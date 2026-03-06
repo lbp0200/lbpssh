@@ -5,14 +5,18 @@ import 'package:lbp_ssh/data/models/default_terminal_config.dart';
 
 void main() {
   group('AppConfig', () {
-    test('should create with default values', () {
+    test(
+        'Given no arguments, When creating AppConfig, Then uses default values',
+        () {
       final config = AppConfig();
 
       expect(config.terminal.fontFamily, 'JetBrainsMonoNerdFontMono');
       expect(config.defaultTerminal.execMac, TerminalType.iterm2);
     });
 
-    test('should create with custom terminal config', () {
+    test(
+        'Given custom terminal config, When creating AppConfig, Then uses custom values',
+        () {
       final terminalConfig = TerminalConfig(
         fontFamily: 'Fira Code',
         fontSize: 14,
@@ -24,7 +28,8 @@ void main() {
       expect(config.terminal.fontSize, 14);
     });
 
-    test('should serialize to JSON', () {
+    test('Given AppConfig, When serializing to JSON, Then produces correct JSON',
+        () {
       final config = AppConfig();
 
       final json = config.toJson();
@@ -34,7 +39,9 @@ void main() {
       expect(json['terminal']['fontFamily'], 'JetBrainsMonoNerdFontMono');
     });
 
-    test('should deserialize from JSON', () {
+    test(
+        'Given valid JSON, When deserializing, Then creates AppConfig correctly',
+        () {
       final json = {
         'terminal': {
           'fontFamily': 'Consolas',
@@ -65,7 +72,9 @@ void main() {
       expect(config.defaultTerminal.execMac, TerminalType.alacritty);
     });
 
-    test('should handle null values in fromJson', () {
+    test(
+        'Given null values in JSON, When deserializing, Then uses default values',
+        () {
       final json = {
         'terminal': null,
         'defaultTerminal': null,
@@ -79,7 +88,9 @@ void main() {
   });
 
   group('TerminalConfig Serialization', () {
-    test('should round-trip serialize correctly', () {
+    test(
+        'Given TerminalConfig, When serializing and deserializing, Then preserves all fields',
+        () {
       final original = TerminalConfig(
         fontFamily: 'Source Code Pro',
         fontSize: 15,
@@ -114,7 +125,9 @@ void main() {
   });
 
   group('DefaultTerminalConfig Serialization', () {
-    test('should round-trip serialize correctly', () {
+    test(
+        'Given DefaultTerminalConfig, When serializing and deserializing, Then preserves all fields',
+        () {
       final original = DefaultTerminalConfig(
         execWindows: TerminalType.powershell,
         execWindowsCustom: 'pwsh.exe',

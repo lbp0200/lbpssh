@@ -43,7 +43,7 @@ dependencies:
   # 数据存储（已迁移到 JSON 文件）
 
   # 终端模拟器
-  kterm: ^1.0.7
+  kterm: ^1.0.8
   flutter_pty: ^0.4.0+2
 
   # 路由
@@ -96,6 +96,9 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^6.0.0
+
+  # Mocking
+  mocktail: ^1.0.4
 
   # 代码生成
   build_runner: ^2.10.5

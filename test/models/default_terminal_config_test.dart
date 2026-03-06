@@ -3,7 +3,9 @@ import 'package:lbp_ssh/data/models/default_terminal_config.dart';
 
 void main() {
   group('DefaultTerminalConfig', () {
-    test('should create config with default values', () {
+    test(
+        'Given no arguments, When creating DefaultTerminalConfig, Then uses default values',
+        () {
       final config = DefaultTerminalConfig();
 
       expect(config.execWindows, TerminalType.windowsTerminal);
@@ -14,7 +16,9 @@ void main() {
       expect(config.execLinuxCustom, isNull);
     });
 
-    test('should create config with custom values', () {
+    test(
+        'Given custom terminal types, When creating DefaultTerminalConfig, Then uses custom values',
+        () {
       final config = DefaultTerminalConfig(
         execWindows: TerminalType.powershell,
         execWindowsCustom: 'custom.exe',
@@ -32,7 +36,9 @@ void main() {
       expect(config.execLinuxCustom, '/usr/bin/kitty');
     });
 
-    test('should serialize to JSON', () {
+    test(
+        'Given DefaultTerminalConfig, When serializing to JSON, Then produces correct JSON',
+        () {
       final config = DefaultTerminalConfig(
         execWindows: TerminalType.cmd,
         execMac: TerminalType.wezterm,
@@ -46,7 +52,9 @@ void main() {
       expect(json['execLinux'], 'alacritty');
     });
 
-    test('should deserialize from JSON', () {
+    test(
+        'Given valid JSON, When deserializing, Then creates DefaultTerminalConfig correctly',
+        () {
       final json = {
         'execWindows': 'powershell',
         'execWindowsCustom': 'pwsh.exe',
@@ -66,7 +74,9 @@ void main() {
       expect(config.execLinuxCustom, 'wezterm');
     });
 
-    test('should serialize and deserialize correctly', () {
+    test(
+        'Given DefaultTerminalConfig, When serializing and deserializing, Then preserves all fields',
+        () {
       final original = DefaultTerminalConfig(
         execWindows: TerminalType.custom,
         execWindowsCustom: 'custom_windows.exe',
@@ -87,7 +97,9 @@ void main() {
       expect(deserialized.execLinuxCustom, original.execLinuxCustom);
     });
 
-    test('should create copy with modified fields', () {
+    test(
+        'Given original config, When calling copyWith, Then creates modified copy',
+        () {
       final original = DefaultTerminalConfig();
 
       final modified = original.copyWith(
@@ -100,22 +112,30 @@ void main() {
       expect(modified.execWindows, original.execWindows);
     });
 
-    test('should get correct Windows command for powershell', () {
+    test(
+        'Given powershell terminal type, When calling getWindowsCommand, Then returns powershell.exe',
+        () {
       final config = DefaultTerminalConfig(execWindows: TerminalType.powershell);
       expect(config.getWindowsCommand(), 'powershell.exe');
     });
 
-    test('should get correct Windows command for cmd', () {
+    test(
+        'Given cmd terminal type, When calling getWindowsCommand, Then returns cmd.exe',
+        () {
       final config = DefaultTerminalConfig(execWindows: TerminalType.cmd);
       expect(config.getWindowsCommand(), 'cmd.exe');
     });
 
-    test('should get correct Windows command for windowsTerminal', () {
+    test(
+        'Given windowsTerminal terminal type, When calling getWindowsCommand, Then returns wt.exe',
+        () {
       final config = DefaultTerminalConfig(execWindows: TerminalType.windowsTerminal);
       expect(config.getWindowsCommand(), 'wt.exe');
     });
 
-    test('should get correct Windows command for custom', () {
+    test(
+        'Given custom terminal type, When calling getWindowsCommand, Then returns custom command',
+        () {
       final config = DefaultTerminalConfig(
         execWindows: TerminalType.custom,
         execWindowsCustom: 'custom_terminal.exe',
@@ -123,32 +143,44 @@ void main() {
       expect(config.getWindowsCommand(), 'custom_terminal.exe');
     });
 
-    test('should get correct Mac command for terminal', () {
+    test(
+        'Given terminal terminal type, When calling getMacCommand, Then returns open command',
+        () {
       final config = DefaultTerminalConfig(execMac: TerminalType.terminal);
       expect(config.getMacCommand(), 'open -b com.apple.terminal');
     });
 
-    test('should get correct Mac command for iTerm2', () {
+    test(
+        'Given iterm2 terminal type, When calling getMacCommand, Then returns iTerm command',
+        () {
       final config = DefaultTerminalConfig(execMac: TerminalType.iterm2);
       expect(config.getMacCommand(), 'open -a iTerm');
     });
 
-    test('should get correct Mac command for alacritty', () {
+    test(
+        'Given alacritty terminal type, When calling getMacCommand, Then returns Alacritty command',
+        () {
       final config = DefaultTerminalConfig(execMac: TerminalType.alacritty);
       expect(config.getMacCommand(), 'open -a Alacritty');
     });
 
-    test('should get correct Mac command for kitty', () {
+    test(
+        'Given kitty terminal type, When calling getMacCommand, Then returns kitty command',
+        () {
       final config = DefaultTerminalConfig(execMac: TerminalType.kitty);
       expect(config.getMacCommand(), 'open -a kitty');
     });
 
-    test('should get correct Mac command for wezterm', () {
+    test(
+        'Given wezterm terminal type, When calling getMacCommand, Then returns WezTerm command',
+        () {
       final config = DefaultTerminalConfig(execMac: TerminalType.wezterm);
       expect(config.getMacCommand(), 'open -a WezTerm');
     });
 
-    test('should get correct Mac command for custom', () {
+    test(
+        'Given custom terminal type, When calling getMacCommand, Then returns custom command',
+        () {
       final config = DefaultTerminalConfig(
         execMac: TerminalType.custom,
         execMacCustom: '/Applications/Custom.app',
@@ -156,27 +188,37 @@ void main() {
       expect(config.getMacCommand(), '/Applications/Custom.app');
     });
 
-    test('should get correct Linux command for terminal', () {
+    test(
+        'Given terminal terminal type, When calling getLinuxCommand, Then returns x-terminal-emulator',
+        () {
       final config = DefaultTerminalConfig(execLinux: TerminalType.terminal);
       expect(config.getLinuxCommand(), 'x-terminal-emulator');
     });
 
-    test('should get correct Linux command for alacritty', () {
+    test(
+        'Given alacritty terminal type, When calling getLinuxCommand, Then returns alacritty',
+        () {
       final config = DefaultTerminalConfig(execLinux: TerminalType.alacritty);
       expect(config.getLinuxCommand(), 'alacritty');
     });
 
-    test('should get correct Linux command for kitty', () {
+    test(
+        'Given kitty terminal type, When calling getLinuxCommand, Then returns kitty',
+        () {
       final config = DefaultTerminalConfig(execLinux: TerminalType.kitty);
       expect(config.getLinuxCommand(), 'kitty');
     });
 
-    test('should get correct Linux command for wezterm', () {
+    test(
+        'Given wezterm terminal type, When calling getLinuxCommand, Then returns wezterm',
+        () {
       final config = DefaultTerminalConfig(execLinux: TerminalType.wezterm);
       expect(config.getLinuxCommand(), 'wezterm');
     });
 
-    test('should get correct Linux command for custom', () {
+    test(
+        'Given custom terminal type, When calling getLinuxCommand, Then returns custom command',
+        () {
       final config = DefaultTerminalConfig(
         execLinux: TerminalType.custom,
         execLinuxCustom: '/usr/bin/custom',
@@ -184,7 +226,9 @@ void main() {
       expect(config.getLinuxCommand(), '/usr/bin/custom');
     });
 
-    test('should provide defaultConfig', () {
+    test(
+        'Given DefaultTerminalConfig, When accessing defaultConfig, Then returns default config',
+        () {
       final defaultConfig = DefaultTerminalConfig.defaultConfig;
 
       expect(defaultConfig, isA<DefaultTerminalConfig>());

@@ -212,7 +212,8 @@ void main() {
   });
 }
 
-/// Test helper: Mock SyncProvider for testing SyncProvider widget
+/// Test helper: Mock SyncProvider for testing SyncStatus widget
+/// Only implements properties used by SyncStatus widget
 class _TestSyncProvider extends ChangeNotifier implements SyncProvider {
   @override
   final SyncStatusEnum status;
@@ -223,28 +224,7 @@ class _TestSyncProvider extends ChangeNotifier implements SyncProvider {
   _TestSyncProvider({required this.status, this.lastSyncTime});
 
   @override
-  bool get isEnabled => true;
-
-  @override
-  bool get hasConflict => false;
-
-  @override
-  List<SyncConflict> get conflicts => [];
-
-  @override
   SyncConfig? get config => null;
-
-  @override
-  String? get errorMessage => null;
-
-  @override
-  Future<void> init() async {}
-
-  @override
-  Future<void> sync() async {}
-
-  @override
-  Future<void> resolveConflict(SyncConflict conflict, bool useLocal) async {}
 
   @override
   Future<void> saveConfig(SyncConfig config) async {}

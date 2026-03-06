@@ -3,7 +3,9 @@ import 'package:lbp_ssh/data/models/terminal_config.dart';
 
 void main() {
   group('TerminalConfig', () {
-    test('should create config with default values', () {
+    test(
+        'Given no arguments, When creating TerminalConfig, Then uses default values',
+        () {
       final config = TerminalConfig();
 
       expect(config.fontFamily, 'JetBrainsMonoNerdFontMono');
@@ -20,7 +22,9 @@ void main() {
       expect(config.shellPath, '');
     });
 
-    test('should create config with custom values', () {
+    test(
+        'Given custom values, When creating TerminalConfig, Then uses custom values',
+        () {
       final config = TerminalConfig(
         fontFamily: 'Courier New',
         fontSize: 16.0,
@@ -50,7 +54,8 @@ void main() {
       expect(config.shellPath, '/bin/bash');
     });
 
-    test('should serialize to JSON', () {
+    test('Given TerminalConfig, When serializing to JSON, Then produces correct JSON',
+        () {
       final config = TerminalConfig(
         fontFamily: 'JetBrainsMonoNerdFontMono',
         fontSize: 14.0,
@@ -82,7 +87,8 @@ void main() {
       expect(json['shellPath'], '');
     });
 
-    test('should deserialize from JSON', () {
+    test('Given valid JSON, When deserializing, Then creates TerminalConfig correctly',
+        () {
       final json = {
         'fontFamily': 'Consolas',
         'fontSize': 18.0,
@@ -114,7 +120,9 @@ void main() {
       expect(config.shellPath, '/usr/bin/zsh');
     });
 
-    test('should serialize and deserialize correctly', () {
+    test(
+        'Given TerminalConfig, When serializing and deserializing, Then preserves all fields',
+        () {
       final original = TerminalConfig(
         fontFamily: 'Fira Code',
         fontSize: 12.0,
@@ -147,7 +155,9 @@ void main() {
       expect(deserialized.shellPath, original.shellPath);
     });
 
-    test('should create copy with modified fields', () {
+    test(
+        'Given original config, When calling copyWith with new values, Then updates only specified fields',
+        () {
       final original = TerminalConfig();
 
       final modified = original.copyWith(
@@ -163,7 +173,9 @@ void main() {
       expect(modified.foregroundColor, original.foregroundColor);
     });
 
-    test('should create copy without modifying original', () {
+    test(
+        'Given config with custom fontSize, When calling copyWith, Then original is not modified',
+        () {
       final original = TerminalConfig(fontSize: 13.0);
       final copy = original.copyWith(fontSize: 16.0);
 
@@ -171,7 +183,8 @@ void main() {
       expect(copy.fontSize, 16.0);
     });
 
-    test('should provide defaultConfig', () {
+    test('Given TerminalConfig, When accessing defaultConfig, Then returns default config',
+        () {
       final defaultConfig = TerminalConfig.defaultConfig;
 
       expect(defaultConfig, isA<TerminalConfig>());
@@ -181,7 +194,9 @@ void main() {
       expect(defaultConfig.backgroundColor, '#1E1E1E');
     });
 
-    test('should have default fontSize of 17 and lineHeight of 1.2', () {
+    test(
+        'Given no arguments, When creating TerminalConfig, Then has default fontSize 17 and lineHeight 1.2',
+        () {
       final config = TerminalConfig();
 
       expect(config.fontSize, 17.0);

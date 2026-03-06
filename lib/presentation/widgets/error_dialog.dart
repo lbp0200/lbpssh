@@ -132,6 +132,7 @@ class _ErrorDialogState extends State<ErrorDialog> {
 
     return AlertDialog(
       title: Row(
+        key: const Key('error_dialog_title'),
         children: [
           Icon(Icons.error_outline, color: theme.colorScheme.error),
           const SizedBox(width: 12),
@@ -209,15 +210,18 @@ class _ErrorDialogState extends State<ErrorDialog> {
       ),
       actions: [
         TextButton(
+          key: const Key('error_dialog_copy_button'),
           onPressed: _copyReport,
           child: const Text('复制报告'),
         ),
         FilledButton.icon(
+          key: const Key('error_dialog_feedback_button'),
           onPressed: _copyAndOpenIssues,
           icon: Icon(_copied ? Icons.check : Icons.open_in_new),
           label: Text(_copied ? '已复制' : '反馈问题'),
         ),
         TextButton(
+          key: const Key('error_dialog_close_button'),
           onPressed: () => Navigator.of(context).pop(),
           child: const Text('关闭'),
         ),

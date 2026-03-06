@@ -42,6 +42,7 @@ class SyncStatus extends StatelessWidget {
         }
 
         return Row(
+          key: const Key('sync_status_container'),
           mainAxisSize: MainAxisSize.min,
           children: [
             if (status == SyncStatusEnum.syncing)
@@ -51,13 +52,18 @@ class SyncStatus extends StatelessWidget {
                 child: CircularProgressIndicator(strokeWidth: 2),
               )
             else
-              Icon(icon, size: 16, color: color),
+              Icon(icon, key: const Key('sync_status_icon'), size: 16, color: color),
             const SizedBox(width: 4),
-            Text(text, style: TextStyle(fontSize: 12, color: color)),
+            Text(
+              text,
+              key: const Key('sync_status_text'),
+              style: TextStyle(fontSize: 12, color: color),
+            ),
             if (lastSyncTime != null) ...[
               const SizedBox(width: 8),
               Text(
                 _formatTime(lastSyncTime),
+                key: const Key('sync_status_time'),
                 style: TextStyle(
                   fontSize: 10,
                   color: Theme.of(

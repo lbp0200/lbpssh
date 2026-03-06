@@ -4,7 +4,9 @@ import 'package:lbp_ssh/data/models/ssh_connection.dart';
 
 void main() {
   group('SyncConfig', () {
-    test('should create with default values', () {
+    test(
+        'Given required fields, When creating SyncConfig, Then uses default values for optional fields',
+        () {
       final config = SyncConfig(
         platform: SyncPlatform.gist,
         accessToken: 'test_token',
@@ -18,7 +20,9 @@ void main() {
       expect(config.syncIntervalMinutes, 5);
     });
 
-    test('should serialize to JSON', () {
+    test(
+        'Given SyncConfig with all fields, When serializing to JSON, Then produces correct JSON',
+        () {
       final config = SyncConfig(
         platform: SyncPlatform.giteeGist,
         accessToken: 'token123',
@@ -38,7 +42,9 @@ void main() {
       expect(json['syncIntervalMinutes'], 60);
     });
 
-    test('should deserialize from JSON', () {
+    test(
+        'Given valid JSON with all fields, When deserializing, Then creates SyncConfig correctly',
+        () {
       final json = {
         'platform': 'gist',
         'accessToken': 'token456',
@@ -58,7 +64,9 @@ void main() {
       expect(config.syncIntervalMinutes, 45);
     });
 
-    test('should handle missing optional fields in JSON', () {
+    test(
+        'Given JSON with missing optional fields, When deserializing, Then uses default values',
+        () {
       final json = {
         'platform': 'giteeGist',
       };
@@ -74,7 +82,9 @@ void main() {
   });
 
   group('SyncConflict', () {
-    test('should create sync conflict', () {
+    test(
+        'Given local and remote connections, When creating SyncConflict, Then stores both connections',
+        () {
       final localConnection = SshConnection(
         id: 'conn1',
         name: 'Local Server',
@@ -105,7 +115,9 @@ void main() {
   });
 
   group('SyncConflictException', () {
-    test('should create exception with conflicts', () {
+    test(
+        'Given list of conflicts, When creating SyncConflictException, Then stores conflicts',
+        () {
       final conflicts = [
         SyncConflict(
           connectionId: 'conn1',
@@ -136,14 +148,17 @@ void main() {
   });
 
   group('SyncPlatform', () {
-    test('should have correct values', () {
+    test('Given SyncPlatform enum, When accessing name, Then returns correct values',
+        () {
       expect(SyncPlatform.gist.name, 'gist');
       expect(SyncPlatform.giteeGist.name, 'giteeGist');
     });
   });
 
   group('SyncStatusEnum', () {
-    test('should have correct values', () {
+    test(
+        'Given SyncStatusEnum enum, When accessing name, Then returns correct values',
+        () {
       expect(SyncStatusEnum.idle.name, 'idle');
       expect(SyncStatusEnum.syncing.name, 'syncing');
       expect(SyncStatusEnum.success.name, 'success');

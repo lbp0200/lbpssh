@@ -3,26 +3,30 @@ import 'package:lbp_ssh/domain/services/kitty_file_transfer_service.dart';
 
 void main() {
   group('KittyFileTransferService', () {
-    test('returns unsupported when remote has no ki tool', () async {
-      // 当远程没有安装 ki 工具时，应该返回不支持
+    test(
+        'Given no terminal connection, When checking protocol support, Then returns unsupported',
+        () async {
       final service = KittyFileTransferService();
       final result = await service.checkProtocolSupport();
       expect(result.isSupported, isFalse);
       expect(result.errorMessage, contains('未连接到终端'));
     });
 
-    test('generates correct OSC sequence for send session', () {
-      // 验证生成的 OSC 序列格式正确
+    test(
+        'Given sessionId, When starting send session, Then generates correct OSC sequence',
+        () {
       final encoder = _TestEncoder();
       final sequence = encoder.startSendSession(sessionId: 'test123');
 
-      // OSC 5113 序列格式
+      // OSC 5113 sequence format
       expect(sequence, contains('\x1b]5113'));
       expect(sequence, contains('ac=send'));
       expect(sequence, contains('id=test123'));
     });
 
-    test('generates correct OSC sequence for file metadata', () {
+    test(
+        'Given file metadata, When sending file metadata, Then generates correct OSC sequence',
+        () {
       final encoder = _TestEncoder();
       final sequence = encoder.sendFileMetadata(
         sessionId: 'test123',
@@ -35,7 +39,9 @@ void main() {
       expect(sequence, contains('fid=f1'));
     });
 
-    test('generates correct OSC sequence for data chunk', () {
+    test(
+        'Given data chunk, When sending data, Then generates correct OSC sequence',
+        () {
       final encoder = _TestEncoder();
       final sequence = encoder.sendDataChunk(
         sessionId: 'test123',
@@ -48,7 +54,9 @@ void main() {
       expect(sequence, contains('fid=f1'));
     });
 
-    test('generates finish session command', () {
+    test(
+        'Given sessionId, When finishing session, Then generates finish command',
+        () {
       final encoder = _TestEncoder();
       final sequence = encoder.finishSession('test123');
 
@@ -57,7 +65,7 @@ void main() {
   });
 }
 
-/// 测试用编码器 - 复用 KittyFileTransferEncoder 的逻辑
+/// Test encoder - reuses KittyFileTransferEncoder logic
 class _TestEncoder {
   String startSendSession({required String sessionId}) {
     return '\x1b]5113;ac=send;id=$sessionId\x1b\\';
@@ -85,12 +93,12 @@ class _TestEncoder {
   }
 
   String _encode64(String input) {
-    // 简化的 base64 编码
+    // Simplified base64 encoding
     return input;
   }
 
   String _encode64Bytes(List<int> data) {
-    // 简化的 base64 编码
+    // Simplified base64 encoding
     return data.toString();
   }
 }

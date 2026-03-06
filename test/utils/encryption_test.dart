@@ -5,41 +5,46 @@ import 'dart:convert';
 void main() {
   group('EncryptionUtil', () {
     group('deriveKey', () {
-      test('should derive key from short password', () {
+      test('Given short password, When deriving key, Then produces 32-byte key', () {
         final key = EncryptionUtil.deriveKey('short');
 
         expect(key.length, 32);
         expect(key.bytes.length, 32);
       });
 
-      test('should derive key from long password', () {
+      test('Given long password, When deriving key, Then produces 32-byte key', () {
         final key = EncryptionUtil.deriveKey('a' * 50);
 
         expect(key.length, 32);
         expect(key.bytes.length, 32);
       });
 
-      test('should derive key from empty password', () {
+      test('Given empty password, When deriving key, Then produces 32-byte key', () {
         final key = EncryptionUtil.deriveKey('');
 
         expect(key.length, 32);
         expect(key.bytes.length, 32);
       });
 
-      test('should derive key from password with special characters', () {
+      test(
+          'Given password with special characters, When deriving key, Then produces valid key',
+          () {
         final key = EncryptionUtil.deriveKey('p@ss!word#123');
 
         expect(key.length, 32);
       });
 
-      test('should produce same key for same password', () {
+      test('Given same password, When deriving key multiple times, Then produces same key',
+          () {
         final key1 = EncryptionUtil.deriveKey('testpassword');
         final key2 = EncryptionUtil.deriveKey('testpassword');
 
         expect(base64Encode(key1.bytes), base64Encode(key2.bytes));
       });
 
-      test('should produce different keys for different passwords', () {
+      test(
+          'Given different passwords, When deriving keys, Then produces different keys',
+          () {
         final key1 = EncryptionUtil.deriveKey('password1');
         final key2 = EncryptionUtil.deriveKey('password2');
 
@@ -48,7 +53,9 @@ void main() {
     });
 
     group('encrypt/decrypt', () {
-      test('should encrypt and decrypt simple text', () {
+      test(
+          'Given simple text and password, When encrypting and decrypting, Then recovers original',
+          () {
         const original = 'Hello, World!';
         const password = 'testpassword123';
 
@@ -58,7 +65,7 @@ void main() {
         expect(decrypted, original);
       });
 
-      test('should throw exception for empty string', () {
+      test('Given empty string, When encrypting, Then throws exception', () {
         const original = '';
         const password = 'testpassword123';
 
@@ -68,7 +75,9 @@ void main() {
         );
       });
 
-      test('should encrypt and decrypt Chinese text', () {
+      test(
+          'Given Chinese text and password, When encrypting and decrypting, Then recovers original',
+          () {
         const original = '你好，世界！';
         const password = 'testpassword123';
 
@@ -78,7 +87,9 @@ void main() {
         expect(decrypted, original);
       });
 
-      test('should encrypt and decrypt special characters', () {
+      test(
+          'Given special characters and password, When encrypting and decrypting, Then recovers original',
+          () {
         const original = '!@#\$%^&*()_+-=[]{}|;\':",./<>?';
         const password = 'testpassword123';
 
@@ -88,7 +99,9 @@ void main() {
         expect(decrypted, original);
       });
 
-      test('should encrypt and decrypt multiline text', () {
+      test(
+          'Given multiline text and password, When encrypting and decrypting, Then recovers original',
+          () {
         const original = '''Line 1
 Line 2
 Line 3''';
@@ -100,7 +113,9 @@ Line 3''';
         expect(decrypted, original);
       });
 
-      test('should produce different ciphertext for same plaintext', () {
+      test(
+          'Given same plaintext, When encrypting multiple times, Then produces different ciphertext',
+          () {
         const original = 'Same text';
         const password = 'testpassword123';
 
@@ -110,7 +125,9 @@ Line 3''';
         expect(encrypted1, isNot(encrypted2));
       });
 
-      test('should fail decryption with wrong password', () {
+      test(
+          'Given encrypted text, When decrypting with wrong password, Then throws exception',
+          () {
         const original = 'Secret message';
         const correctPassword = 'correctpassword';
         const wrongPassword = 'wrongpassword';
@@ -123,7 +140,9 @@ Line 3''';
         );
       });
 
-      test('should encrypt and decrypt JSON-like string', () {
+      test(
+          'Given JSON string and password, When encrypting and decrypting, Then recovers original',
+          () {
         const original = '{"name": "test", "value": 123}';
         const password = 'jsonpassword';
 
@@ -133,7 +152,9 @@ Line 3''';
         expect(decrypted, original);
       });
 
-      test('should handle long text', () {
+      test(
+          'Given long text and password, When encrypting and decrypting, Then recovers original',
+          () {
         final original = 'A' * 10000;
         const password = 'longtextpassword';
 
@@ -143,7 +164,9 @@ Line 3''';
         expect(decrypted, original);
       });
 
-      test('should handle unicode characters', () {
+      test(
+          'Given unicode characters and password, When encrypting and decrypting, Then recovers original',
+          () {
         const original = 'Hello 你好 مرحبا Привет 🌍';
         const password = 'unicodepassword';
 
@@ -155,20 +178,20 @@ Line 3''';
     });
 
     group('generateRandomKey', () {
-      test('should generate key of correct length', () {
+      test('Given no input, When generating random key, Then produces key of length 44', () {
         final key = EncryptionUtil.generateRandomKey();
 
         expect(key.length, 44);
       });
 
-      test('should generate different keys each time', () {
+      test('Given no input, When generating multiple random keys, Then produces different keys', () {
         final key1 = EncryptionUtil.generateRandomKey();
         final key2 = EncryptionUtil.generateRandomKey();
 
         expect(key1, isNot(key2));
       });
 
-      test('should generate valid base64 key', () {
+      test('Given no input, When generating random key, Then produces valid base64 key', () {
         final key = EncryptionUtil.generateRandomKey();
 
         expect(() => base64Decode(key), returnsNormally);
@@ -176,7 +199,9 @@ Line 3''';
     });
 
     group('encryption format', () {
-      test('should produce base64 encoded ciphertext', () {
+      test(
+          'Given plaintext and password, When encrypting, Then produces base64 encoded ciphertext',
+          () {
         const original = 'Test message';
         const password = 'testpassword';
 
@@ -185,7 +210,9 @@ Line 3''';
         expect(() => base64Decode(encrypted), returnsNormally);
       });
 
-      test('should include IV in ciphertext', () {
+      test(
+          'Given plaintext and password, When encrypting, Then includes IV in ciphertext',
+          () {
         const original = 'Test message';
         const password = 'testpassword';
 
