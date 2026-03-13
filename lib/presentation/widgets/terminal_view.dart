@@ -15,6 +15,7 @@ import '../../data/models/ssh_connection.dart';
 import '../../data/models/terminal_config.dart';
 import '../../domain/services/terminal_service.dart';
 import '../../domain/services/kitty_file_transfer_service.dart';
+import '../../utils/color_utils.dart';
 import 'error_dialog.dart';
 import 'graphics_overlay.dart';
 
@@ -115,15 +116,6 @@ class _TerminalViewWidgetState extends State<TerminalViewWidget> {
         // 获取终端配置
         final config = configProvider.terminalConfig;
 
-        // 解析颜色（从 #RRGGBB 格式转换为 Color）
-        Color parseColor(String colorHex) {
-          try {
-            return Color(int.parse(colorHex.replaceFirst('#', '0xFF')));
-          } catch (e) {
-            return Colors.white;
-          }
-        }
-
         return LayoutBuilder(
           builder: (context, constraints) {
             return DropTarget(
@@ -152,7 +144,6 @@ class _TerminalViewWidgetState extends State<TerminalViewWidget> {
                       terminal: session.terminal,
                       controller: session.controller,
                       config: config,
-                      parseColor: parseColor,
                     ),
                   ),
                   // 拖拽提示覆盖层
@@ -197,13 +188,11 @@ class _TerminalViewWithSelection extends StatefulWidget {
   final Terminal terminal;
   final TerminalController controller;
   final TerminalConfig config;
-  final Color Function(String) parseColor;
 
   const _TerminalViewWithSelection({
     required this.terminal,
     required this.controller,
     required this.config,
-    required this.parseColor,
   });
 
   @override
@@ -268,31 +257,31 @@ class _TerminalViewWithSelectionState extends State<_TerminalViewWithSelection> 
                 height: widget.config.lineHeight,
               ),
               theme: TerminalTheme(
-                foreground: widget.parseColor(widget.config.foregroundColor),
-                background: widget.parseColor(widget.config.backgroundColor),
-                cursor: widget.parseColor(widget.config.cursorColor),
-                selection: widget.parseColor(
+                foreground: ColorUtils.parseColorCached(widget.config.foregroundColor),
+                background: ColorUtils.parseColorCached(widget.config.backgroundColor),
+                cursor: ColorUtils.parseColorCached(widget.config.cursorColor),
+                selection: ColorUtils.parseColorCached(
                   widget.config.foregroundColor,
                 ).withValues(alpha: 0.3),
-                black: widget.parseColor('#000000'),
-                red: widget.parseColor('#CD3131'),
-                green: widget.parseColor('#0DBC79'),
-                yellow: widget.parseColor('#E5E510'),
-                blue: widget.parseColor('#2472C8'),
-                magenta: widget.parseColor('#BC3FBC'),
-                cyan: widget.parseColor('#11A8CD'),
-                white: widget.parseColor('#E5E5E5'),
-                brightBlack: widget.parseColor('#666666'),
-                brightRed: widget.parseColor('#F14C4C'),
-                brightGreen: widget.parseColor('#23D18B'),
-                brightYellow: widget.parseColor('#F5F543'),
-                brightBlue: widget.parseColor('#3B8EEA'),
-                brightMagenta: widget.parseColor('#D670D6'),
-                brightCyan: widget.parseColor('#29B8DB'),
-                brightWhite: widget.parseColor('#E5E5E5'),
-                searchHitBackground: widget.parseColor('#FFFF00').withValues(alpha: 0.3),
-                searchHitBackgroundCurrent: widget.parseColor('#FFFF00').withValues(alpha: 0.5),
-                searchHitForeground: widget.parseColor('#000000'),
+                black: ColorUtils.parseColorCached('#000000'),
+                red: ColorUtils.parseColorCached('#CD3131'),
+                green: ColorUtils.parseColorCached('#0DBC79'),
+                yellow: ColorUtils.parseColorCached('#E5E510'),
+                blue: ColorUtils.parseColorCached('#2472C8'),
+                magenta: ColorUtils.parseColorCached('#BC3FBC'),
+                cyan: ColorUtils.parseColorCached('#11A8CD'),
+                white: ColorUtils.parseColorCached('#E5E5E5'),
+                brightBlack: ColorUtils.parseColorCached('#666666'),
+                brightRed: ColorUtils.parseColorCached('#F14C4C'),
+                brightGreen: ColorUtils.parseColorCached('#23D18B'),
+                brightYellow: ColorUtils.parseColorCached('#F5F543'),
+                brightBlue: ColorUtils.parseColorCached('#3B8EEA'),
+                brightMagenta: ColorUtils.parseColorCached('#D670D6'),
+                brightCyan: ColorUtils.parseColorCached('#29B8DB'),
+                brightWhite: ColorUtils.parseColorCached('#E5E5E5'),
+                searchHitBackground: ColorUtils.parseColorCached('#FFFF00').withValues(alpha: 0.3),
+                searchHitBackgroundCurrent: ColorUtils.parseColorCached('#FFFF00').withValues(alpha: 0.5),
+                searchHitForeground: ColorUtils.parseColorCached('#000000'),
               ),
             ),
           ),
