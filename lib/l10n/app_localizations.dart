@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
 class AppLocalizations {
   final Locale locale;
@@ -10,30 +9,21 @@ class AppLocalizations {
     return Localizations.of<AppLocalizations>(context, AppLocalizations);
   }
 
-  static const LocalizationsDelegate<AppLocalizations> delegate =
-      _AppLocalizationsDelegate();
+  static const LocalizationsDelegate<AppLocalizations> delegate = _AppLocalizationsDelegate();
 
-  String get appTitle => Intl.message('lbpSSH',
-      name: 'appTitle', locale: locale.toString());
-  String get connect =>
-      Intl.message('连接', name: 'connect', locale: locale.toString());
-  String get disconnect => Intl.message('断开',
-      name: 'disconnect', locale: locale.toString());
-  String get noConnection => Intl.message('暂无保存的连接',
-      name: 'noConnection', locale: locale.toString());
-  String get createLocalTerminal => Intl.message('创建本地终端',
-      name: 'createLocalTerminal', locale: locale.toString());
-  String get clickToConnect => Intl.message('点击左侧连接以打开终端',
-      name: 'clickToConnect', locale: locale.toString());
+  String get appTitle => locale.languageCode == 'zh' ? 'lbpSSH' : 'lbpSSH';
+  String get connect => locale.languageCode == 'zh' ? '连接' : 'Connect';
+  String get disconnect => locale.languageCode == 'zh' ? '断开' : 'Disconnect';
+  String get noConnection => locale.languageCode == 'zh' ? '暂无保存的连接' : 'No saved connections';
+  String get createLocalTerminal => locale.languageCode == 'zh' ? '创建本地终端' : 'Create Local Terminal';
+  String get clickToConnect => locale.languageCode == 'zh' ? '点击左侧连接以打开终端' : 'Click a connection on the left to open terminal';
 }
 
-class _AppLocalizationsDelegate
-    extends LocalizationsDelegate<AppLocalizations> {
+class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
   const _AppLocalizationsDelegate();
 
   @override
-  bool isSupported(Locale locale) =>
-      ['en', 'zh'].contains(locale.languageCode);
+  bool isSupported(Locale locale) => ['en', 'zh'].contains(locale.languageCode);
 
   @override
   Future<AppLocalizations> load(Locale locale) async {

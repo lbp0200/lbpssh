@@ -1,0 +1,9 @@
+{
+  "@@locale": "en",
+  "appTitle": "lbpSSH",
+  "connect": "Connect",
+  "disconnect": "Disconnect",
+  "noConnection": "No saved connections",
+  "createLocalTerminal": "Create Local Terminal",
+  "clickToConnect": "Click a connection on the left to open terminal"
+}

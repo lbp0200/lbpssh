@@ -11,8 +11,7 @@ void main() {
 
     test('should load English localization', () {
       final localizations = AppLocalizations(Locale('en'));
-      // Intl.message returns the message as fallback when no translation is defined
-      expect(localizations.connect, '连接');
+      expect(localizations.connect, 'Connect');
     });
 
     test('should support Chinese locale', () {

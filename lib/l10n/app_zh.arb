@@ -1,0 +1,9 @@
+{
+  "@@locale": "zh",
+  "appTitle": "lbpSSH",
+  "connect": "连接",
+  "disconnect": "断开",
+  "noConnection": "暂无保存的连接",
+  "createLocalTerminal": "创建本地终端",
+  "clickToConnect": "点击左侧连接以打开终端"
+}
