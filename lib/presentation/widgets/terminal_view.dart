@@ -246,10 +246,10 @@ class _TerminalViewWithSelectionState extends State<_TerminalViewWithSelection> 
     final cellWidth = widget.config.fontSize * 0.6;
     final cellHeight = widget.config.fontSize * widget.config.lineHeight;
 
-    return RepaintBoundary(
-      child: Stack(
-        children: [
-          Padding(
+    return Stack(
+      children: [
+        RepaintBoundary(
+          child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             child: TerminalView(
               widget.terminal,
@@ -296,16 +296,15 @@ class _TerminalViewWithSelectionState extends State<_TerminalViewWithSelection> 
               ),
             ),
           ),
-          // GraphicsOverlay remains outside RepaintBoundary for proper layering
-          if (graphicsManager != null)
-            GraphicsOverlayWidget(
-              graphicsManager: graphicsManager,
-              cellWidth: cellWidth,
-              cellHeight: cellHeight,
-              scrollOffset: 0,
-            ),
-        ],
-      ),
+        ),
+        if (graphicsManager != null)
+          GraphicsOverlayWidget(
+            graphicsManager: graphicsManager,
+            cellWidth: cellWidth,
+            cellHeight: cellHeight,
+            scrollOffset: 0,
+          ),
+      ],
     );
   }
 }
