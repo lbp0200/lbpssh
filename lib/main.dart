@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
@@ -16,8 +18,26 @@ import 'presentation/providers/app_config_provider.dart';
 import 'presentation/providers/import_export_provider.dart';
 import 'presentation/providers/sftp_provider.dart';
 import 'presentation/screens/main_screen.dart';
+import 'utils/sentry_service.dart';
 
 void main() async {
+  // 初始化 Sentry
+  await SentryService().init(
+    dsn: const String.fromEnvironment('SENTRY_DSN', defaultValue: ''),
+  );
+
+  // 全局错误处理器
+  FlutterError.onError = (details) {
+    SentryService().captureException(details.exception,
+        stackTrace: details.stack);
+    FlutterError.presentError(details);
+  };
+
+  PlatformDispatcher.instance.onError = (error, stack) {
+    SentryService().captureException(error, stackTrace: stack);
+    return true;
+  };
+
   WidgetsFlutterBinding.ensureInitialized();
 
   // 初始化窗口管理器并设置最大化
