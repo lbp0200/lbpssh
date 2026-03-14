@@ -89,6 +89,9 @@ dependencies:
   # UUID 生成
   uuid: ^4.3.3
 
+  # 骨架屏
+  shimmer: ^3.0.0
+
   # 文件选择器
   file_picker: ^10.3.10
 
