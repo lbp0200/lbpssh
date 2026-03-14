@@ -40,7 +40,7 @@ dependencies:
   cupertino_icons: ^1.0.8
 
   # App info
-  package_info_plus: ^8.0.0
+  package_info_plus: ^9.0.0
 
   # SSH 客户端
   dartssh2: ^2.13.0
@@ -56,6 +56,8 @@ dependencies:
 
   # 状态管理
   provider: ^6.1.1
+  flutter_riverpod: ^3.3.1
+  riverpod_annotation: ^4.0.2
 
   # HTTP 客户端
   dio: ^5.4.0
@@ -85,16 +87,16 @@ dependencies:
   uuid: ^4.3.3
 
   # 文件选择器
-  file_picker: ^8.0.0
+  file_picker: ^10.3.10
 
   # 桌面通知
-  flutter_local_notifications: ^18.0.0
+  flutter_local_notifications: ^21.0.0
 
   # 窗口管理
-  window_manager: ^0.4.0
+  window_manager: ^0.5.1
 
   # 桌面拖拽支持
-  desktop_drop: ^0.5.0
+  desktop_drop: ^0.7.0
   cross_file: ^0.3.5+2
 
 dev_dependencies:
@@ -112,6 +114,7 @@ dev_dependencies:
   # 代码生成
   build_runner: ^2.10.5
   json_serializable: ^6.11.3
+  riverpod_generator: ^4.0.3
   flutter_launcher_icons: ^0.14.4
 
   # Golden tests
