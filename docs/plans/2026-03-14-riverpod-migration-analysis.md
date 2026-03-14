@@ -3,9 +3,10 @@
 ## 当前状态
 - Provider 文件数: 6
 - 总依赖点: 24 (使用 grep 统计)
-  - ChangeNotifierProvider: 12 处
+  - ChangeNotifierProvider: 6 处
   - Provider.of: 6 处
-  - context.watch (在 main.dart): 6 处
+  - context.read: 12 处
+  - context.watch: 0 处
 
 ## Provider 依赖分析
 
