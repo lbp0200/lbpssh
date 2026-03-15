@@ -113,7 +113,8 @@ void main() {
 
         // Assert (Then)
         expect(result, isNotEmpty);
-        expect(result, startsWith('/'));
+        // On Windows, returns cmd.exe; on Unix-like, returns /bin/bash or similar
+        expect(result, anyOf(startsWith('/'), equals('cmd.exe')));
       });
 
       test('When getDefaultShellPath called multiple times, Then returns consistent result', () {
