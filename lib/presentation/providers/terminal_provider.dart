@@ -83,6 +83,19 @@ class TerminalProvider extends ChangeNotifier {
       rethrow;
     }
 
+    // PTY 启动后，等待一帧让终端 widget 完成布局，然后同步尺寸
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // 延迟一点确保 kterm 完成布局计算
+      Future.delayed(const Duration(milliseconds: 100), () {
+        if (session.terminal.viewWidth > 0 && session.terminal.viewHeight > 0) {
+          localService.resize(
+            session.terminal.viewHeight,
+            session.terminal.viewWidth,
+          );
+        }
+      });
+    });
+
     // 设置目录变化回调（当检测到 cd 命令时）
     localService.onDirectoryChange = (String newDir) {
       // 直接使用解析后的目录更新标签名称
