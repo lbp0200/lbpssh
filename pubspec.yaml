@@ -87,7 +87,7 @@ dependencies:
   shared_preferences: ^2.2.2
 
   # UUID 生成
-  uuid: ^4.3.3
+  uuid: ^4.5.3
 
   # 骨架屏
   shimmer: ^3.0.0
