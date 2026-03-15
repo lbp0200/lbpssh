@@ -67,6 +67,7 @@ class TerminalProvider extends ChangeNotifier {
       name: initialName,
       inputService: localService,
       terminalConfig: terminalConfig,
+      isLocal: true,
     );
 
     // 设置工作目录并更新名称
@@ -118,6 +119,7 @@ class TerminalProvider extends ChangeNotifier {
       name: connection.name,
       inputService: sshService,
       terminalConfig: terminalConfig,
+      serverInfo: '${connection.username}@${connection.host}',
     );
 
     _activeSessionId = sessionId;

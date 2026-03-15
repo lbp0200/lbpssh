@@ -1,10 +1,11 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:kterm/kterm.dart';
 import 'terminal_input_service.dart';
-import 'local_terminal_service.dart';
 import '../../data/models/terminal_config.dart';
+import 'ssh_service.dart';
 
 /// 文件传输事件
 class FileTransferEvent {
@@ -59,11 +60,26 @@ class TerminalSession {
   // 当前工作目录
   String workingDirectory = '/';
 
+  // === 新增：连接状态相关字段 ===
+  /// 连接状态
+  SshConnectionState connectionState = SshConnectionState.disconnected;
+
+  /// 连接开始时间（用于计算连接时长）
+  DateTime? connectionStartTime;
+
+  /// 是否为本地终端
+  final bool isLocal;
+
+  /// 服务器信息（SSH时为 user@host，本地为 null）
+  final String? serverInfo;
+
   TerminalSession({
     required this.id,
     required String name,
     required this.inputService,
     TerminalConfig? terminalConfig,
+    this.isLocal = false,
+    this.serverInfo,
   }) : _name = name,
        terminal = Terminal(maxLines: 10000),
        controller = TerminalController() {
@@ -235,7 +251,13 @@ class TerminalSession {
     // 监听连接状态
     _stateSubscription = inputService.stateStream.listen(
       (isConnected) {
-        // 连接状态变化（已移除状态消息显示）
+        // 更新连接状态
+        connectionState = isConnected
+            ? SshConnectionState.connected
+            : SshConnectionState.disconnected;
+        if (isConnected) {
+          connectionStartTime = DateTime.now();
+        }
       },
       onError: (error) {
         // 状态流错误
@@ -257,12 +279,24 @@ class TerminalSession {
       }
     };
 
-    // 监听终端尺寸变化（仅对 LocalTerminalService 有效）
+    // 监听终端尺寸变化
     terminal.onResize = (width, height, pixelWidth, pixelHeight) {
-      if (inputService is LocalTerminalService) {
-        (inputService as LocalTerminalService).resize(width, height);
-      }
+      // 对所有终端输入服务（包括 SSH 和本地）调整尺寸
+      inputService.resize(height, width);
     };
+
+    // 全屏启动时，SSH 连接建立后需要同步当前终端尺寸
+    // 延迟一帧让 kterm 完成布局，然后调用 resize 同步尺寸
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Future.delayed(const Duration(milliseconds: 100), () {
+        // 使用 kterm 的 viewWidth 和 viewHeight 获取当前终端尺寸
+        final cols = terminal.viewWidth;
+        final rows = terminal.viewHeight;
+        if (rows > 0 && cols > 0) {
+          inputService.resize(rows, cols);
+        }
+      });
+    });
   }
 
   /// 执行命令
@@ -296,12 +330,16 @@ class TerminalService {
     required String name,
     required TerminalInputService inputService,
     TerminalConfig? terminalConfig,
+    bool isLocal = false,
+    String? serverInfo,
   }) {
     final session = TerminalSession(
       id: id,
       name: name,
       inputService: inputService,
       terminalConfig: terminalConfig,
+      isLocal: isLocal,
+      serverInfo: serverInfo,
     );
     _sessions[id] = session;
     session.initialize();
