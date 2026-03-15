@@ -60,7 +60,7 @@ dependencies:
   riverpod_annotation: ^4.0.2
 
   # HTTP 客户端
-  dio: ^5.4.0
+  dio: ^5.9.2
 
   # OAuth 认证
   oauth2: ^2.0.2
