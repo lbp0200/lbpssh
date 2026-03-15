@@ -78,7 +78,7 @@ dependencies:
   url_launcher: ^6.2.4
 
   # JSON 序列化
-  json_annotation: ^4.8.1
+  json_annotation: ^4.11.0
 
   # 路径处理
   path_provider: ^2.1.1
