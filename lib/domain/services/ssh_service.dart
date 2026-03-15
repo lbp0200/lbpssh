@@ -491,7 +491,9 @@ class SshService implements TerminalInputService {
   /// 调整终端尺寸
   @override
   void resize(int rows, int columns) {
-    if (_session != null && _state == SshConnectionState.connected) {
+    // 移除连接状态检查，确保连接建立前的尺寸变化也能记录
+    // SSH 连接成功后，dartssh2 会自动应用最近一次 resize 参数
+    if (_session != null) {
       try {
         _session!.resizeTerminal(columns, rows);
       } catch (e) {
