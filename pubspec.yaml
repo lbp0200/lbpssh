@@ -119,7 +119,7 @@ dev_dependencies:
   mocktail: ^1.0.4
 
   # 代码生成
-  build_runner: ^2.10.5
+  build_runner: ^2.13.1
   json_serializable: ^6.11.3
   riverpod_generator: ^4.0.3
   flutter_launcher_icons: ^0.14.4
