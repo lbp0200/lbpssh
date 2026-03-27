@@ -452,7 +452,7 @@ class _ConnectionFormScreenState extends State<ConnectionFormScreen> {
                           message: '未找到 ~/.ssh/config 文件',
                           child: Icon(
                             Icons.info_outline,
-                            color: Colors.grey.shade400,
+                            color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.4),
                             size: 16,
                           ),
                         ),
@@ -645,7 +645,7 @@ class _ConnectionFormScreenState extends State<ConnectionFormScreen> {
                                 '${entry.actualHost ?? entry.hostName}${entry.user != null ? ' (@${entry.user})' : ''}',
                                 style: TextStyle(
                                   fontSize: 12,
-                                  color: Colors.grey.shade600,
+                                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
                                 ),
                               ),
                           ],
@@ -675,7 +675,7 @@ class _ConnectionFormScreenState extends State<ConnectionFormScreen> {
                 Text(
                   '将使用 ~/.ssh/config 中定义的主机配置（主机名、端口、用户、身份文件等）。',
                   style: TextStyle(
-                    color: Colors.grey.shade600,
+                    color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
                     fontSize: 12,
                   ),
                 ),
@@ -844,7 +844,7 @@ class _ConnectionFormScreenState extends State<ConnectionFormScreen> {
               Text(
                 '提示：用户名和密码为可选配置，如果代理服务器不需要认证请留空。',
                 style: TextStyle(
-                  color: Colors.grey.shade600,
+                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
                   fontSize: 12,
                 ),
               ),
@@ -925,7 +925,7 @@ class _ManualPathDialogState extends State<_ManualPathDialog> {
             '提示：由于 macOS 沙箱限制，无法直接选择 ~/.ssh 目录中的文件，请手动输入完整路径。',
             style: TextStyle(
               fontSize: 12,
-              color: Colors.grey,
+              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
             ),
           ),
         ],
