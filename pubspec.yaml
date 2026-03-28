@@ -37,7 +37,7 @@ dependencies:
   intl: ^0.20.2
 
   # UI
-  cupertino_icons: ^1.0.8
+  cupertino_icons: ^1.0.9
 
   # App info
   package_info_plus: ^9.0.0
