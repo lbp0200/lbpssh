@@ -8,6 +8,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 20
       - name: Generate CHANGELOG
         run: |
           git log --pretty=format:"- %s (%h)" HEAD~20..HEAD > CHANGELOG.md
