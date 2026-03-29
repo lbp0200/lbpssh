@@ -810,18 +810,18 @@ $error
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildInfoRow('连接名称', widget.connection.name),
+                  _buildInfoRow('连接名称', widget.connection.name, theme),
                   _buildInfoRow('主机地址',
-                      '${widget.connection.host}:${widget.connection.port}'),
-                  _buildInfoRow('用户名', widget.connection.username),
+                      '${widget.connection.host}:${widget.connection.port}', theme),
+                  _buildInfoRow('用户名', widget.connection.username, theme),
                   _buildInfoRow('认证方式',
-                      _getAuthTypeName(widget.connection.authType)),
+                      _getAuthTypeName(widget.connection.authType), theme),
                   if (widget.connection.jumpHost != null)
                     _buildInfoRow('跳板机',
-                        '${widget.connection.jumpHost!.host}:${widget.connection.jumpHost!.port}'),
+                        '${widget.connection.jumpHost!.host}:${widget.connection.jumpHost!.port}', theme),
                   if (widget.connection.socks5Proxy != null)
                     _buildInfoRow('SOCKS5 代理',
-                        '${widget.connection.socks5Proxy!.host}:${widget.connection.socks5Proxy!.port}'),
+                        '${widget.connection.socks5Proxy!.host}:${widget.connection.socks5Proxy!.port}', theme),
                 ],
               ),
             ),
@@ -882,7 +882,7 @@ $error
     );
   }
 
-  Widget _buildInfoRow(String label, String value) {
+  Widget _buildInfoRow(String label, String value, ThemeData theme) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
