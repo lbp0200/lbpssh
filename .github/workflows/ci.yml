@@ -30,8 +30,8 @@ jobs:
         if: matrix.platform == 'ubuntu-latest'
         run: |
           flutter build linux --release
-          cd build/linux/x64/release/bundle
-          zip -r lbpSSH-linux-x64.zip .
+          cd build/linux/x64/release
+          zip -r lbpSSH-linux-x64.zip bundle
       - name: Build macOS
         if: matrix.platform == 'macos-latest'
         run: |
@@ -42,13 +42,13 @@ jobs:
         if: matrix.platform == 'windows-latest'
         run: |
           flutter build windows --release
-          Compress-Archive -Path build/windows/x64/runner/Release -DestinationPath build/windows/lbpSSH-windows-x64.zip
+          Compress-Archive -Path build/windows/x64/runner -DestinationPath build/windows/x64/lbpSSH-windows-x64.zip
       - name: Upload Linux build
         if: matrix.platform == 'ubuntu-latest'
         uses: actions/upload-artifact@v4
         with:
           name: linux-build
-          path: build/linux/x64/release/bundle/lbpSSH-linux-x64.zip
+          path: build/linux/x64/release/lbpSSH-linux-x64.zip
       - name: Upload macOS build
         if: matrix.platform == 'macos-latest'
         uses: actions/upload-artifact@v4
@@ -60,7 +60,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: windows-build
-          path: build/windows/lbpSSH-windows-x64.zip
+          path: build/windows/x64/lbpSSH-windows-x64.zip
 
   release:
     runs-on: ubuntu-latest
