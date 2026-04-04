@@ -40,7 +40,7 @@ dependencies:
   cupertino_icons: ^1.0.8
 
   # App info
-  package_info_plus: ^9.0.0
+  package_info_plus: ^9.0.1
 
   # SSH 客户端
   dartssh2: ^2.13.0
