@@ -576,10 +576,10 @@ packages:
     dependency: "direct main"
     description:
       name: kterm
-      sha256: "0e58db836a07c6ff756e55c68676dc1e74b1f77249e0dc6445d2b55d879c439f"
+      sha256: "111b465c1db499abb4e2d4665c5ee2fc652679137569f15d36e30993a7a957c2"
       url: "https://pub.dev"
     source: hosted
-    version: "1.0.9"
+    version: "1.1.0"
   leak_tracker:
     dependency: transitive
     description:
