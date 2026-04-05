@@ -11,6 +11,7 @@ import 'package:cross_file/cross_file.dart';
 import '../providers/app_config_provider.dart';
 import '../providers/connection_provider.dart';
 import '../providers/terminal_provider.dart';
+import '../../core/theme/app_theme.dart';
 import '../../data/models/ssh_connection.dart';
 import '../../data/models/terminal_config.dart';
 import '../../domain/services/terminal_service.dart';
@@ -410,37 +411,40 @@ class TerminalTabsView extends StatelessWidget {
                 Icon(
                   Icons.terminal,
                   size: 64,
-                  color: Theme.of(
-                    context,
-                  ).colorScheme.onSurface.withValues(alpha: 0.3),
+                  color: LinearColors.textPrimary.withValues(alpha: 0.2),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: LinearSpacing.spacing16),
                 Text(
                   '点击左侧连接以打开终端',
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    color: Theme.of(
-                      context,
-                    ).colorScheme.onSurface.withValues(alpha: 0.5),
+                    color: LinearColors.textTertiary,
                   ),
                 ),
-                const SizedBox(height: 16),
-                TextButton.icon(
-                  onPressed: () async {
-                    try {
-                      await terminalProvider.createLocalTerminal();
-                    } catch (e, stackTrace) {
-                      if (context.mounted) {
-                        showErrorDialog(
-                          context,
-                          title: '创建终端失败',
-                          error: e,
-                          stackTrace: stackTrace,
-                        );
+                const SizedBox(height: LinearSpacing.spacing16),
+                Container(
+                  decoration: BoxDecoration(
+                    color: const Color(0x05ffffff),
+                    borderRadius: BorderRadius.circular(LinearRadius.standard),
+                    border: Border.all(color: LinearColors.borderSolid),
+                  ),
+                  child: TextButton.icon(
+                    onPressed: () async {
+                      try {
+                        await terminalProvider.createLocalTerminal();
+                      } catch (e, stackTrace) {
+                        if (context.mounted) {
+                          showErrorDialog(
+                            context,
+                            title: '创建终端失败',
+                            error: e,
+                            stackTrace: stackTrace,
+                          );
+                        }
                       }
-                    }
-                  },
-                  icon: const Icon(Icons.add),
-                  label: const Text('创建本地终端'),
+                    },
+                    icon: const Icon(Icons.add),
+                    label: const Text('创建本地终端'),
+                  ),
                 ),
               ],
             ),
@@ -452,11 +456,8 @@ class TerminalTabsView extends StatelessWidget {
             // 标签页栏
             Container(
               height: 48,
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.surface,
-                border: Border(
-                  bottom: BorderSide(color: Theme.of(context).dividerColor),
-                ),
+              decoration: const BoxDecoration(
+                color: LinearColors.panel,
               ),
               child: Row(
                 children: [
@@ -485,14 +486,19 @@ class TerminalTabsView extends StatelessWidget {
                       color: Colors.transparent,
                       child: InkWell(
                         child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 8,
+                          margin: const EdgeInsets.symmetric(
+                            horizontal: LinearSpacing.spacing8,
+                            vertical: LinearSpacing.spacing8,
+                          ),
+                          decoration: BoxDecoration(
+                            color: const Color(0x05ffffff),
+                            borderRadius: BorderRadius.circular(LinearRadius.standard),
+                            border: Border.all(color: LinearColors.borderSolid),
                           ),
                           child: Icon(
                             Icons.add,
                             size: 20,
-                            color: Theme.of(context).colorScheme.primary,
+                            color: LinearColors.accentInteractive,
                           ),
                         ),
                       ),
@@ -579,7 +585,6 @@ class TerminalTabsView extends StatelessWidget {
   }
 }
 
-/// 终端标签页
 class _TerminalTab extends StatefulWidget {
   final TerminalSession session;
   final bool isActive;
@@ -598,102 +603,72 @@ class _TerminalTab extends StatefulWidget {
 }
 
 class _TerminalTabState extends State<_TerminalTab> {
-  final FocusNode _focusNode = FocusNode();
-
-  @override
-  void dispose() {
-    _focusNode.dispose();
-    super.dispose();
-  }
+  bool _isHovered = false;
 
   @override
   Widget build(BuildContext context) {
-    return Focus(
-      focusNode: _focusNode,
-      onKeyEvent: (node, event) {
-        if (event is KeyDownEvent) {
-          // Enter to select tab
-          if (event.logicalKey == LogicalKeyboardKey.enter) {
-            widget.onTap();
-            return KeyEventResult.handled;
-          }
-          // Escape or W with Ctrl to close
-          if (event.logicalKey == LogicalKeyboardKey.escape ||
-              (event.logicalKey == LogicalKeyboardKey.keyW &&
-                  HardwareKeyboard.instance.isControlPressed)) {
-            widget.onClose();
-            return KeyEventResult.handled;
-          }
-        }
-        return KeyEventResult.ignored;
-      },
-      child: Semantics(
-        label: '终端标签页: ${widget.session.name}${widget.isActive ? ", 当前激活" : ""}',
-        button: true,
-        child: Material(
-          color: Colors.transparent,
-          child: InkWell(
-            onTap: widget.onTap,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              decoration: BoxDecoration(
-                color: widget.isActive
-                    ? Theme.of(context).colorScheme.surface
-                    : Theme.of(context).colorScheme.surface.withValues(alpha: 0.5),
-                border: Border(
-                  bottom: BorderSide(
+    return MouseRegion(
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      child: GestureDetector(
+        onTap: widget.onTap,
+        child: AnimatedContainer(
+          duration: LinearDuration.fast,
+          curve: Curves.easeInOut,
+          margin: const EdgeInsets.symmetric(
+            horizontal: LinearSpacing.spacing4,
+            vertical: LinearSpacing.spacing8,
+          ),
+          padding: const EdgeInsets.symmetric(
+            horizontal: LinearSpacing.spacing12,
+            vertical: LinearSpacing.spacing4,
+          ),
+          decoration: BoxDecoration(
+            color: widget.isActive
+                ? LinearColors.surface
+                : (_isHovered
+                    ? const Color(0x05ffffff)
+                    : Colors.transparent),
+            borderRadius: BorderRadius.circular(LinearRadius.card),
+            border: widget.isActive
+                ? Border(bottom: BorderSide(color: LinearColors.accentInteractive, width: 2))
+                : null,
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 200),
+                child: Text(
+                  widget.session.name,
+                  style: TextStyle(
                     color: widget.isActive
-                        ? Theme.of(context).colorScheme.primary
-                        : Colors.transparent,
-                    width: 2,
+                        ? LinearColors.textPrimary
+                        : LinearColors.textTertiary,
+                    fontWeight: widget.isActive ? FontWeight.w500 : FontWeight.w400,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                ),
+              ),
+              const SizedBox(width: LinearSpacing.spacing8),
+              AnimatedOpacity(
+                opacity: _isHovered || widget.isActive ? 1.0 : 0.0,
+                duration: LinearDuration.fast,
+                child: InkWell(
+                  onTap: widget.onClose,
+                  borderRadius: BorderRadius.circular(LinearRadius.micro),
+                  child: Padding(
+                    padding: const EdgeInsets.all(LinearSpacing.spacing4),
+                    child: Icon(
+                      Icons.close,
+                      size: 16,
+                      color: LinearColors.textTertiary,
+                    ),
                   ),
                 ),
               ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 200),
-                    child: Text(
-                      widget.session.name,
-                      style: TextStyle(
-                        fontWeight: widget.isActive ? FontWeight.bold : FontWeight.normal,
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 1,
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Semantics(
-                    label: '关闭标签页 ${widget.session.name}',
-                    button: true,
-                    child: MouseRegion(
-                      cursor: SystemMouseCursors.click,
-                      child: GestureDetector(
-                        onTap: () {
-                          // 阻止事件冒泡，避免触发父级的 onTap
-                          widget.onClose();
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.all(4),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(12),
-                            color: Colors.transparent,
-                          ),
-                          child: Icon(
-                            Icons.close,
-                            size: 16,
-                            color: Theme.of(
-                              context,
-                            ).colorScheme.onSurface.withValues(alpha: 0.6),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+            ],
           ),
         ),
       ),
