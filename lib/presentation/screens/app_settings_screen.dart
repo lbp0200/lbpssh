@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import '../../core/theme/app_theme.dart';
 import '../../data/models/ssh_config.dart';
 import '../../data/models/ssh_connection.dart';
 import '../../data/models/terminal_config.dart';
@@ -9,6 +10,85 @@ import '../providers/connection_provider.dart';
 import 'connection_form.dart';
 import 'import_export_settings.dart';
 import 'sync_settings.dart';
+
+class _LinearNavItem extends StatefulWidget {
+  final IconData icon;
+  final String label;
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  const _LinearNavItem({
+    required this.icon,
+    required this.label,
+    required this.isSelected,
+    required this.onTap,
+  });
+
+  @override
+  State<_LinearNavItem> createState() => _LinearNavItemState();
+}
+
+class _LinearNavItemState extends State<_LinearNavItem> {
+  bool _isHovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      child: GestureDetector(
+        onTap: widget.onTap,
+        child: AnimatedContainer(
+          duration: LinearDuration.fast,
+          margin: const EdgeInsets.symmetric(
+            horizontal: LinearSpacing.spacing8,
+            vertical: LinearSpacing.spacing4,
+          ),
+          padding: const EdgeInsets.symmetric(
+            horizontal: LinearSpacing.spacing12,
+            vertical: LinearSpacing.spacing8,
+          ),
+          decoration: BoxDecoration(
+            color: widget.isSelected
+                ? const Color(0x0Dffffff)
+                : (_isHovered ? const Color(0x05ffffff) : Colors.transparent),
+            borderRadius: BorderRadius.circular(LinearRadius.standard),
+            border: widget.isSelected
+                ? Border(
+                    left: BorderSide(
+                      color: LinearColors.accentInteractive,
+                      width: 2,
+                    ),
+                  )
+                : null,
+          ),
+          child: Row(
+            children: [
+              Icon(
+                widget.icon,
+                size: 20,
+                color: widget.isSelected
+                    ? LinearColors.accentInteractive
+                    : LinearColors.textSecondary,
+              ),
+              const SizedBox(width: LinearSpacing.spacing12),
+              Text(
+                widget.label,
+                style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w500,
+                  color: widget.isSelected
+                      ? LinearColors.textPrimary
+                      : LinearColors.textSecondary,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
 
 class AppSettingsScreen extends StatefulWidget {
   const AppSettingsScreen({super.key});
@@ -28,22 +108,33 @@ class _AppSettingsScreenState extends State<AppSettingsScreen> {
       appBar: AppBar(title: const Text('设置')),
       body: Row(
         children: [
-          NavigationRail(
-            selectedIndex: _selectedIndex,
-            onDestinationSelected: (index) {
-              setState(() {
-                _selectedIndex = index;
-              });
-            },
-            labelType: NavigationRailLabelType.all,
-            destinations: _tabs.map((tab) {
-              return NavigationRailDestination(
-                icon: Icon(_getTabIcon(tab)),
-                label: Text(tab),
-              );
-            }).toList(),
+          Container(
+          width: 200,
+          decoration: BoxDecoration(
+            color: LinearColors.panel,
+            border: Border(
+              right: BorderSide(color: LinearColors.borderSubtle),
+            ),
           ),
-          const VerticalDivider(thickness: 1, width: 1),
+          child: Column(
+            children: [
+              const SizedBox(height: LinearSpacing.spacing16),
+              ...List.generate(_tabs.length, (index) {
+                final isSelected = _selectedIndex == index;
+                return _LinearNavItem(
+                  icon: _getTabIcon(_tabs[index]),
+                  label: _tabs[index],
+                  isSelected: isSelected,
+                  onTap: () => setState(() => _selectedIndex = index),
+                );
+              }),
+            ],
+          ),
+        ),
+        Container(
+          width: 1,
+          color: LinearColors.borderSubtle,
+        ),
           Expanded(
             child: IndexedStack(
               index: _selectedIndex,
