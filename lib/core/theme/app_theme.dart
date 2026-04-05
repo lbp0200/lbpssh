@@ -1,49 +1,75 @@
 import 'package:flutter/material.dart';
 
+class LinearColors {
+  // Background Surfaces
+  static const Color background = Color(0xFF08090a);
+  static const Color panel = Color(0xFF0f1011);
+  static const Color surface = Color(0xFF191a1b);
+  static const Color surfaceElevated = Color(0xFF28282c);
+
+  // Text Colors
+  static const Color textPrimary = Color(0xFFf7f8f8);
+  static const Color textSecondary = Color(0xFFd0d6e0);
+  static const Color textTertiary = Color(0xFF8a8f98);
+  static const Color textQuaternary = Color(0xFF62666d);
+
+  // Brand & Accent
+  static const Color accent = Color(0xFF5e6ad2);
+  static const Color accentInteractive = Color(0xFF7170ff);
+  static const Color accentHover = Color(0xFF828fff);
+
+  // Borders (semi-transparent)
+  static Color borderSubtle = const Color(0x0Dffffff); // rgba(255,255,255,0.05)
+  static Color borderStandard = const Color(0x14ffffff); // rgba(255,255,255,0.08)
+  static const Color borderSolid = Color(0xFF23252a);
+
+  // Functional Status Colors
+  static const Color success = Color(0xFF27a644);
+  static const Color error = Color(0xFFf85149);
+  static const Color warning = Color(0xFFd29922);
+}
+
+class LinearSpacing {
+  static const double spacing1 = 1.0;
+  static const double spacing4 = 4.0;
+  static const double spacing7 = 7.0;
+  static const double spacing8 = 8.0;
+  static const double spacing11 = 11.0;
+  static const double spacing12 = 12.0;
+  static const double spacing16 = 16.0;
+  static const double spacing19 = 19.0;
+  static const double spacing20 = 20.0;
+  static const double spacing22 = 22.0;
+  static const double spacing24 = 24.0;
+  static const double spacing28 = 28.0;
+  static const double spacing32 = 32.0;
+  static const double spacing35 = 35.0;
+}
+
+class LinearRadius {
+  static const double micro = 2.0;
+  static const double small = 4.0;
+  static const double standard = 6.0;
+  static const double card = 8.0;
+  static const double panel = 12.0;
+  static const double large = 22.0;
+  static const double pill = 9999.0;
+}
+
+class LinearDuration {
+  static const Duration fast = Duration(milliseconds: 150);
+  static const Duration normal = Duration(milliseconds: 200);
+  static const Duration slow = Duration(milliseconds: 300);
+}
+
 class AppTheme {
-  // === Spacing Constants (4pt base grid) ===
+  // Legacy spacing (keep existing values for backward compat)
   static const double spacingXs = 4.0;
   static const double spacingSm = 8.0;
   static const double spacingMd = 12.0;
   static const double spacingLg = 16.0;
   static const double spacingXl = 24.0;
   static const double spacingXxl = 32.0;
-
-  // === Dark Mode Semantic Colors ===
-  static const Color darkBackground = Color(0xFF0B0F19);
-  static const Color darkSurface = Color(0xFF161B22);
-  static const Color darkSurfaceRaised = Color(0xFF1C2128);
-  static const Color darkBorder = Color(0xFF30363D);
-  static const Color darkBorderSubtle = Color(0xFF21262D);
-  static const Color darkTextPrimary = Color(0xFFE6EDF3);
-  static const Color darkTextSecondary = Color(0xFF8B949E);
-  static const Color darkTextTertiary = Color(0xFF6E7681);
-  static const Color darkAccent = Color(0xFF238636);
-  static const Color darkAccentHover = Color(0xFF2EA043);
-  static const Color darkAccentMuted = Color(0x26238636); // 15% opacity
-
-  // === Light Mode Semantic Colors ===
-  static const Color lightBackground = Color(0xFFFFFFFF);
-  static const Color lightSurface = Color(0xFFF6F8FA);
-  static const Color lightSurfaceRaised = Color(0xFFFFFFFF);
-  static const Color lightBorder = Color(0xFFD0D7DE);
-  static const Color lightBorderSubtle = Color(0xFFEAECEF);
-  static const Color lightTextPrimary = Color(0xFF1F2328);
-  static const Color lightTextSecondary = Color(0xFF656D76);
-  static const Color lightTextTertiary = Color(0xFF8C959F);
-  static const Color lightAccent = Color(0xFF1A7F37);
-  static const Color lightAccentHover = Color(0xFF2DA44E);
-  static const Color lightAccentMuted = Color(0x1A1A7F37); // 10% opacity
-
-  // Legacy constants for backward compatibility (deprecated)
-  static const Color accentGreen = darkAccent;
-  static const Color primaryDark = darkBackground;
-  static const Color secondaryDark = darkSurface;
-  static const Color backgroundDark = darkBackground;
-  static const Color surfaceDark = darkSurface;
-  static const Color cardDark = darkSurfaceRaised;
-  static const Color terminalBackground = Color(0xFF1E1E1E);
-  static const Color terminalForeground = Color(0xFFD4D4D4);
 
   // === Updated Themes ===
 
@@ -127,91 +153,165 @@ class AppTheme {
   static ThemeData darkTheme = ThemeData(
     useMaterial3: true,
     brightness: Brightness.dark,
-    scaffoldBackgroundColor: darkBackground,
+    scaffoldBackgroundColor: LinearColors.background,
     colorScheme: const ColorScheme.dark(
-      primary: darkAccent,
-      secondary: darkAccent,
-      surface: darkSurface,
+      primary: LinearColors.accentInteractive,
+      secondary: LinearColors.accentInteractive,
+      surface: LinearColors.panel,
       onPrimary: Colors.white,
       onSecondary: Colors.white,
-      onSurface: darkTextPrimary,
-      surfaceContainerHighest: darkSurfaceRaised,
+      onSurface: LinearColors.textPrimary,
+      surfaceContainerHighest: LinearColors.surface,
     ),
     appBarTheme: const AppBarTheme(
       centerTitle: false,
       elevation: 0,
-      scrolledUnderElevation: 1,
-      backgroundColor: darkBackground,
+      scrolledUnderElevation: 0,
+      backgroundColor: LinearColors.panel,
       surfaceTintColor: Colors.transparent,
-      foregroundColor: darkTextPrimary,
+      foregroundColor: LinearColors.textPrimary,
     ),
     cardTheme: CardThemeData(
       elevation: 0,
-      color: darkSurfaceRaised,
+      color: LinearColors.surface,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8),
-        side: const BorderSide(color: darkBorder),
+        borderRadius: BorderRadius.circular(LinearRadius.card),
+        side: BorderSide(color: LinearColors.borderStandard),
       ),
     ),
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
-      fillColor: darkSurface,
+      fillColor: const Color(0x05ffffff),
       border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(6),
-        borderSide: const BorderSide(color: darkBorder),
+        borderRadius: BorderRadius.circular(LinearRadius.standard),
+        borderSide: BorderSide(color: LinearColors.borderStandard),
       ),
       enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(6),
-        borderSide: const BorderSide(color: darkBorder),
+        borderRadius: BorderRadius.circular(LinearRadius.standard),
+        borderSide: BorderSide(color: LinearColors.borderStandard),
       ),
       focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(6),
-        borderSide: const BorderSide(color: darkAccent, width: 2),
+        borderRadius: BorderRadius.circular(LinearRadius.standard),
+        borderSide: const BorderSide(color: LinearColors.accentInteractive, width: 2),
       ),
       contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-      labelStyle: const TextStyle(color: darkTextSecondary),
-      hintStyle: const TextStyle(color: darkTextTertiary),
+      labelStyle: const TextStyle(color: LinearColors.textSecondary),
+      hintStyle: const TextStyle(color: LinearColors.textQuaternary),
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
-        backgroundColor: darkAccent,
+        backgroundColor: LinearColors.accent,
         foregroundColor: Colors.white,
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(LinearRadius.standard)),
+      ),
+    ),
+    textButtonTheme: TextButtonThemeData(
+      style: TextButton.styleFrom(
+        foregroundColor: LinearColors.accentInteractive,
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(LinearRadius.standard)),
+      ),
+    ),
+    outlinedButtonTheme: OutlinedButtonThemeData(
+      style: OutlinedButton.styleFrom(
+        foregroundColor: LinearColors.textPrimary,
+        side: const BorderSide(color: LinearColors.borderSolid),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(LinearRadius.standard)),
+      ),
+    ),
+    iconButtonTheme: IconButtonThemeData(
+      style: IconButton.styleFrom(
+        foregroundColor: LinearColors.textSecondary,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(LinearRadius.standard)),
       ),
     ),
     dividerTheme: const DividerThemeData(
-      color: darkBorderSubtle,
+      color: LinearColors.borderSolid,
       thickness: 1,
     ),
-    iconTheme: const IconThemeData(color: darkTextSecondary),
+    iconTheme: const IconThemeData(color: LinearColors.textSecondary),
     textTheme: const TextTheme(
-      headlineLarge: TextStyle(fontWeight: FontWeight.w600, color: darkTextPrimary),
-      headlineMedium: TextStyle(fontWeight: FontWeight.w600, color: darkTextPrimary),
-      headlineSmall: TextStyle(fontWeight: FontWeight.w600, color: darkTextPrimary),
-      titleLarge: TextStyle(fontWeight: FontWeight.w600, color: darkTextPrimary),
-      titleMedium: TextStyle(fontWeight: FontWeight.w500, color: darkTextPrimary),
-      titleSmall: TextStyle(fontWeight: FontWeight.w500, color: darkTextPrimary),
-      bodyLarge: TextStyle(color: darkTextPrimary),
-      bodyMedium: TextStyle(color: darkTextSecondary),
-      bodySmall: TextStyle(color: darkTextTertiary),
-      labelLarge: TextStyle(color: darkTextSecondary),
-      labelMedium: TextStyle(color: darkTextTertiary),
-      labelSmall: TextStyle(color: darkTextTertiary),
+      headlineLarge: TextStyle(fontWeight: FontWeight.w500, color: LinearColors.textPrimary, letterSpacing: -0.704),
+      headlineMedium: TextStyle(fontWeight: FontWeight.w400, color: LinearColors.textPrimary, letterSpacing: -0.288),
+      headlineSmall: TextStyle(fontWeight: FontWeight.w600, color: LinearColors.textPrimary, letterSpacing: -0.24),
+      titleLarge: TextStyle(fontWeight: FontWeight.w600, color: LinearColors.textPrimary),
+      titleMedium: TextStyle(fontWeight: FontWeight.w500, color: LinearColors.textPrimary),
+      titleSmall: TextStyle(fontWeight: FontWeight.w500, color: LinearColors.textPrimary),
+      bodyLarge: TextStyle(color: LinearColors.textSecondary, letterSpacing: -0.165),
+      bodyMedium: TextStyle(color: LinearColors.textSecondary),
+      bodySmall: TextStyle(color: LinearColors.textTertiary),
+      labelLarge: TextStyle(color: LinearColors.textSecondary, fontWeight: FontWeight.w500),
+      labelMedium: TextStyle(color: LinearColors.textTertiary, fontWeight: FontWeight.w500),
+      labelSmall: TextStyle(color: LinearColors.textQuaternary),
     ),
     listTileTheme: const ListTileThemeData(
-      textColor: darkTextPrimary,
-      iconColor: darkTextSecondary,
+      textColor: LinearColors.textPrimary,
+      iconColor: LinearColors.textSecondary,
     ),
     dialogTheme: DialogThemeData(
-      backgroundColor: darkSurface,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      backgroundColor: LinearColors.surface,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(LinearRadius.panel),
+        side: BorderSide(color: LinearColors.borderStandard),
+      ),
     ),
     snackBarTheme: SnackBarThemeData(
-      backgroundColor: darkSurfaceRaised,
-      contentTextStyle: const TextStyle(color: darkTextPrimary),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+      backgroundColor: LinearColors.surfaceElevated,
+      contentTextStyle: const TextStyle(color: LinearColors.textPrimary),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(LinearRadius.standard)),
       behavior: SnackBarBehavior.floating,
     ),
+    popupMenuTheme: PopupMenuThemeData(
+      color: LinearColors.surface,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(LinearRadius.card),
+        side: BorderSide(color: LinearColors.borderStandard),
+      ),
+    ),
+    navigationRailTheme: const NavigationRailThemeData(
+      backgroundColor: LinearColors.panel,
+      selectedIconTheme: IconThemeData(color: LinearColors.accentInteractive),
+      unselectedIconTheme: IconThemeData(color: LinearColors.textSecondary),
+      selectedLabelTextStyle: TextStyle(color: LinearColors.accentInteractive, fontWeight: FontWeight.w500),
+      unselectedLabelTextStyle: TextStyle(color: LinearColors.textSecondary),
+    ),
+    tabBarTheme: const TabBarThemeData(
+      labelColor: LinearColors.accentInteractive,
+      unselectedLabelColor: LinearColors.textTertiary,
+      indicatorColor: LinearColors.accentInteractive,
+    ),
+    tooltipTheme: TooltipThemeData(
+      decoration: BoxDecoration(
+        color: LinearColors.surfaceElevated,
+        borderRadius: BorderRadius.circular(LinearRadius.micro),
+        border: Border.all(color: LinearColors.borderStandard),
+      ),
+      textStyle: const TextStyle(color: LinearColors.textPrimary, fontSize: 12),
+    ),
   );
+
+  // Backward compatibility aliases
+  static const Color accentGreen = LinearColors.accent;
+  static const Color primaryDark = LinearColors.background;
+  static const Color secondaryDark = LinearColors.panel;
+  static const Color backgroundDark = LinearColors.background;
+  static const Color surfaceDark = LinearColors.surface;
+  static const Color cardDark = LinearColors.surface;
+  static const Color terminalBackground = Color(0xFF1E1E1E);
+  static const Color terminalForeground = Color(0xFFD4D4D4);
+
+  // === Light Mode Semantic Colors (kept for lightTheme above) ===
+  static const Color lightBackground = Color(0xFFFFFFFF);
+  static const Color lightSurface = Color(0xFFF6F8FA);
+  static const Color lightSurfaceRaised = Color(0xFFFFFFFF);
+  static const Color lightBorder = Color(0xFFD0D7DE);
+  static const Color lightBorderSubtle = Color(0xFFEAECEF);
+  static const Color lightTextPrimary = Color(0xFF1F2328);
+  static const Color lightTextSecondary = Color(0xFF656D76);
+  static const Color lightTextTertiary = Color(0xFF8C959F);
+  static const Color lightAccent = Color(0xFF2563EB);  // Royal Blue
+  static const Color lightAccentHover = Color(0xFF3B82F6);  // Bright Blue
+  static const Color lightAccentMuted = Color(0x1A2563EB);  // 10% opacity blue
 }
