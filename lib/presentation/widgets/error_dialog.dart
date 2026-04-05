@@ -5,6 +5,8 @@ import 'package:flutter/services.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../core/theme/app_theme.dart';
+
 /// 显示错误详情对话框
 ///
 /// [title] 简要错误标题
@@ -131,12 +133,22 @@ class _ErrorDialogState extends State<ErrorDialog> {
     );
 
     return AlertDialog(
+      backgroundColor: LinearColors.surface,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(LinearRadius.panel),
+        side: BorderSide(color: LinearColors.borderStandard),
+      ),
       title: Row(
         key: const Key('error_dialog_title'),
         children: [
-          Icon(Icons.error_outline, color: theme.colorScheme.error),
-          const SizedBox(width: 12),
-          Expanded(child: Text(widget.title)),
+          const Icon(Icons.error_outline, color: LinearColors.error),
+          const SizedBox(width: LinearSpacing.spacing12),
+          Expanded(
+            child: Text(
+              widget.title,
+              style: const TextStyle(color: LinearColors.textPrimary),
+            ),
+          ),
         ],
       ),
       content: SizedBox(
@@ -171,7 +183,7 @@ class _ErrorDialogState extends State<ErrorDialog> {
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: theme.colorScheme.surfaceContainerHighest,
+                    color: LinearColors.panel,
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Column(
@@ -209,16 +221,27 @@ class _ErrorDialogState extends State<ErrorDialog> {
         ),
       ),
       actions: [
-        TextButton(
-          key: const Key('error_dialog_copy_button'),
-          onPressed: _copyReport,
-          child: const Text('复制报告'),
+        Container(
+          decoration: BoxDecoration(
+            color: const Color(0x05ffffff),
+            borderRadius: BorderRadius.circular(LinearRadius.standard),
+            border: Border.all(color: LinearColors.borderSolid),
+          ),
+          child: TextButton.icon(
+            key: const Key('error_dialog_copy_button'),
+            onPressed: _copyReport,
+            icon: const Icon(Icons.content_copy, size: 18),
+            label: const Text('复制报告'),
+          ),
         ),
-        FilledButton.icon(
+        ElevatedButton(
           key: const Key('error_dialog_feedback_button'),
           onPressed: _copyAndOpenIssues,
-          icon: Icon(_copied ? Icons.check : Icons.open_in_new),
-          label: Text(_copied ? '已复制' : '反馈问题'),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: LinearColors.accent,
+            foregroundColor: Colors.white,
+          ),
+          child: Text(_copied ? '已复制，前往 Issues' : '反馈问题'),
         ),
         TextButton(
           key: const Key('error_dialog_close_button'),
