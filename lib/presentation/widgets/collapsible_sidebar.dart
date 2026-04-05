@@ -95,7 +95,6 @@ class _CollapsibleSidebarState extends State<CollapsibleSidebar>
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
 
     return AnimatedBuilder(
       animation: _widthAnimation,
@@ -105,15 +104,12 @@ class _CollapsibleSidebarState extends State<CollapsibleSidebar>
 
         return Container(
           width: currentWidth,
-          decoration: BoxDecoration(
-            color: colorScheme.surface,
-            border: Border(
-              right: BorderSide(color: theme.dividerColor),
-            ),
+          decoration: const BoxDecoration(
+            color: LinearColors.panel,
           ),
           child: Column(
             children: [
-              _buildHeader(theme, colorScheme, isCompactMode),
+              _buildHeader(theme, isCompactMode),
               Expanded(
                 child: ConnectionList(
                   isCompact: isCompactMode,
@@ -121,7 +117,7 @@ class _CollapsibleSidebarState extends State<CollapsibleSidebar>
                   onSftpTap: widget.onSftpTap,
                 ),
               ),
-              _buildBottomBar(theme, colorScheme, isCompactMode),
+              _buildBottomBar(theme, isCompactMode),
             ],
           ),
         );
@@ -129,23 +125,23 @@ class _CollapsibleSidebarState extends State<CollapsibleSidebar>
     );
   }
 
-  Widget _buildHeader(ThemeData theme, ColorScheme colorScheme, bool isCompactMode) {
+  Widget _buildHeader(ThemeData theme, bool isCompactMode) {
     return Padding(
-      padding: const EdgeInsets.all(AppTheme.spacingMd),
+      padding: const EdgeInsets.all(LinearSpacing.spacing12),
       child: !isCompactMode
           ? Column(
               children: [
                 if (_showSearch)
-                  _buildSearchField(theme, colorScheme)
+                  _buildSearchField(theme)
                 else
-                  _buildExpandedHeader(theme, colorScheme),
+                  _buildExpandedHeader(theme),
               ],
             )
-          : _buildCollapsedHeader(theme, colorScheme),
+          : _buildCollapsedHeader(theme),
     );
   }
 
-  Widget _buildExpandedHeader(ThemeData theme, ColorScheme colorScheme) {
+  Widget _buildExpandedHeader(ThemeData theme) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -154,51 +150,49 @@ class _CollapsibleSidebarState extends State<CollapsibleSidebar>
           onPressed: _toggleSearch,
           tooltip: '搜索',
           theme: theme,
-          colorScheme: colorScheme,
         ),
         _buildIconButton(
           icon: Icons.settings,
           onPressed: _openSettings,
           tooltip: '设置',
           theme: theme,
-          colorScheme: colorScheme,
         ),
       ],
     );
   }
 
-  Widget _buildSearchField(ThemeData theme, ColorScheme colorScheme) {
+  Widget _buildSearchField(ThemeData theme) {
     return TextField(
       controller: _searchController,
-      style: TextStyle(color: colorScheme.onSurface),
+      style: const TextStyle(color: LinearColors.textPrimary),
       decoration: InputDecoration(
         hintText: '搜索连接...',
-        hintStyle: TextStyle(color: colorScheme.onSurface.withValues(alpha: 0.5)),
-        prefixIcon: Icon(Icons.search, color: colorScheme.onSurface.withValues(alpha: 0.6)),
+        hintStyle: const TextStyle(color: LinearColors.textQuaternary),
+        prefixIcon: Icon(Icons.search, color: LinearColors.textQuaternary.withValues(alpha: 0.6)),
         suffixIcon: IconButton(
           icon: const Icon(Icons.close),
           onPressed: _toggleSearch,
-          color: colorScheme.onSurface.withValues(alpha: 0.6),
+          color: LinearColors.textQuaternary,
         ),
         isDense: true,
         contentPadding: const EdgeInsets.symmetric(
-          horizontal: AppTheme.spacingMd,
-          vertical: AppTheme.spacingSm + 2,
+          horizontal: LinearSpacing.spacing12,
+          vertical: LinearSpacing.spacing8 + 2,
         ),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(6),
-          borderSide: BorderSide(color: theme.dividerColor),
+          borderRadius: BorderRadius.circular(LinearRadius.standard),
+          borderSide: BorderSide(color: LinearColors.borderStandard),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(6),
-          borderSide: BorderSide(color: theme.dividerColor),
+          borderRadius: BorderRadius.circular(LinearRadius.standard),
+          borderSide: BorderSide(color: LinearColors.borderStandard),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(6),
-          borderSide: BorderSide(color: colorScheme.primary),
+          borderRadius: BorderRadius.circular(LinearRadius.standard),
+          borderSide: const BorderSide(color: LinearColors.accentInteractive),
         ),
         filled: true,
-        fillColor: colorScheme.surfaceContainerHighest,
+        fillColor: const Color(0x05ffffff),
       ),
       onChanged: (value) {
         context.read<ConnectionProvider>().setSearchQuery(value);
@@ -206,13 +200,12 @@ class _CollapsibleSidebarState extends State<CollapsibleSidebar>
     );
   }
 
-  Widget _buildCollapsedHeader(ThemeData theme, ColorScheme colorScheme) {
+  Widget _buildCollapsedHeader(ThemeData theme) {
     return _buildIconButton(
       icon: Icons.chevron_right,
       onPressed: _toggleExpanded,
       tooltip: '展开',
       theme: theme,
-      colorScheme: colorScheme,
     );
   }
 
@@ -221,22 +214,21 @@ class _CollapsibleSidebarState extends State<CollapsibleSidebar>
     required VoidCallback onPressed,
     required String tooltip,
     required ThemeData theme,
-    required ColorScheme colorScheme,
   }) {
     return Tooltip(
       message: tooltip,
       child: Material(
         color: Colors.transparent,
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(LinearRadius.standard),
         child: InkWell(
           onTap: onPressed,
-          borderRadius: BorderRadius.circular(8),
-          hoverColor: colorScheme.primary.withValues(alpha: 0.1),
+          borderRadius: BorderRadius.circular(LinearRadius.standard),
+          hoverColor: LinearColors.accentInteractive.withValues(alpha: 0.1),
           child: Container(
-            padding: const EdgeInsets.all(AppTheme.spacingSm + 2),
+            padding: const EdgeInsets.all(LinearSpacing.spacing8),
             child: Icon(
               icon,
-              color: colorScheme.onSurface.withValues(alpha: 0.8),
+              color: LinearColors.textSecondary,
               size: 22,
             ),
           ),
@@ -245,21 +237,20 @@ class _CollapsibleSidebarState extends State<CollapsibleSidebar>
     );
   }
 
-  Widget _buildBottomBar(ThemeData theme, ColorScheme colorScheme, bool isCompactMode) {
+  Widget _buildBottomBar(ThemeData theme, bool isCompactMode) {
     if (!isCompactMode) {
       return Padding(
-        padding: const EdgeInsets.all(AppTheme.spacingMd),
+        padding: const EdgeInsets.all(LinearSpacing.spacing12),
         child: _buildIconButton(
           icon: Icons.chevron_left,
           onPressed: _toggleExpanded,
           tooltip: '折叠',
           theme: theme,
-          colorScheme: colorScheme,
         ),
       );
     } else {
       return Padding(
-        padding: const EdgeInsets.all(AppTheme.spacingSm),
+        padding: const EdgeInsets.all(LinearSpacing.spacing8),
         child: Column(
           children: [
             _buildIconButton(
@@ -267,15 +258,13 @@ class _CollapsibleSidebarState extends State<CollapsibleSidebar>
               onPressed: _toggleSearch,
               tooltip: '搜索',
               theme: theme,
-              colorScheme: colorScheme,
             ),
-            const SizedBox(height: 4),
+            const SizedBox(height: LinearSpacing.spacing4),
             _buildIconButton(
               icon: Icons.settings,
               onPressed: _openSettings,
               tooltip: '设置',
               theme: theme,
-              colorScheme: colorScheme,
             ),
           ],
         ),
