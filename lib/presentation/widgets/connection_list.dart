@@ -44,16 +44,16 @@ class ConnectionList extends StatelessWidget {
                 Icon(
                   Icons.dns_outlined,
                   size: 56,
-                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.3),
+                  color: LinearColors.textPrimary.withValues(alpha: 0.2),
                 ),
-                const SizedBox(height: AppTheme.spacingLg),
+                const SizedBox(height: LinearSpacing.spacing16),
                 Text(
                   '暂无连接配置',
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
+                    color: LinearColors.textTertiary,
                   ),
                 ),
-                const SizedBox(height: AppTheme.spacingLg),
+                const SizedBox(height: LinearSpacing.spacing16),
                 FilledButton.icon(
                   onPressed: () => _showConnectionForm(context, null),
                   icon: const Icon(Icons.add, size: 18),
@@ -64,11 +64,11 @@ class ConnectionList extends StatelessWidget {
           );
         }
 
-        final bottomPadding = isCompact ? AppTheme.spacingSm : AppTheme.spacingXl + AppTheme.spacingMd;
+        final bottomPadding = isCompact ? LinearSpacing.spacing8 : LinearSpacing.spacing24 + LinearSpacing.spacing16;
         return Stack(
           children: [
             ListView.builder(
-              padding: EdgeInsets.only(top: AppTheme.spacingSm, bottom: bottomPadding),
+              padding: EdgeInsets.only(top: LinearSpacing.spacing8, bottom: bottomPadding),
               itemCount: connections.length,
               itemBuilder: (context, index) {
                 final connection = connections[index];
@@ -90,13 +90,20 @@ class ConnectionList extends StatelessWidget {
             ),
             if (!isCompact)
               Positioned(
-                bottom: AppTheme.spacingSm,
-                right: AppTheme.spacingSm,
-                child: FloatingActionButton.small(
-                  heroTag: 'add_connection',
-                  onPressed: () => _showConnectionForm(context, null),
-                  tooltip: '添加连接',
-                  child: const Icon(Icons.add),
+                bottom: LinearSpacing.spacing8,
+                right: LinearSpacing.spacing8,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: const Color(0x05ffffff),
+                    borderRadius: BorderRadius.circular(LinearRadius.standard),
+                    border: Border.all(color: LinearColors.borderSolid),
+                  ),
+                  child: IconButton(
+                    onPressed: () => _showConnectionForm(context, null),
+                    tooltip: '添加连接',
+                    icon: const Icon(Icons.add),
+                    color: LinearColors.accentInteractive,
+                  ),
                 ),
               ),
           ],
@@ -121,8 +128,17 @@ class ConnectionList extends StatelessWidget {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('确认删除'),
-        content: Text('确定要删除连接 "${connection.name}" 吗？'),
+        title: Row(
+          children: [
+            Icon(Icons.delete_outline, color: LinearColors.error),
+            const SizedBox(width: LinearSpacing.spacing8 + 2),
+            Text('确认删除', style: TextStyle(color: LinearColors.textPrimary)),
+          ],
+        ),
+        content: Text(
+          '确定要删除连接 "${connection.name}" 吗？',
+          style: TextStyle(color: LinearColors.textSecondary),
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
@@ -130,7 +146,7 @@ class ConnectionList extends StatelessWidget {
           ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
-            style: TextButton.styleFrom(foregroundColor: Colors.red),
+            style: TextButton.styleFrom(foregroundColor: LinearColors.error),
             child: const Text('删除'),
           ),
         ],
@@ -148,7 +164,7 @@ class ConnectionList extends StatelessWidget {
   }
 }
 
-class _ConnectionListItem extends StatelessWidget {
+class _ConnectionListItem extends StatefulWidget {
   final SshConnection connection;
   final VoidCallback onTap;
   final VoidCallback onEdit;
@@ -164,124 +180,146 @@ class _ConnectionListItem extends StatelessWidget {
   });
 
   @override
+  State<_ConnectionListItem> createState() => _ConnectionListItemState();
+}
+
+class _ConnectionListItemState extends State<_ConnectionListItem> {
+  bool _isHovered = false;
+
+  @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
 
     return Padding(
       padding: const EdgeInsets.symmetric(
-        horizontal: AppTheme.spacingSm,
+        horizontal: LinearSpacing.spacing8,
         vertical: 3,
       ),
-      child: Material(
-        color: Colors.transparent,
-        borderRadius: BorderRadius.circular(8),
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(8),
-          hoverColor: colorScheme.primary.withValues(alpha: 0.08),
-          child: Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: AppTheme.spacingMd,
-              vertical: AppTheme.spacingSm + 2,
+      child: MouseRegion(
+        onEnter: (_) => setState(() => _isHovered = true),
+        onExit: (_) => setState(() => _isHovered = false),
+        child: AnimatedContainer(
+          duration: LinearDuration.fast,
+          curve: Curves.easeInOut,
+          decoration: BoxDecoration(
+            color: _isHovered
+                ? const Color(0x0Dffffff)
+                : const Color(0x05ffffff),
+            borderRadius: BorderRadius.circular(LinearRadius.card),
+            border: Border.all(
+              color: _isHovered
+                  ? LinearColors.borderStandard
+                  : Colors.transparent,
+              width: 1,
             ),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: theme.dividerColor),
-            ),
-            child: Row(
-              children: [
-                Container(
-                  width: 36,
-                  height: 36,
-                  decoration: BoxDecoration(
-                    color: colorScheme.primary.withValues(alpha: 0.15),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Icon(
-                    Icons.terminal,
-                    color: colorScheme.primary,
-                    size: 20,
-                  ),
+          ),
+          child: Material(
+            color: Colors.transparent,
+            borderRadius: BorderRadius.circular(LinearRadius.card),
+            child: InkWell(
+              onTap: widget.onTap,
+              borderRadius: BorderRadius.circular(LinearRadius.card),
+              hoverColor: LinearColors.accentInteractive.withValues(alpha: 0.08),
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: LinearSpacing.spacing12,
+                  vertical: LinearSpacing.spacing8 + 2,
                 ),
-                const SizedBox(width: AppTheme.spacingMd),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        connection.name,
-                        style: theme.textTheme.titleSmall?.copyWith(
-                          fontWeight: FontWeight.w500,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
+                child: Row(
+                  children: [
+                    Container(
+                      width: 36,
+                      height: 36,
+                      decoration: BoxDecoration(
+                        color: LinearColors.accentInteractive.withValues(alpha: 0.15),
+                        borderRadius: BorderRadius.circular(LinearRadius.standard),
                       ),
-                      const SizedBox(height: 2),
-                      Text(
-                        '${connection.username}@${connection.host}:${connection.port}',
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          fontFamily: 'monospace',
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
+                      child: const Icon(
+                        Icons.terminal,
+                        color: LinearColors.accentInteractive,
+                        size: 20,
                       ),
-                    ],
-                  ),
-                ),
-                const SizedBox(width: AppTheme.spacingSm),
-                if (onSftpTap != null)
-                  IconButton(
-                    icon: Icon(
-                      Icons.folder_copy_outlined,
-                      size: 20,
-                      color: colorScheme.onSurface.withValues(alpha: 0.6),
                     ),
-                    onPressed: onSftpTap,
-                    tooltip: 'SFTP',
-                    visualDensity: VisualDensity.compact,
-                  ),
-                PopupMenuButton(
-                  icon: Icon(
-                    Icons.more_vert,
-                    size: 20,
-                    color: colorScheme.onSurface.withValues(alpha: 0.6),
-                  ),
-                  itemBuilder: (context) => [
-                    PopupMenuItem(
-                      value: 'edit',
-                      child: Row(
+                    const SizedBox(width: LinearSpacing.spacing12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Icon(
-                            Icons.edit,
-                            size: 18,
-                            color: colorScheme.onSurface.withValues(alpha: 0.8),
+                          Text(
+                            widget.connection.name,
+                            style: theme.textTheme.titleSmall?.copyWith(
+                              fontWeight: FontWeight.w500,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
-                          const SizedBox(width: AppTheme.spacingSm + 2),
-                          Text('编辑', style: TextStyle(color: colorScheme.onSurface)),
+                          const SizedBox(height: 2),
+                          Text(
+                            '${widget.connection.username}@${widget.connection.host}:${widget.connection.port}',
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              fontFamily: 'monospace',
+                              color: LinearColors.textTertiary,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
                         ],
                       ),
                     ),
-                    const PopupMenuItem(
-                      value: 'delete',
-                      child: Row(
-                        children: [
-                          Icon(Icons.delete, size: 18, color: Colors.red),
-                          SizedBox(width: AppTheme.spacingSm + 2),
-                          Text('删除', style: TextStyle(color: Colors.red)),
-                        ],
+                    if (widget.onSftpTap != null)
+                      IconButton(
+                        icon: Icon(
+                          Icons.folder_copy_outlined,
+                          size: 20,
+                          color: LinearColors.textTertiary.withValues(alpha: 0.6),
+                        ),
+                        onPressed: widget.onSftpTap,
+                        tooltip: 'SFTP',
+                        visualDensity: VisualDensity.compact,
                       ),
+                    PopupMenuButton(
+                      icon: Icon(
+                        Icons.more_vert,
+                        size: 20,
+                        color: LinearColors.textTertiary.withValues(alpha: 0.6),
+                      ),
+                      itemBuilder: (context) => [
+                        PopupMenuItem(
+                          value: 'edit',
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.edit,
+                                size: 18,
+                                color: LinearColors.textSecondary,
+                              ),
+                              const SizedBox(width: LinearSpacing.spacing8 + 2),
+                              Text('编辑', style: TextStyle(color: LinearColors.textPrimary)),
+                            ],
+                          ),
+                        ),
+                        const PopupMenuItem(
+                          value: 'delete',
+                          child: Row(
+                            children: [
+                              Icon(Icons.delete, size: 18, color: LinearColors.error),
+                              SizedBox(width: LinearSpacing.spacing8 + 2),
+                              Text('删除', style: TextStyle(color: LinearColors.error)),
+                            ],
+                          ),
+                        ),
+                      ],
+                      onSelected: (value) {
+                        if (value == 'edit') {
+                          widget.onEdit();
+                        } else if (value == 'delete') {
+                          widget.onDelete();
+                        }
+                      },
                     ),
                   ],
-                  onSelected: (value) {
-                    if (value == 'edit') {
-                      onEdit();
-                    } else if (value == 'delete') {
-                      onDelete();
-                    }
-                  },
                 ),
-              ],
+              ),
             ),
           ),
         ),
@@ -304,7 +342,6 @@ class _CompactConnectionItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -313,12 +350,12 @@ class _CompactConnectionItem extends StatelessWidget {
           message: '${connection.name}\n${connection.host}',
           child: InkWell(
             onTap: onTap,
-            borderRadius: BorderRadius.circular(8),
-            hoverColor: colorScheme.primary.withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(LinearRadius.standard),
+            hoverColor: LinearColors.accentInteractive.withValues(alpha: 0.1),
             child: Padding(
               padding: const EdgeInsets.symmetric(
-                vertical: AppTheme.spacingSm,
-                horizontal: AppTheme.spacingSm + 2,
+                vertical: LinearSpacing.spacing8,
+                horizontal: LinearSpacing.spacing8 + 2,
               ),
               child: Column(
                 children: [
@@ -326,19 +363,21 @@ class _CompactConnectionItem extends StatelessWidget {
                     width: 32,
                     height: 32,
                     decoration: BoxDecoration(
-                      color: colorScheme.primary.withValues(alpha: 0.15),
-                      borderRadius: BorderRadius.circular(6),
+                      color: LinearColors.accentInteractive.withValues(alpha: 0.15),
+                      borderRadius: BorderRadius.circular(LinearRadius.standard),
                     ),
-                    child: Icon(
+                    child: const Icon(
                       Icons.terminal,
-                      color: colorScheme.primary,
+                      color: LinearColors.accentInteractive,
                       size: 16,
                     ),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     connection.name,
-                    style: theme.textTheme.labelSmall,
+                    style: theme.textTheme.labelSmall?.copyWith(
+                      color: LinearColors.textSecondary,
+                    ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -352,13 +391,13 @@ class _CompactConnectionItem extends StatelessWidget {
             message: 'SFTP',
             child: InkWell(
               onTap: onSftpTap,
-              borderRadius: BorderRadius.circular(4),
+              borderRadius: BorderRadius.circular(LinearRadius.micro),
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 2),
                 child: Icon(
                   Icons.folder_copy_outlined,
                   size: 14,
-                  color: colorScheme.onSurface.withValues(alpha: 0.4),
+                  color: LinearColors.textQuaternary.withValues(alpha: 0.4),
                 ),
               ),
             ),
