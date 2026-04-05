@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import '../../core/theme/app_theme.dart';
 import '../../domain/services/terminal_service.dart';
 import '../../domain/services/ssh_service.dart';
 
@@ -73,20 +74,14 @@ class _TerminalStatusBarState extends State<TerminalStatusBar> {
         SshConnectionState.disconnected ||
         widget.session.connectionState == SshConnectionState.error;
 
-    // 颜色方案
-    final backgroundColor = isDisconnected
-        ? Colors.red.shade900
-        : Theme.of(context).colorScheme.surfaceContainerHighest;
-    final textColor = isDisconnected
-        ? Colors.white
-        : Theme.of(context).colorScheme.onSurface;
+    // 颜色方案 - Linear 风格
     final indicatorColor = isConnecting
-        ? Colors.amber
+        ? LinearColors.warning
         : isConnected
-            ? Colors.green
+            ? LinearColors.success
             : isDisconnected
-                ? Colors.red
-                : Colors.blue; // 本地终端
+                ? LinearColors.error
+                : LinearColors.accent; // 本地终端
 
     final statusText = widget.session.isLocal
         ? 'Local'
@@ -97,8 +92,16 @@ class _TerminalStatusBarState extends State<TerminalStatusBar> {
                 : 'Disconnected';
 
     return Container(
-      height: 24,
-      color: backgroundColor,
+      height: 28,
+      decoration: BoxDecoration(
+        color: LinearColors.panel.withValues(alpha: 0.9),
+        border: Border(
+          top: BorderSide(
+            color: LinearColors.borderSubtle,
+            width: 1,
+          ),
+        ),
+      ),
       padding: const EdgeInsets.symmetric(horizontal: 8),
       child: Row(
         children: [
@@ -114,8 +117,8 @@ class _TerminalStatusBarState extends State<TerminalStatusBar> {
           const SizedBox(width: 6),
           Text(
             statusText,
-            style: TextStyle(
-              color: textColor,
+            style: const TextStyle(
+              color: LinearColors.textPrimary,
               fontSize: 12,
             ),
           ),
@@ -124,8 +127,8 @@ class _TerminalStatusBarState extends State<TerminalStatusBar> {
             const SizedBox(width: 8),
             Text(
               '• $_latency',
-              style: TextStyle(
-                color: textColor.withValues(alpha: 0.7),
+              style: const TextStyle(
+                color: LinearColors.textTertiary,
                 fontSize: 12,
               ),
             ),
@@ -135,8 +138,8 @@ class _TerminalStatusBarState extends State<TerminalStatusBar> {
             const SizedBox(width: 8),
             Text(
               '• ${_formatDuration(_connectionDuration)}',
-              style: TextStyle(
-                color: textColor.withValues(alpha: 0.7),
+              style: const TextStyle(
+                color: LinearColors.textTertiary,
                 fontSize: 12,
               ),
             ),
@@ -146,8 +149,8 @@ class _TerminalStatusBarState extends State<TerminalStatusBar> {
             const SizedBox(width: 8),
             Text(
               '• ${widget.session.serverInfo}',
-              style: TextStyle(
-                color: textColor.withValues(alpha: 0.7),
+              style: const TextStyle(
+                color: LinearColors.textTertiary,
                 fontSize: 12,
               ),
             ),
@@ -157,10 +160,10 @@ class _TerminalStatusBarState extends State<TerminalStatusBar> {
           if (isDisconnected && !widget.session.isLocal && widget.onReconnect != null)
             TextButton.icon(
               onPressed: widget.onReconnect,
-              icon: const Icon(Icons.refresh, size: 14),
-              label: const Text('Reconnect', style: TextStyle(fontSize: 12)),
+              icon: const Icon(Icons.refresh, size: 14, color: LinearColors.textTertiary),
+              label: const Text('Reconnect', style: TextStyle(fontSize: 12, color: LinearColors.textTertiary)),
               style: TextButton.styleFrom(
-                foregroundColor: Colors.white,
+                foregroundColor: LinearColors.textTertiary,
                 padding: const EdgeInsets.symmetric(horizontal: 8),
                 minimumSize: Size.zero,
               ),
