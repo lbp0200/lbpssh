@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lbp_ssh/core/theme/app_theme.dart';
 import 'package:lbp_ssh/domain/services/kitty_file_transfer_service.dart';
 
 /// 传输进度对话框
@@ -51,26 +52,77 @@ class _TransferProgressDialogState extends State<TransferProgressDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('上传文件'),
+      backgroundColor: LinearColors.surface,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(LinearRadius.panel),
+        side: BorderSide(color: LinearColors.borderStandard),
+      ),
+      title: const Row(
+        children: [
+          Icon(Icons.upload_file, color: LinearColors.accentInteractive),
+          SizedBox(width: LinearSpacing.spacing12),
+          Text(
+            '上传文件',
+            style: TextStyle(
+              color: LinearColors.textPrimary,
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
+      ),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('文件: ${widget.fileName}'),
-          const SizedBox(height: 16),
-          LinearProgressIndicator(value: _percent / 100),
-          const SizedBox(height: 8),
-          Text('${_percent.toStringAsFixed(1)}%'),
-          const SizedBox(height: 8),
-          Text('${_formatSize(_transferred)} / ${_formatSize(widget.totalBytes)}'),
-          if (_bytesPerSecond > 0)
-            Text('速度: ${_formatSize(_bytesPerSecond)}/s'),
+          Text(
+            '文件: ${widget.fileName}',
+            style: const TextStyle(color: LinearColors.textSecondary, fontSize: 13),
+          ),
+          const SizedBox(height: LinearSpacing.spacing16),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(LinearRadius.small),
+            child: LinearProgressIndicator(
+              value: _percent / 100,
+              backgroundColor: LinearColors.borderSolid,
+              valueColor: const AlwaysStoppedAnimation<Color>(LinearColors.accentInteractive),
+              minHeight: 6,
+            ),
+          ),
+          const SizedBox(height: LinearSpacing.spacing8),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                '${_percent.toStringAsFixed(1)}%',
+                style: const TextStyle(
+                  color: LinearColors.accentInteractive,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              Text(
+                '${_formatSize(_transferred)} / ${_formatSize(widget.totalBytes)}',
+                style: const TextStyle(color: LinearColors.textTertiary, fontSize: 12),
+              ),
+            ],
+          ),
+          if (_bytesPerSecond > 0) ...[
+            const SizedBox(height: LinearSpacing.spacing4),
+            Text(
+              '速度: ${_formatSize(_bytesPerSecond)}/s',
+              style: const TextStyle(color: LinearColors.textQuaternary, fontSize: 12),
+            ),
+          ],
         ],
       ),
       actions: [
         TextButton(
           onPressed: widget.onCancel,
-          child: const Text('取消'),
+          child: const Text(
+            '取消',
+            style: TextStyle(color: LinearColors.textTertiary),
+          ),
         ),
       ],
     );

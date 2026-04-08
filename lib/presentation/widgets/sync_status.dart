@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lbp_ssh/core/theme/app_theme.dart';
 import 'package:provider/provider.dart';
 import '../../domain/services/sync_service.dart';
 import '../providers/sync_provider.dart';
@@ -21,22 +22,22 @@ class SyncStatus extends StatelessWidget {
         switch (status) {
           case SyncStatusEnum.idle:
             icon = Icons.sync;
-            color = Colors.grey;
+            color = LinearColors.textTertiary;
             text = '未同步';
             break;
           case SyncStatusEnum.syncing:
             icon = Icons.sync;
-            color = Colors.blue;
+            color = LinearColors.accentInteractive;
             text = '同步中...';
             break;
           case SyncStatusEnum.success:
             icon = Icons.check_circle;
-            color = Colors.green;
+            color = LinearColors.success;
             text = '同步成功';
             break;
           case SyncStatusEnum.error:
             icon = Icons.error;
-            color = Colors.red;
+            color = LinearColors.error;
             text = '同步失败';
             break;
         }
@@ -49,26 +50,27 @@ class SyncStatus extends StatelessWidget {
               const SizedBox(
                 width: 16,
                 height: 16,
-                child: CircularProgressIndicator(strokeWidth: 2),
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  valueColor: AlwaysStoppedAnimation<Color>(LinearColors.accentInteractive),
+                ),
               )
             else
               Icon(icon, key: const Key('sync_status_icon'), size: 16, color: color),
-            const SizedBox(width: 4),
+            const SizedBox(width: LinearSpacing.spacing4),
             Text(
               text,
               key: const Key('sync_status_text'),
-              style: TextStyle(fontSize: 12, color: color),
+              style: TextStyle(fontSize: 12, color: color, fontWeight: FontWeight.w500),
             ),
             if (lastSyncTime != null) ...[
-              const SizedBox(width: 8),
+              const SizedBox(width: LinearSpacing.spacing8),
               Text(
                 _formatTime(lastSyncTime),
                 key: const Key('sync_status_time'),
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 10,
-                  color: Theme.of(
-                    context,
-                  ).colorScheme.onSurface.withValues(alpha: 0.6),
+                  color: LinearColors.textQuaternary,
                 ),
               ),
             ],

@@ -360,7 +360,7 @@ class _ConnectionFormScreenState extends State<ConnectionFormScreen> {
       body: Form(
         key: _formKey,
         child: ListView(
-          padding: const EdgeInsets.all(16),
+          padding: EdgeInsets.all(LinearSpacing.spacing16),
           children: [
             // 基本信息
             TextFormField(
@@ -371,7 +371,7 @@ class _ConnectionFormScreenState extends State<ConnectionFormScreen> {
                 hintText: '例如：生产服务器',
                 hintStyle: const TextStyle(color: LinearColors.textQuaternary),
                 filled: true,
-                fillColor: const Color(0x05ffffff),
+                fillColor: LinearColors.fillSurface,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(LinearRadius.standard),
                   borderSide: BorderSide(color: LinearColors.borderStandard),
@@ -392,7 +392,7 @@ class _ConnectionFormScreenState extends State<ConnectionFormScreen> {
                 return null;
               },
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: LinearSpacing.spacing16),
             Row(
               children: [
                 Expanded(
@@ -405,7 +405,7 @@ class _ConnectionFormScreenState extends State<ConnectionFormScreen> {
                       hintText: '例如：192.168.1.100',
                       hintStyle: const TextStyle(color: LinearColors.textQuaternary),
                       filled: true,
-                      fillColor: const Color(0x05ffffff),
+                      fillColor: LinearColors.fillSurface,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(LinearRadius.standard),
                         borderSide: BorderSide(color: LinearColors.borderStandard),
@@ -427,7 +427,7 @@ class _ConnectionFormScreenState extends State<ConnectionFormScreen> {
                     },
                   ),
                 ),
-                const SizedBox(width: 16),
+                SizedBox(width: LinearSpacing.spacing16),
                 Expanded(
                   child: TextFormField(
                     controller: _portController,
@@ -436,7 +436,7 @@ class _ConnectionFormScreenState extends State<ConnectionFormScreen> {
                       labelStyle: const TextStyle(color: LinearColors.textSecondary),
                       hintStyle: const TextStyle(color: LinearColors.textQuaternary),
                       filled: true,
-                      fillColor: const Color(0x05ffffff),
+                      fillColor: LinearColors.fillSurface,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(LinearRadius.standard),
                         borderSide: BorderSide(color: LinearColors.borderStandard),
@@ -465,7 +465,7 @@ class _ConnectionFormScreenState extends State<ConnectionFormScreen> {
                 ),
               ],
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: LinearSpacing.spacing16),
             TextFormField(
               controller: _usernameController,
               decoration: InputDecoration(
@@ -474,7 +474,7 @@ class _ConnectionFormScreenState extends State<ConnectionFormScreen> {
                 hintText: '例如：root',
                 hintStyle: const TextStyle(color: LinearColors.textQuaternary),
                 filled: true,
-                fillColor: const Color(0x05ffffff),
+                fillColor: LinearColors.fillSurface,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(LinearRadius.standard),
                   borderSide: BorderSide(color: LinearColors.borderStandard),
@@ -495,7 +495,7 @@ class _ConnectionFormScreenState extends State<ConnectionFormScreen> {
                 return null;
               },
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: LinearSpacing.spacing16),
 
             // 认证方式
             DropdownButtonFormField<AuthType>(
@@ -505,7 +505,7 @@ class _ConnectionFormScreenState extends State<ConnectionFormScreen> {
                 labelStyle: const TextStyle(color: LinearColors.textSecondary),
                 hintStyle: const TextStyle(color: LinearColors.textQuaternary),
                 filled: true,
-                fillColor: const Color(0x05ffffff),
+                fillColor: LinearColors.fillSurface,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(LinearRadius.standard),
                   borderSide: BorderSide(color: LinearColors.borderStandard),
@@ -531,13 +531,13 @@ class _ConnectionFormScreenState extends State<ConnectionFormScreen> {
                   child: Row(
                     children: [
                       const Text('SSH Config'),
-                      const SizedBox(width: 8),
+                      SizedBox(width: LinearSpacing.spacing8),
                       if (_sshConfigEntries.isEmpty)
                         Tooltip(
                           message: '未找到 ~/.ssh/config 文件',
                           child: Icon(
                             Icons.info_outline,
-                            color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.4),
+                            color: LinearColors.textQuaternary,
                             size: 16,
                           ),
                         ),
@@ -551,7 +551,7 @@ class _ConnectionFormScreenState extends State<ConnectionFormScreen> {
                 });
               },
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: LinearSpacing.spacing16),
 
             // 密码输入（如果是密码认证）
             if (_authType == AuthType.password)
@@ -562,7 +562,7 @@ class _ConnectionFormScreenState extends State<ConnectionFormScreen> {
                   labelStyle: const TextStyle(color: LinearColors.textSecondary),
                   hintStyle: const TextStyle(color: LinearColors.textQuaternary),
                   filled: true,
-                  fillColor: const Color(0x05ffffff),
+                  fillColor: LinearColors.fillSurface,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(LinearRadius.standard),
                     borderSide: BorderSide(color: LinearColors.borderStandard),
@@ -594,12 +594,12 @@ class _ConnectionFormScreenState extends State<ConnectionFormScreen> {
             // 私钥文件（如果是密钥认证）
             if (_authType == AuthType.key ||
                 _authType == AuthType.keyWithPassword) ...[
-              const SizedBox(height: 16),
+              SizedBox(height: LinearSpacing.spacing16),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text('私钥文件'),
-                  const SizedBox(height: 8),
+                  SizedBox(height: LinearSpacing.spacing8),
                   Row(
                     children: [
                       Expanded(
@@ -613,7 +613,7 @@ class _ConnectionFormScreenState extends State<ConnectionFormScreen> {
                                 : '点击右侧按钮选择私钥文件',
                             hintStyle: const TextStyle(color: LinearColors.textQuaternary),
                             filled: true,
-                            fillColor: const Color(0x05ffffff),
+                            fillColor: LinearColors.fillSurface,
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(LinearRadius.standard),
                               borderSide: BorderSide(color: LinearColors.borderStandard),
@@ -627,9 +627,9 @@ class _ConnectionFormScreenState extends State<ConnectionFormScreen> {
                               borderSide: BorderSide(color: LinearColors.accentInteractive, width: 2),
                             ),
                             suffixIcon: _privateKeyContent != null
-                                ? const Icon(
+                                ? Icon(
                                     Icons.check_circle,
-                                    color: Colors.green,
+                                    color: LinearColors.success,
                                   )
                                 : null,
                           ),
@@ -644,13 +644,13 @@ class _ConnectionFormScreenState extends State<ConnectionFormScreen> {
                           },
                         ),
                       ),
-                      const SizedBox(width: 8),
+                      SizedBox(width: LinearSpacing.spacing8),
                       ElevatedButton.icon(
                         onPressed: _pickPrivateKeyFile,
                         icon: const Icon(Icons.folder_open),
                         label: const Text('选择文件'),
                       ),
-                      const SizedBox(width: 8),
+                      SizedBox(width: LinearSpacing.spacing8),
                       Tooltip(
                         message: '由于 macOS 沙箱限制，无法选择 ~/.ssh 目录中的文件，请手动输入路径',
                         child: OutlinedButton.icon(
@@ -676,11 +676,11 @@ class _ConnectionFormScreenState extends State<ConnectionFormScreen> {
                     ],
                   ),
                   if (_privateKeyContent != null) ...[
-                    const SizedBox(height: 4),
+                    SizedBox(height: LinearSpacing.spacing4),
                     Text(
                       '私钥已加载: ${_keyPathController.text.isNotEmpty ? _keyPathController.text.split('/').last : "未知文件"}',
                       style: TextStyle(
-                        color: Colors.green.shade700,
+                        color: LinearColors.success,
                         fontSize: 12,
                       ),
                     ),
@@ -691,7 +691,7 @@ class _ConnectionFormScreenState extends State<ConnectionFormScreen> {
 
             // 密钥密码（如果是密钥+密码认证）
             if (_authType == AuthType.keyWithPassword) ...[
-              const SizedBox(height: 16),
+              SizedBox(height: LinearSpacing.spacing16),
               TextFormField(
                 controller: _keyPassphraseController,
                 decoration: InputDecoration(
@@ -699,7 +699,7 @@ class _ConnectionFormScreenState extends State<ConnectionFormScreen> {
                   labelStyle: const TextStyle(color: LinearColors.textSecondary),
                   hintStyle: const TextStyle(color: LinearColors.textQuaternary),
                   filled: true,
-                  fillColor: const Color(0x05ffffff),
+                  fillColor: LinearColors.fillSurface,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(LinearRadius.standard),
                     borderSide: BorderSide(color: LinearColors.borderStandard),
@@ -731,23 +731,23 @@ class _ConnectionFormScreenState extends State<ConnectionFormScreen> {
 
             // SSH Config 主机选择（如果是 sshConfig 认证）
             if (_authType == AuthType.sshConfig) ...[
-              const SizedBox(height: 16),
+              SizedBox(height: LinearSpacing.spacing16),
               if (_sshConfigEntries.isEmpty)
                 Container(
-                  padding: const EdgeInsets.all(12),
+                  padding: EdgeInsets.all(LinearSpacing.spacing12),
                   decoration: BoxDecoration(
-                    color: Colors.orange.shade50,
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: Colors.orange.shade200),
+                    color: LinearColors.warning.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(LinearRadius.card),
+                    border: Border.all(color: LinearColors.warning.withValues(alpha: 0.3)),
                   ),
                   child: Row(
                     children: [
-                      Icon(Icons.warning_amber, color: Colors.orange.shade700),
-                      const SizedBox(width: 12),
+                      Icon(Icons.warning_amber, color: LinearColors.warning),
+                      SizedBox(width: LinearSpacing.spacing12),
                       Expanded(
                         child: Text(
                           '未找到 ~/.ssh/config 文件。请确保文件存在且包含主机配置。',
-                          style: TextStyle(color: Colors.orange.shade900),
+                          style: TextStyle(color: LinearColors.textPrimary),
                         ),
                       ),
                     ],
@@ -762,7 +762,7 @@ class _ConnectionFormScreenState extends State<ConnectionFormScreen> {
                     hintText: '从 ~/.ssh/config 中选择',
                     hintStyle: const TextStyle(color: LinearColors.textQuaternary),
                     filled: true,
-                    fillColor: const Color(0x05ffffff),
+                    fillColor: LinearColors.fillSurface,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(LinearRadius.standard),
                       borderSide: BorderSide(color: LinearColors.borderStandard),
@@ -794,7 +794,7 @@ class _ConnectionFormScreenState extends State<ConnectionFormScreen> {
                                 '${entry.actualHost ?? entry.hostName}${entry.user != null ? ' (@${entry.user})' : ''}',
                                 style: TextStyle(
                                   fontSize: 12,
-                                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+                                  color: LinearColors.textTertiary,
                                 ),
                               ),
                           ],
@@ -820,16 +820,16 @@ class _ConnectionFormScreenState extends State<ConnectionFormScreen> {
                     });
                   },
                 ),
-                const SizedBox(height: 8),
+                SizedBox(height: LinearSpacing.spacing8),
                 Text(
                   '将使用 ~/.ssh/config 中定义的主机配置（主机名、端口、用户、身份文件等）。',
                   style: TextStyle(
-                    color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+                    color: LinearColors.textTertiary,
                     fontSize: 12,
                   ),
                 ),
               ],
-              const SizedBox(height: 8),
+              SizedBox(height: LinearSpacing.spacing8),
               ElevatedButton.icon(
                 onPressed: () {
                   _loadSshConfigEntries();
@@ -840,11 +840,11 @@ class _ConnectionFormScreenState extends State<ConnectionFormScreen> {
               ),
             ],
 
-            const SizedBox(height: 24),
+            SizedBox(height: LinearSpacing.spacing24),
 
             // 跳板机配置
             CheckboxListTile(
-              title: const Text('使用跳板机'),
+              title: Text('使用跳板机', style: TextStyle(color: LinearColors.textPrimary)),
               value: _useJumpHost,
               onChanged: (value) {
                 setState(() {
@@ -854,7 +854,7 @@ class _ConnectionFormScreenState extends State<ConnectionFormScreen> {
             ),
 
             if (_useJumpHost) ...[
-              const SizedBox(height: 16),
+              SizedBox(height: LinearSpacing.spacing16),
               Row(
                 children: [
                   Expanded(
@@ -866,7 +866,7 @@ class _ConnectionFormScreenState extends State<ConnectionFormScreen> {
                         labelStyle: const TextStyle(color: LinearColors.textSecondary),
                         hintStyle: const TextStyle(color: LinearColors.textQuaternary),
                         filled: true,
-                        fillColor: const Color(0x05ffffff),
+                        fillColor: LinearColors.fillSurface,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(LinearRadius.standard),
                           borderSide: BorderSide(color: LinearColors.borderStandard),
@@ -882,7 +882,7 @@ class _ConnectionFormScreenState extends State<ConnectionFormScreen> {
                       ),
                     ),
                   ),
-                  const SizedBox(width: 16),
+                  SizedBox(width: LinearSpacing.spacing16),
                   Expanded(
                     child: TextFormField(
                       controller: _jumpPortController,
@@ -891,7 +891,7 @@ class _ConnectionFormScreenState extends State<ConnectionFormScreen> {
                         labelStyle: const TextStyle(color: LinearColors.textSecondary),
                         hintStyle: const TextStyle(color: LinearColors.textQuaternary),
                         filled: true,
-                        fillColor: const Color(0x05ffffff),
+                        fillColor: LinearColors.fillSurface,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(LinearRadius.standard),
                           borderSide: BorderSide(color: LinearColors.borderStandard),
@@ -910,7 +910,7 @@ class _ConnectionFormScreenState extends State<ConnectionFormScreen> {
                   ),
                 ],
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: LinearSpacing.spacing16),
               TextFormField(
                 controller: _jumpUsernameController,
                 decoration: InputDecoration(
@@ -918,7 +918,7 @@ class _ConnectionFormScreenState extends State<ConnectionFormScreen> {
                   labelStyle: const TextStyle(color: LinearColors.textSecondary),
                   hintStyle: const TextStyle(color: LinearColors.textQuaternary),
                   filled: true,
-                  fillColor: const Color(0x05ffffff),
+                  fillColor: LinearColors.fillSurface,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(LinearRadius.standard),
                     borderSide: BorderSide(color: LinearColors.borderStandard),
@@ -933,7 +933,7 @@ class _ConnectionFormScreenState extends State<ConnectionFormScreen> {
                   ),
                 ),
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: LinearSpacing.spacing16),
               DropdownButtonFormField<AuthType>(
                 initialValue: _jumpAuthType,
                 decoration: InputDecoration(
@@ -941,7 +941,7 @@ class _ConnectionFormScreenState extends State<ConnectionFormScreen> {
                   labelStyle: const TextStyle(color: LinearColors.textSecondary),
                   hintStyle: const TextStyle(color: LinearColors.textQuaternary),
                   filled: true,
-                  fillColor: const Color(0x05ffffff),
+                  fillColor: LinearColors.fillSurface,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(LinearRadius.standard),
                     borderSide: BorderSide(color: LinearColors.borderStandard),
@@ -969,7 +969,7 @@ class _ConnectionFormScreenState extends State<ConnectionFormScreen> {
                 },
               ),
               if (_jumpAuthType == AuthType.password) ...[
-                const SizedBox(height: 16),
+                SizedBox(height: LinearSpacing.spacing16),
                 TextFormField(
                   controller: _jumpPasswordController,
                   decoration: InputDecoration(
@@ -977,7 +977,7 @@ class _ConnectionFormScreenState extends State<ConnectionFormScreen> {
                     labelStyle: const TextStyle(color: LinearColors.textSecondary),
                     hintStyle: const TextStyle(color: LinearColors.textQuaternary),
                     filled: true,
-                    fillColor: const Color(0x05ffffff),
+                    fillColor: LinearColors.fillSurface,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(LinearRadius.standard),
                       borderSide: BorderSide(color: LinearColors.borderStandard),
@@ -996,11 +996,11 @@ class _ConnectionFormScreenState extends State<ConnectionFormScreen> {
               ],
             ],
 
-            const SizedBox(height: 24),
+            SizedBox(height: LinearSpacing.spacing24),
 
             // SOCKS5 代理配置
             CheckboxListTile(
-              title: const Text('使用 SOCKS5 代理'),
+              title: Text('使用 SOCKS5 代理', style: TextStyle(color: LinearColors.textPrimary)),
               value: _useSocks5Proxy,
               onChanged: (value) {
                 setState(() {
@@ -1010,7 +1010,7 @@ class _ConnectionFormScreenState extends State<ConnectionFormScreen> {
             ),
 
             if (_useSocks5Proxy) ...[
-              const SizedBox(height: 16),
+              SizedBox(height: LinearSpacing.spacing16),
               Row(
                 children: [
                   Expanded(
@@ -1023,7 +1023,7 @@ class _ConnectionFormScreenState extends State<ConnectionFormScreen> {
                         hintText: '例如：127.0.0.1',
                         hintStyle: const TextStyle(color: LinearColors.textQuaternary),
                         filled: true,
-                        fillColor: const Color(0x05ffffff),
+                        fillColor: LinearColors.fillSurface,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(LinearRadius.standard),
                           borderSide: BorderSide(color: LinearColors.borderStandard),
@@ -1046,7 +1046,7 @@ class _ConnectionFormScreenState extends State<ConnectionFormScreen> {
                       },
                     ),
                   ),
-                  const SizedBox(width: 16),
+                  SizedBox(width: LinearSpacing.spacing16),
                   Expanded(
                     child: TextFormField(
                       controller: _socks5PortController,
@@ -1056,7 +1056,7 @@ class _ConnectionFormScreenState extends State<ConnectionFormScreen> {
                         hintText: '默认 1080',
                         hintStyle: const TextStyle(color: LinearColors.textQuaternary),
                         filled: true,
-                        fillColor: const Color(0x05ffffff),
+                        fillColor: LinearColors.fillSurface,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(LinearRadius.standard),
                           borderSide: BorderSide(color: LinearColors.borderStandard),
@@ -1086,7 +1086,7 @@ class _ConnectionFormScreenState extends State<ConnectionFormScreen> {
                   ),
                 ],
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: LinearSpacing.spacing16),
               Row(
                 children: [
                   Expanded(
@@ -1098,7 +1098,7 @@ class _ConnectionFormScreenState extends State<ConnectionFormScreen> {
                         hintText: '可选',
                         hintStyle: const TextStyle(color: LinearColors.textQuaternary),
                         filled: true,
-                        fillColor: const Color(0x05ffffff),
+                        fillColor: LinearColors.fillSurface,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(LinearRadius.standard),
                           borderSide: BorderSide(color: LinearColors.borderStandard),
@@ -1114,7 +1114,7 @@ class _ConnectionFormScreenState extends State<ConnectionFormScreen> {
                       ),
                     ),
                   ),
-                  const SizedBox(width: 16),
+                  SizedBox(width: LinearSpacing.spacing16),
                   Expanded(
                     child: TextFormField(
                       controller: _socks5PasswordController,
@@ -1124,7 +1124,7 @@ class _ConnectionFormScreenState extends State<ConnectionFormScreen> {
                         hintText: '可选',
                         hintStyle: const TextStyle(color: LinearColors.textQuaternary),
                         filled: true,
-                        fillColor: const Color(0x05ffffff),
+                        fillColor: LinearColors.fillSurface,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(LinearRadius.standard),
                           borderSide: BorderSide(color: LinearColors.borderStandard),
@@ -1143,17 +1143,17 @@ class _ConnectionFormScreenState extends State<ConnectionFormScreen> {
                   ),
                 ],
               ),
-              const SizedBox(height: 8),
+              SizedBox(height: LinearSpacing.spacing8),
               Text(
                 '提示：用户名和密码为可选配置，如果代理服务器不需要认证请留空。',
                 style: TextStyle(
-                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+                  color: LinearColors.textTertiary,
                   fontSize: 12,
                 ),
               ),
             ],
 
-            const SizedBox(height: 24),
+            SizedBox(height: LinearSpacing.spacing24),
 
             // 备注
             TextFormField(
@@ -1164,7 +1164,7 @@ class _ConnectionFormScreenState extends State<ConnectionFormScreen> {
                 hintText: '可选',
                 hintStyle: const TextStyle(color: LinearColors.textQuaternary),
                 filled: true,
-                fillColor: const Color(0x05ffffff),
+                fillColor: LinearColors.fillSurface,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(LinearRadius.standard),
                   borderSide: BorderSide(color: LinearColors.borderStandard),
@@ -1181,14 +1181,14 @@ class _ConnectionFormScreenState extends State<ConnectionFormScreen> {
               maxLines: 3,
             ),
 
-            const SizedBox(height: 32),
+            SizedBox(height: LinearSpacing.spacing32),
 
             // 保存按钮
             ElevatedButton(
               onPressed: _saveConnection,
               style: ElevatedButton.styleFrom(
                 backgroundColor: LinearColors.accent,
-                foregroundColor: Colors.white,
+                foregroundColor: LinearColors.textPrimary,
                 padding: const EdgeInsets.symmetric(
                   horizontal: LinearSpacing.spacing24,
                   vertical: LinearSpacing.spacing12,
@@ -1247,7 +1247,7 @@ class _ManualPathDialogState extends State<_ManualPathDialog> {
               hintStyle: const TextStyle(color: LinearColors.textQuaternary),
               prefixIcon: const Icon(Icons.edit),
               filled: true,
-              fillColor: const Color(0x05ffffff),
+              fillColor: LinearColors.fillSurface,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(LinearRadius.standard),
                 borderSide: BorderSide(color: LinearColors.borderStandard),
@@ -1263,12 +1263,12 @@ class _ManualPathDialogState extends State<_ManualPathDialog> {
             ),
             autofocus: true,
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: LinearSpacing.spacing12),
           Text(
             '提示：由于 macOS 沙箱限制，无法直接选择 ~/.ssh 目录中的文件，请手动输入完整路径。',
             style: TextStyle(
               fontSize: 12,
-              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+              color: LinearColors.textTertiary,
             ),
           ),
         ],

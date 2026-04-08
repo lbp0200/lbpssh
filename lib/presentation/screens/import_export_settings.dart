@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../../core/theme/app_theme.dart';
 import '../../../data/models/ssh_connection.dart';
 import '../../../domain/services/import_export_service.dart';
 import '../providers/import_export_provider.dart';
@@ -42,14 +43,14 @@ class _ImportExportSettingsScreenState
       body: Consumer<ImportExportProvider>(
         builder: (context, provider, child) {
           return ListView(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(LinearSpacing.spacing16),
             children: [
               _buildStatsCard(),
-              const SizedBox(height: 24),
+              const SizedBox(height: LinearSpacing.spacing24),
               _buildExportSection(provider),
-              const SizedBox(height: 24),
+              const SizedBox(height: LinearSpacing.spacing24),
               _buildImportSection(provider),
-              const SizedBox(height: 24),
+              const SizedBox(height: LinearSpacing.spacing24),
               if (_showImportPreview && _importedConnections.isNotEmpty)
                 _buildImportPreview(),
             ],
@@ -63,22 +64,28 @@ class _ImportExportSettingsScreenState
     final stats = _provider!.getExportStats();
 
     return Card(
+      elevation: 0,
+      color: LinearColors.surface,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(LinearRadius.card),
+        side: BorderSide(color: LinearColors.borderStandard),
+      ),
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(LinearSpacing.spacing16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
                 const Icon(Icons.info_outline),
-                const SizedBox(width: 8),
+                const SizedBox(width: LinearSpacing.spacing8),
                 const Text(
                   '当前SSH连接统计',
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
               ],
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: LinearSpacing.spacing16),
             Row(
               children: [
                 Expanded(
@@ -104,8 +111,8 @@ class _ImportExportSettingsScreenState
                 ),
               ],
             ),
-            const SizedBox(height: 8),
-            if (stats['jumpHostConnections'] > 0)
+            const SizedBox(height: LinearSpacing.spacing8),
+            if ((stats['jumpHostConnections'] as int? ?? 0) > 0)
               Row(
                 children: [
                   _buildStatItem(
@@ -121,7 +128,7 @@ class _ImportExportSettingsScreenState
                         children: [
                           const Text(
                             '最后更新',
-                            style: TextStyle(fontSize: 12, color: Colors.grey),
+                            style: TextStyle(fontSize: 12, color: LinearColors.textSecondary),
                           ),
                           Text(
                             '${stats['lastUpdated']}',
@@ -149,40 +156,46 @@ class _ImportExportSettingsScreenState
       mainAxisAlignment: mainAxisAlignment,
       crossAxisAlignment: crossAxisAlignment,
       children: [
-        Icon(icon, color: Theme.of(context).primaryColor),
-        const SizedBox(height: 4),
+        Icon(icon, color: LinearColors.accentInteractive),
+        const SizedBox(height: LinearSpacing.spacing4),
         Text(
           value,
           style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
-        Text(label, style: TextStyle(fontSize: 12, color: Colors.grey[600])),
+        Text(label, style: TextStyle(fontSize: 12, color: LinearColors.textQuaternary)),
       ],
     );
   }
 
   Widget _buildExportSection(ImportExportProvider provider) {
     return Card(
+      elevation: 0,
+      color: LinearColors.surface,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(LinearRadius.card),
+        side: BorderSide(color: LinearColors.borderStandard),
+      ),
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(LinearSpacing.spacing16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
                 const Icon(Icons.file_upload),
-                const SizedBox(width: 8),
+                const SizedBox(width: LinearSpacing.spacing8),
                 const Text(
                   '导出配置',
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
               ],
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: LinearSpacing.spacing8),
             const Text(
               '将SSH连接配置导出到本地文件，包含所有连接信息（密码、私钥等敏感信息）。',
               style: TextStyle(fontSize: 12),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: LinearSpacing.spacing16),
             SizedBox(
               width: double.infinity,
               child: ElevatedButton.icon(
@@ -211,27 +224,33 @@ class _ImportExportSettingsScreenState
 
   Widget _buildImportSection(ImportExportProvider provider) {
     return Card(
+      elevation: 0,
+      color: LinearColors.surface,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(LinearRadius.card),
+        side: BorderSide(color: LinearColors.borderStandard),
+      ),
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(LinearSpacing.spacing16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
                 const Icon(Icons.file_download),
-                const SizedBox(width: 8),
+                const SizedBox(width: LinearSpacing.spacing8),
                 const Text(
                   '导入配置',
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
               ],
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: LinearSpacing.spacing8),
             const Text(
               '从之前导出的配置文件导入SSH连接配置。支持覆盖现有连接或添加前缀避免冲突。',
               style: TextStyle(fontSize: 12),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: LinearSpacing.spacing16),
             SizedBox(
               width: double.infinity,
               child: ElevatedButton.icon(
@@ -260,27 +279,33 @@ class _ImportExportSettingsScreenState
 
   Widget _buildImportPreview() {
     return Card(
+      elevation: 0,
+      color: LinearColors.surface,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(LinearRadius.card),
+        side: BorderSide(color: LinearColors.borderStandard),
+      ),
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(LinearSpacing.spacing16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
                 const Icon(Icons.preview),
-                const SizedBox(width: 8),
+                const SizedBox(width: LinearSpacing.spacing8),
                 const Text(
                   '导入预览',
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
               ],
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: LinearSpacing.spacing8),
             Text(
               '发现 ${_importedConnections.length} 个连接配置：',
               style: const TextStyle(fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: LinearSpacing.spacing12),
             ListView.separated(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
@@ -291,19 +316,19 @@ class _ImportExportSettingsScreenState
                 return ListTile(
                   leading: Icon(
                     _getAuthTypeIcon(connection.authType),
-                    color: Theme.of(context).primaryColor,
+                    color: LinearColors.accentInteractive,
                   ),
                   title: Text(connection.name),
                   subtitle: Text(
                     '${connection.username}@${connection.host}:${connection.port}',
                   ),
                   trailing: connection.jumpHost != null
-                      ? const Icon(Icons.router, size: 16, color: Colors.orange)
+                      ? const Icon(Icons.router, size: 16, color: LinearColors.warning)
                       : null,
                 );
               },
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: LinearSpacing.spacing16),
             Row(
               children: [
                 Expanded(
@@ -312,7 +337,7 @@ class _ImportExportSettingsScreenState
                     child: const Text('添加前缀'),
                   ),
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: LinearSpacing.spacing8),
                 Expanded(
                   child: ElevatedButton(
                     onPressed: () => _showImportDialog(true),
@@ -345,7 +370,7 @@ class _ImportExportSettingsScreenState
       final file = await provider.exportToLocalFile();
       if (file != null && mounted) {
         final summary = provider.generateExportSummary();
-        showDialog(
+        showDialog<void>(
           context: context,
           builder: (context) => AlertDialog(
             title: const Text('导出成功'),
@@ -355,7 +380,7 @@ class _ImportExportSettingsScreenState
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(summary),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: LinearSpacing.spacing16),
                   Text(
                     '文件保存位置:',
                     style: const TextStyle(fontWeight: FontWeight.bold),
@@ -376,7 +401,7 @@ class _ImportExportSettingsScreenState
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('导出失败: $e'), backgroundColor: Colors.red),
+          SnackBar(content: Text('导出失败: $e'), backgroundColor: LinearColors.error),
         );
       }
     }
@@ -402,14 +427,14 @@ class _ImportExportSettingsScreenState
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('导入失败: $e'), backgroundColor: Colors.red),
+          SnackBar(content: Text('导入失败: $e'), backgroundColor: LinearColors.error),
         );
       }
     }
   }
 
   void _showImportDialog(bool overwrite) {
-    showDialog(
+    showDialog<void>(
       context: context,
       builder: (context) => AlertDialog(
         title: Text(overwrite ? '确认覆盖' : '确认添加'),
@@ -445,7 +470,7 @@ class _ImportExportSettingsScreenState
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(overwrite ? '连接已覆盖' : '连接已添加'),
-            backgroundColor: Colors.green,
+            backgroundColor: LinearColors.success,
           ),
         );
 
@@ -457,7 +482,7 @@ class _ImportExportSettingsScreenState
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('导入失败: $e'), backgroundColor: Colors.red),
+          SnackBar(content: Text('导入失败: $e'), backgroundColor: LinearColors.error),
         );
       }
     }

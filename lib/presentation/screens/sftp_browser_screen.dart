@@ -140,7 +140,7 @@ class _SftpBrowserScreenState extends State<SftpBrowserScreen> {
       if (!mounted) return;
 
       // 显示进度对话框
-      showDialog(
+      showDialog<void>(
         context: context,
         barrierDismissible: false,
         builder: (context) => TransferProgressDialog(
@@ -186,7 +186,7 @@ class _SftpBrowserScreenState extends State<SftpBrowserScreen> {
       if (!mounted) return;
 
       // 显示进度对话框
-      showDialog(
+      showDialog<void>(
         context: context,
         barrierDismissible: false,
         builder: (context) => TransferProgressDialog(
@@ -386,7 +386,7 @@ class _SftpBrowserScreenState extends State<SftpBrowserScreen> {
   }
 
   void _showItemMenu(FileItem item) {
-    showModalBottomSheet(
+    showModalBottomSheet<void>(
       context: context,
       builder: (context) => Column(
         mainAxisSize: MainAxisSize.min,

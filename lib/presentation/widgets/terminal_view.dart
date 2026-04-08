@@ -358,7 +358,7 @@ class TerminalTabsView extends StatelessWidget {
     SshConnection connection,
     String errorMessage,
   ) {
-    showDialog(
+    showDialog<void>(
       context: context,
       builder: (context) => ErrorDetailDialog(
         connection: connection,
@@ -402,6 +402,7 @@ class TerminalTabsView extends StatelessWidget {
         final sessions = terminalProvider.sessions;
         final activeSessionId = terminalProvider.activeSessionId;
         final connections = connProvider.connections;
+        final theme = Theme.of(context);
 
         if (sessions.isEmpty) {
           return Center(
@@ -416,7 +417,7 @@ class TerminalTabsView extends StatelessWidget {
                 const SizedBox(height: LinearSpacing.spacing16),
                 Text(
                   '点击左侧连接以打开终端',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  style: theme.textTheme.titleMedium?.copyWith(
                     color: LinearColors.textTertiary,
                   ),
                 ),
@@ -482,25 +483,20 @@ class TerminalTabsView extends StatelessWidget {
                   // 下拉菜单按钮
                   PopupMenuButton<String>(
                     padding: EdgeInsets.zero,
-                    child: Material(
-                      color: Colors.transparent,
-                      child: InkWell(
-                        child: Container(
-                          margin: const EdgeInsets.symmetric(
-                            horizontal: LinearSpacing.spacing8,
-                            vertical: LinearSpacing.spacing8,
-                          ),
-                          decoration: BoxDecoration(
-                            color: const Color(0x05ffffff),
-                            borderRadius: BorderRadius.circular(LinearRadius.standard),
-                            border: Border.all(color: LinearColors.borderSolid),
-                          ),
-                          child: Icon(
-                            Icons.add,
-                            size: 20,
-                            color: LinearColors.accentInteractive,
-                          ),
-                        ),
+                    child: Container(
+                      margin: const EdgeInsets.symmetric(
+                        horizontal: LinearSpacing.spacing8,
+                        vertical: LinearSpacing.spacing8,
+                      ),
+                      decoration: BoxDecoration(
+                        color: const Color(0x05ffffff),
+                        borderRadius: BorderRadius.circular(LinearRadius.standard),
+                        border: Border.all(color: LinearColors.borderSolid),
+                      ),
+                      child: Icon(
+                        Icons.add,
+                        size: 20,
+                        color: LinearColors.accentInteractive,
                       ),
                     ),
                     itemBuilder: (context) {
@@ -645,7 +641,7 @@ class _TerminalTabState extends State<_TerminalTab> {
                     color: widget.isActive
                         ? LinearColors.textPrimary
                         : LinearColors.textTertiary,
-                    fontWeight: widget.isActive ? FontWeight.w500 : FontWeight.w400,
+                    fontWeight: widget.isActive ? FontWeight(510) : FontWeight.w400,
                   ),
                   overflow: TextOverflow.ellipsis,
                   maxLines: 1,

@@ -6,7 +6,7 @@ import '../screens/connection_form.dart';
 
 /// 紧凑型连接Logo列表组件
 class CompactConnectionList extends StatelessWidget {
-  final Function(SshConnection)? onConnectionTap;
+  final void Function(SshConnection)? onConnectionTap;
 
   const CompactConnectionList({super.key, this.onConnectionTap});
 
@@ -105,7 +105,7 @@ class CompactConnectionList extends StatelessWidget {
 
   void _showConnectionForm(BuildContext context, SshConnection? connection) {
     Navigator.of(context).push(
-      MaterialPageRoute(
+      MaterialPageRoute<void>(
         builder: (context) => ConnectionFormScreen(connection: connection),
       ),
     );

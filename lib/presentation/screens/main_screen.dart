@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../core/theme/app_theme.dart';
 import '../../data/models/ssh_connection.dart';
 import '../providers/terminal_provider.dart';
 import '../screens/sftp_browser_screen.dart';
@@ -33,7 +34,7 @@ class _MainScreenState extends State<MainScreen> {
     SshConnection connection,
     String errorMessage,
   ) {
-    showDialog(
+    showDialog<void>(
       context: context,
       builder: (context) => ErrorDetailDialog(
         connection: connection,
@@ -45,6 +46,7 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: LinearColors.background,
       body: Row(
         children: [
           // Connection list sidebar
@@ -75,9 +77,9 @@ class _MainScreenState extends State<MainScreen> {
               }
               // 然后打开 SFTP 页面
               if (context.mounted) {
-                Navigator.push(
+                Navigator.push<Object?>(
                   context,
-                  MaterialPageRoute(
+                  MaterialPageRoute<Object?>(
                     builder: (context) =>
                         SftpBrowserScreen(connection: connection),
                   ),
@@ -85,7 +87,7 @@ class _MainScreenState extends State<MainScreen> {
               }
             },
           ),
-          const VerticalDivider(width: 1),
+          Container(width: 1, color: LinearColors.borderStandard),
           // Terminal view
           const Expanded(child: TerminalTabsView()),
         ],

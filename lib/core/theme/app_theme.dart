@@ -18,6 +18,9 @@ class LinearColors {
   static const Color accentInteractive = Color(0xFF7170ff);
   static const Color accentHover = Color(0xFF828fff);
 
+  // Fill Colors
+  static Color fillSurface = const Color(0x05ffffff); // rgba(255,255,255,0.02)
+
   // Borders (semi-transparent)
   static Color borderSubtle = const Color(0x0Dffffff); // rgba(255,255,255,0.05)
   static Color borderStandard = const Color(0x14ffffff); // rgba(255,255,255,0.08)

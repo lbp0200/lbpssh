@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lbp_ssh/core/theme/app_theme.dart';
 import 'package:shimmer/shimmer.dart';
 
 class ShimmerLoading extends StatelessWidget {
@@ -16,8 +17,8 @@ class ShimmerLoading extends StatelessWidget {
     if (!isLoading) return child;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Shimmer.fromColors(
-      baseColor: isDark ? Colors.grey.shade800 : Colors.grey.shade300,
-      highlightColor: isDark ? Colors.grey.shade700 : Colors.grey.shade100,
+      baseColor: isDark ? LinearColors.surfaceElevated : Colors.grey.shade300,
+      highlightColor: isDark ? LinearColors.panel : Colors.grey.shade100,
       child: child,
     );
   }
