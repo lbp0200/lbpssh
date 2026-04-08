@@ -229,7 +229,7 @@ void main() {
           isCompact: false,
         ));
 
-        expect(find.byType(FloatingActionButton), findsOneWidget);
+        expect(find.byWidgetPredicate((w) => w is IconButton && (w.tooltip?.contains('添加连接') ?? false)), findsOneWidget);
       });
 
       testWidgets('Given compact mode, When rendered, Then does not show FAB',
@@ -257,7 +257,7 @@ void main() {
           isCompact: true,
         ));
 
-        expect(find.byType(FloatingActionButton), findsNothing);
+        expect(find.byWidgetPredicate((w) => w is IconButton && (w.tooltip?.contains('添加连接') ?? false)), findsNothing);
       });
     });
   });
