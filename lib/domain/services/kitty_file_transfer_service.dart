@@ -538,7 +538,7 @@ class KittyFileTransferService {
             break;
         }
       },
-      onError: (error) async {
+      onError: (Object error) async {
         await sink.close();
         if (!completer.isCompleted) {
           completer.completeError(error);

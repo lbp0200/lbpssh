@@ -1,3 +1,4 @@
+import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 
 /// 终端图形叠加层组件
@@ -33,7 +34,7 @@ class _GraphicsOverlayWidgetState extends State<GraphicsOverlayWidget> {
 
   void _startPolling() {
     Future.doWhile(() async {
-      await Future.delayed(const Duration(milliseconds: 100));
+      await Future<void>.delayed(const Duration(milliseconds: 100));
       if (mounted) {
         // 使用 setState 触发重建以检查新的图形
         setState(() {});
@@ -52,17 +53,17 @@ class _GraphicsOverlayWidgetState extends State<GraphicsOverlayWidget> {
 
   List<Widget> _buildImageWidgets() {
     final widgets = <Widget>[];
-    final placements = widget.graphicsManager.placements as Map;
+    final placements = widget.graphicsManager.placements as Map<Object, Object>;
 
     for (final entry in placements.entries) {
-      final placement = entry.value;
-      final image = widget.graphicsManager.getImage(placement.imageId);
+      final placement = entry.value as Map<String, Object>;
+      final image = widget.graphicsManager.getImage(placement['imageId'] as String);
       if (image == null) continue;
 
-      final x = placement.x * widget.cellWidth;
-      final y = (placement.y - widget.scrollOffset) * widget.cellHeight;
-      final width = placement.width * widget.cellWidth;
-      final height = placement.height * widget.cellHeight;
+      final x = (placement['x'] as num).toDouble() * widget.cellWidth;
+      final y = ((placement['y'] as num).toDouble() - widget.scrollOffset) * widget.cellHeight;
+      final width = (placement['width'] as num).toDouble() * widget.cellWidth;
+      final height = (placement['height'] as num).toDouble() * widget.cellHeight;
 
       // 跳过不可见的图片
       if (x + width < 0 || y + height < 0) continue;
@@ -75,7 +76,7 @@ class _GraphicsOverlayWidgetState extends State<GraphicsOverlayWidget> {
             width: width,
             height: height,
             child: RawImage(
-              image: image,
+              image: image as ui.Image?,
               fit: BoxFit.contain,
             ),
           ),

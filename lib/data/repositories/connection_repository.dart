@@ -60,7 +60,7 @@ class ConnectionRepository {
   Future<void> _loadCache() async {
     try {
       final content = await _configFile!.readAsString();
-      final List<dynamic> jsonList = jsonDecode(content);
+      final jsonList = jsonDecode(content) as List<dynamic>;
       _connectionsCache = {
         for (var json in jsonList)
           (json['id'] as String): SshConnection.fromJson(

@@ -14,14 +14,14 @@ class _Socks5ProxySocket implements SSHSocket {
   final Socket _socket;
   late final Stream<Uint8List> _stream;
   late final StreamController<Uint8List> _controller;
-  StreamSubscription? _subscription;
+  StreamSubscription<Object>? _subscription;
 
   _Socks5ProxySocket(Socket socket) : _socket = socket {
     _controller = StreamController<Uint8List>.broadcast();
     _stream = _controller.stream;
     _subscription = _socket.listen(
       (data) => _controller.add(data),
-      onError: (e) => _controller.addError(e),
+      onError: (Object e) => _controller.addError(e),
       onDone: () => _controller.close(),
     );
   }
@@ -379,7 +379,7 @@ class SshService implements TerminalInputService {
               _outputBuffer.write(data);
               _scheduleOutputFlush();
             },
-            onError: (error) {
+            onError: (Object error) {
               if (!_isDisposed && !_outputController.isClosed) {
                 _outputController.add('\r\n[输出流错误: $error]\r\n');
               }
@@ -397,7 +397,7 @@ class SshService implements TerminalInputService {
             (data) {
               _outputController.add(data);
             },
-            onError: (error) {
+            onError: (Object error) {
               if (!_isDisposed && !_outputController.isClosed) {
                 _outputController.add('\r\n[错误流错误: $error]\r\n');
               }
@@ -685,7 +685,7 @@ class SshService implements TerminalInputService {
     await jumpClient.execute(tunnelCmd);
 
     // 等待一下让隧道建立
-    await Future.delayed(const Duration(seconds: 2));
+    await Future<void>.delayed(const Duration(seconds: 2));
 
     _outputController.add('跳板机隧道建立成功 (本地端口: $localPort)\r\n');
 

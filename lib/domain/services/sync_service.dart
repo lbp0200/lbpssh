@@ -44,15 +44,15 @@ class SyncConfig {
 
   factory SyncConfig.fromJson(Map<String, dynamic> json) => SyncConfig(
     platform: SyncPlatform.values.firstWhere(
-      (e) => e.name == json['platform'],
+      (e) => e.name == (json['platform'] as String? ?? 'gist'),
       orElse: () => SyncPlatform.gist,
     ),
-    accessToken: json['accessToken'],
-    gistId: json['gistId'],
-    gistFileName: json['gistFileName'],
-    autoSync: json['autoSync'] ?? false,
+    accessToken: json['accessToken'] as String?,
+    gistId: json['gistId'] as String?,
+    gistFileName: json['gistFileName'] as String?,
+    autoSync: (json['autoSync'] as bool?) ?? false,
     syncIntervalMinutes:
-        json['syncIntervalMinutes'] ?? AppConstants.defaultSyncIntervalMinutes,
+        (json['syncIntervalMinutes'] as int?) ?? AppConstants.defaultSyncIntervalMinutes,
   );
 }
 
@@ -73,7 +73,7 @@ class SyncService with ChangeNotifier {
     final prefs = await SharedPreferences.getInstance();
     final configJson = prefs.getString(AppConstants.syncSettingsKey);
     if (configJson != null) {
-      _config = SyncConfig.fromJson(jsonDecode(configJson));
+      _config = SyncConfig.fromJson(jsonDecode(configJson) as Map<String, dynamic>);
     }
   }
 

@@ -198,7 +198,7 @@ class LocalTerminalService implements TerminalInputService {
                 _outputController.add(data);
               }
             },
-            onError: (error) {
+            onError: (Object error) {
               if (!_isShuttingDown) {
                 _outputController.add('\r\n[输出流错误: $error]\r\n');
               }
@@ -221,7 +221,7 @@ class LocalTerminalService implements TerminalInputService {
               _outputController.add('\r\n[进程已退出，退出码: $code]\r\n');
             }
           })
-          .catchError((error) {
+          .catchError((Object error) {
             if (!_isShuttingDown) {
               _pty = null;
               _stateController.add(false);
@@ -366,7 +366,7 @@ class LocalTerminalService implements TerminalInputService {
       sendInput(command);
       sendInput('\n');
 
-      await Future.delayed(const Duration(seconds: 2));
+      await Future<void>.delayed(const Duration(seconds: 2));
 
       await subscription.cancel();
       return buffer.toString();
@@ -396,7 +396,7 @@ class LocalTerminalService implements TerminalInputService {
       try {
         // 发送 Ctrl+D (EOF) 信号
         sendInput('\x04');
-        await Future.delayed(const Duration(milliseconds: 500));
+        await Future<void>.delayed(const Duration(milliseconds: 500));
 
         if (_pty != null) {
           _pty!.kill();
