@@ -104,6 +104,7 @@ class SshService implements TerminalInputService {
   final _stateController = StreamController<SshConnectionState>.broadcast();
   final _outputController = StreamController<String>.broadcast();
   SSHSession? _session;
+  Completer<void>? _sessionDoneCompleter;
 
   // 跳板机相关
   SSHClient? _jumpClient;
@@ -369,6 +370,9 @@ class SshService implements TerminalInputService {
         }
       }
       _session = session;
+      _sessionDoneCompleter = Completer<void>();
+      _session!.done.then((_) => _onSessionDone());
+
       // 使用 UTF-8 解码器正确处理多字节字符（如中文）
       _session!.stdout
           .cast<List<int>>()
@@ -383,9 +387,10 @@ class SshService implements TerminalInputService {
               if (!_isDisposed && !_outputController.isClosed) {
                 _outputController.add('\r\n[输出流错误: $error]\r\n');
               }
+              _onSessionDone();
             },
             onDone: () {
-              // 输出流关闭
+              _onSessionDone();
             },
             cancelOnError: false,
           );
@@ -450,8 +455,12 @@ class SshService implements TerminalInputService {
   void sendInput(String input) {
     if (_session != null && _state == SshConnectionState.connected) {
       // 使用 UTF-8 编码确保多字节字符（如中文）正确传输
-      final bytes = const Utf8Encoder().convert(input);
-      _session!.stdin.add(bytes);
+      try {
+        final bytes = const Utf8Encoder().convert(input);
+        _session!.stdin.add(bytes);
+      } catch (e) {
+        // stdin.add 在 session 已关闭时会失败，静默忽略
+      }
     }
   }
 
@@ -504,6 +513,23 @@ class SshService implements TerminalInputService {
     if (_isDisposed || _stateController.isClosed) return;
     _state = newState;
     _stateController.add(newState);
+  }
+
+  /// SSH session 意外断开时调用（由 _session.done 触发）
+  void _onSessionDone() {
+    if (_isDisposed) return;
+    if (_sessionDoneCompleter?.isCompleted == false) {
+      _sessionDoneCompleter?.complete();
+    }
+    _sessionDoneCompleter = null;
+    _session = null;
+    if (_state != SshConnectionState.disconnected &&
+        _state != SshConnectionState.error) {
+      _updateState(SshConnectionState.disconnected);
+      if (!_outputController.isClosed) {
+        _outputController.add('\r\n[连接已断开]\r\n');
+      }
+    }
   }
 
   /// 自动发现用户的默认shell环境
@@ -741,6 +767,9 @@ class SshService implements TerminalInputService {
 
     // 清理定时器
     _outputTimer?.cancel();
+    if (_sessionDoneCompleter?.isCompleted == false) {
+      _sessionDoneCompleter?.complete();
+    }
 
     disconnect();
 
