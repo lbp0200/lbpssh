@@ -58,7 +58,7 @@ void main() {
       // Simulate building terminal widgets
       for (int i = 0; i < 100; i++) {
         // Simulate widget construction overhead
-        final container = Container(
+        final container = SizedBox(
           width: 800,
           height: 600,
           child: Stack(

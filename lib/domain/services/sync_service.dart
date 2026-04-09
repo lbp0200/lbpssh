@@ -245,7 +245,7 @@ class SyncService with ChangeNotifier {
         'files': {
           fileName: {
             'content': utf8.decode(base64Decode(contentBase64)),
-            if (fileSha != null) 'sha': fileSha,
+            'sha': ?fileSha,
           },
         },
       };
@@ -365,7 +365,7 @@ class SyncService with ChangeNotifier {
         'files': {
           fileName: {
             'content': utf8.decode(base64Decode(contentBase64)),
-            if (fileSha != null) 'sha': fileSha,
+            'sha': ?fileSha,
           },
         },
       };

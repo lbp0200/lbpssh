@@ -370,12 +370,13 @@ class KittyFileTransferService {
     final buffer = StringBuffer();
 
     // 文件类型
-    if ((mode & 0x4000) != 0)
+    if ((mode & 0x4000) != 0) {
       buffer.write('d');
-    else if ((mode & 0xA000) != 0)
+    } else if ((mode & 0xA000) != 0) {
       buffer.write('l');
-    else
+    } else {
       buffer.write('-');
+    }
 
     // 所有者权限
     buffer.write((mode & 0x100) != 0 ? 'r' : '-');

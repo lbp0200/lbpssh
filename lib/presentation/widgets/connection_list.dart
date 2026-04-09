@@ -6,8 +6,8 @@ import '../providers/connection_provider.dart';
 import '../screens/connection_form.dart';
 
 class ConnectionList extends StatelessWidget {
-  final Function(SshConnection)? onConnectionTap;
-  final Function(SshConnection)? onSftpTap;
+  final void Function(SshConnection)? onConnectionTap;
+  final void Function(SshConnection)? onSftpTap;
   final bool isCompact;
 
   const ConnectionList({
@@ -114,7 +114,7 @@ class ConnectionList extends StatelessWidget {
 
   void _showConnectionForm(BuildContext context, SshConnection? connection) {
     Navigator.of(context).push(
-      MaterialPageRoute(
+      MaterialPageRoute<ConnectionFormScreen>(
         builder: (context) => ConnectionFormScreen(connection: connection),
       ),
     );
@@ -128,16 +128,16 @@ class ConnectionList extends StatelessWidget {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: Row(
+        title: const Row(
           children: [
             Icon(Icons.delete_outline, color: LinearColors.error),
-            const SizedBox(width: LinearSpacing.spacing8 + 2),
+            SizedBox(width: LinearSpacing.spacing8 + 2),
             Text('确认删除', style: TextStyle(color: LinearColors.textPrimary)),
           ],
         ),
         content: Text(
           '确定要删除连接 "${connection.name}" 吗？',
-          style: TextStyle(color: LinearColors.textSecondary),
+          style: const TextStyle(color: LinearColors.textSecondary),
         ),
         actions: [
           TextButton(
@@ -284,7 +284,7 @@ class _ConnectionListItemState extends State<_ConnectionListItem> {
                         color: LinearColors.textTertiary.withValues(alpha: 0.6),
                       ),
                       itemBuilder: (context) => [
-                        PopupMenuItem(
+                        const PopupMenuItem(
                           value: 'edit',
                           child: Row(
                             children: [
@@ -293,7 +293,7 @@ class _ConnectionListItemState extends State<_ConnectionListItem> {
                                 size: 18,
                                 color: LinearColors.textSecondary,
                               ),
-                              const SizedBox(width: LinearSpacing.spacing8 + 2),
+                              SizedBox(width: LinearSpacing.spacing8 + 2),
                               Text('编辑', style: TextStyle(color: LinearColors.textPrimary)),
                             ],
                           ),

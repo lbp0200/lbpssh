@@ -59,7 +59,7 @@ class ImportExportService {
       }
 
       // 写入文件
-      final jsonContent = JsonEncoder.withIndent('  ').convert(exportData);
+      final jsonContent = const JsonEncoder.withIndent('  ').convert(exportData);
       await File(outputFile).writeAsString(jsonContent);
 
       _status = ImportExportStatus.success;

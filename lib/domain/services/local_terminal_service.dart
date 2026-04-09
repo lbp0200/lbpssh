@@ -88,7 +88,7 @@ class LocalTerminalService implements TerminalInputService {
             final dirName = entity.path.split('/').last;
             if (dirName.toLowerCase() == targetName.toLowerCase()) {
               // 找到大小写匹配的目录
-              return '${basePath}/${dirName}';
+              return '$basePath/$dirName';
             }
           }
         }

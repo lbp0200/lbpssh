@@ -75,11 +75,11 @@ class _ImportExportSettingsScreenState
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
+            const Row(
               children: [
-                const Icon(Icons.info_outline),
-                const SizedBox(width: LinearSpacing.spacing8),
-                const Text(
+                Icon(Icons.info_outline),
+                SizedBox(width: LinearSpacing.spacing8),
+                Text(
                   '当前SSH连接统计',
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
@@ -162,7 +162,7 @@ class _ImportExportSettingsScreenState
           value,
           style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
-        Text(label, style: TextStyle(fontSize: 12, color: LinearColors.textQuaternary)),
+        Text(label, style: const TextStyle(fontSize: 12, color: LinearColors.textQuaternary)),
       ],
     );
   }
@@ -180,11 +180,11 @@ class _ImportExportSettingsScreenState
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
+            const Row(
               children: [
-                const Icon(Icons.file_upload),
-                const SizedBox(width: LinearSpacing.spacing8),
-                const Text(
+                Icon(Icons.file_upload),
+                SizedBox(width: LinearSpacing.spacing8),
+                Text(
                   '导出配置',
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
@@ -235,11 +235,11 @@ class _ImportExportSettingsScreenState
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
+            const Row(
               children: [
-                const Icon(Icons.file_download),
-                const SizedBox(width: LinearSpacing.spacing8),
-                const Text(
+                Icon(Icons.file_download),
+                SizedBox(width: LinearSpacing.spacing8),
+                Text(
                   '导入配置',
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
@@ -290,11 +290,11 @@ class _ImportExportSettingsScreenState
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
+            const Row(
               children: [
-                const Icon(Icons.preview),
-                const SizedBox(width: LinearSpacing.spacing8),
-                const Text(
+                Icon(Icons.preview),
+                SizedBox(width: LinearSpacing.spacing8),
+                Text(
                   '导入预览',
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
@@ -381,9 +381,9 @@ class _ImportExportSettingsScreenState
                 children: [
                   Text(summary),
                   const SizedBox(height: LinearSpacing.spacing16),
-                  Text(
+                  const Text(
                     '文件保存位置:',
-                    style: const TextStyle(fontWeight: FontWeight.bold),
+                    style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                   Text(file.path),
                 ],

@@ -54,7 +54,7 @@ class _LinearNavItemState extends State<_LinearNavItem> {
                 : (_isHovered ? const Color(0x05ffffff) : Colors.transparent),
             borderRadius: BorderRadius.circular(LinearRadius.standard),
             border: widget.isSelected
-                ? Border(
+                ? const Border(
                     left: BorderSide(
                       color: LinearColors.accentInteractive,
                       width: 2,
@@ -138,11 +138,11 @@ class _AppSettingsScreenState extends State<AppSettingsScreen> {
           Expanded(
             child: IndexedStack(
               index: _selectedIndex,
-              children: [
-                const TerminalSettingsPage(),
-                const ConnectionManagementPage(),
-                const ImportExportSettingsScreen(),
-                const SyncSettingsScreen(),
+              children: const [
+                TerminalSettingsPage(),
+                ConnectionManagementPage(),
+                ImportExportSettingsScreen(),
+                SyncSettingsScreen(),
               ],
             ),
           ),
@@ -798,7 +798,7 @@ class _TerminalSettingsPageState extends State<TerminalSettingsPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         DropdownButtonFormField<String>(
-          value: _popularFonts.contains(_config.fontFamily)
+          initialValue: _popularFonts.contains(_config.fontFamily)
               ? _config.fontFamily
               : null,
           decoration: const InputDecoration(
@@ -875,7 +875,7 @@ class _TerminalSettingsPageState extends State<TerminalSettingsPage> {
           decoration: BoxDecoration(
             border: Border.all(color: Theme.of(context).dividerColor),
             borderRadius: BorderRadius.circular(8),
-            color: Theme.of(context).colorScheme.surfaceVariant.withValues(alpha: 0.3),
+            color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -943,7 +943,7 @@ class ConnectionManagementPage extends StatelessWidget {
               ElevatedButton.icon(
                 onPressed: () {
                   Navigator.of(context).push(
-                    MaterialPageRoute(
+                    MaterialPageRoute<ConnectionFormScreen>(
                       builder: (context) =>
                           const ConnectionFormScreen(connection: null),
                     ),
@@ -1003,7 +1003,7 @@ class ConnectionManagementPage extends StatelessWidget {
                       ElevatedButton.icon(
                         onPressed: () {
                           Navigator.of(context).push(
-                            MaterialPageRoute(
+                            MaterialPageRoute<ConnectionFormScreen>(
                               builder: (context) =>
                                   const ConnectionFormScreen(connection: null),
                             ),
@@ -1079,7 +1079,7 @@ class _ConnectionManagementItem extends StatelessWidget {
           onSelected: (value) {
             if (value == 'edit') {
               Navigator.of(context).push(
-                MaterialPageRoute(
+                MaterialPageRoute<ConnectionFormScreen>(
                   builder: (context) =>
                       ConnectionFormScreen(connection: connection),
                 ),
@@ -1091,7 +1091,7 @@ class _ConnectionManagementItem extends StatelessWidget {
         ),
         onTap: () {
           Navigator.of(context).push(
-            MaterialPageRoute(
+            MaterialPageRoute<ConnectionFormScreen>(
               builder: (context) =>
                   ConnectionFormScreen(connection: connection),
             ),

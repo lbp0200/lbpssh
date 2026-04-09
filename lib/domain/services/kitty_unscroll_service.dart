@@ -144,7 +144,7 @@ class KittyUnscrollService {
     }
 
     // CSI startLine ; endLine r - 设置滚动区域
-    final cmd = '\x1b[${startLine};${endLine}r';
+    final cmd = '\x1b[$startLine;${endLine}r';
     _session.writeRaw(cmd);
   }
 

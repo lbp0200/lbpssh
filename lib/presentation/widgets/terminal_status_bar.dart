@@ -23,7 +23,7 @@ class TerminalStatusBar extends StatefulWidget {
 class _TerminalStatusBarState extends State<TerminalStatusBar> {
   Timer? _durationTimer;
   Duration _connectionDuration = Duration.zero;
-  String _latency = '--';
+  final String _latency = '--';
 
   @override
   void initState() {

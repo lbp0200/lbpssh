@@ -5,21 +5,21 @@ import 'package:lbp_ssh/l10n/app_localizations.dart';
 void main() {
   group('AppLocalizations Tests', () {
     test('should load Chinese localization', () {
-      final localizations = AppLocalizations(Locale('zh'));
+      final localizations = AppLocalizations(const Locale('zh'));
       expect(localizations.connect, '连接');
     });
 
     test('should load English localization', () {
-      final localizations = AppLocalizations(Locale('en'));
+      final localizations = AppLocalizations(const Locale('en'));
       expect(localizations.connect, 'Connect');
     });
 
     test('should support Chinese locale', () {
-      expect(AppLocalizations.delegate.isSupported(Locale('zh')), isTrue);
+      expect(AppLocalizations.delegate.isSupported(const Locale('zh')), isTrue);
     });
 
     test('should support English locale', () {
-      expect(AppLocalizations.delegate.isSupported(Locale('en')), isTrue);
+      expect(AppLocalizations.delegate.isSupported(const Locale('en')), isTrue);
     });
   });
 }

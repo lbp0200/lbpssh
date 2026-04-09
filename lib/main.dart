@@ -92,7 +92,7 @@ class MyApp extends StatelessWidget {
       themeMode: ThemeMode.system,
       home: const MainScreen(),
       debugShowCheckedModeBanner: false,
-      localizationsDelegates: [
+      localizationsDelegates: const [
         AppLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,

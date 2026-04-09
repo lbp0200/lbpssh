@@ -116,7 +116,7 @@ class SshService implements TerminalInputService {
   bool _hasShownLastLogin = false;
 
   /// OS 类型: 'Linux', 'Darwin' (macOS), 'Windows' 等
-  String _osType = 'Linux';
+  final String _osType = 'Linux';
 
   /// 获取 OS 类型
   String get osType => _osType;

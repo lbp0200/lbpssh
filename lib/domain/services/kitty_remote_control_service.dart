@@ -78,7 +78,7 @@ class KittyRemoteControlService {
     // 响应格式: ESC [ rows ; cols R
     // 实际响应通过回调处理
 
-    return TerminalInfo(); // 返回空对象，实际数据通过回调
+    return const TerminalInfo(); // 返回空对象，实际数据通过回调
   }
 
   /// 获取光标位置

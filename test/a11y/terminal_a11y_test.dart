@@ -25,11 +25,11 @@ void main() {
     testWidgets('focusable elements should be focusable', (tester) async {
       // 验证 Focus widget 可以正确构建
       await tester.pumpWidget(
-        MaterialApp(
+        const MaterialApp(
           home: Scaffold(
             body: Focus(
               autofocus: true,
-              child: const TextField(),
+              child: TextField(),
             ),
           ),
         ),

@@ -80,7 +80,7 @@ class AppTheme {
     useMaterial3: true,
     brightness: Brightness.light,
     scaffoldBackgroundColor: lightBackground,
-    colorScheme: ColorScheme.light(
+    colorScheme: const ColorScheme.light(
       primary: lightAccent,
       secondary: lightAccent,
       surface: lightSurface,

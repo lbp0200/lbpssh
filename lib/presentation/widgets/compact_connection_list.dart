@@ -189,12 +189,12 @@ class _CompactConnectionItem extends StatelessWidget {
                 ],
               ),
             ),
-            PopupMenuItem(
+            const PopupMenuItem(
               value: 'delete',
               child: Row(
                 children: [
-                  const Icon(Icons.delete, size: 20, color: Colors.red),
-                  const SizedBox(width: 8),
+                  Icon(Icons.delete, size: 20, color: Colors.red),
+                  SizedBox(width: 8),
                   Text('删除', style: TextStyle(color: Colors.red)),
                 ],
               ),

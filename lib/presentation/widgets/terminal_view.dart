@@ -493,7 +493,7 @@ class TerminalTabsView extends StatelessWidget {
                         borderRadius: BorderRadius.circular(LinearRadius.standard),
                         border: Border.all(color: LinearColors.borderSolid),
                       ),
-                      child: Icon(
+                      child: const Icon(
                         Icons.add,
                         size: 20,
                         color: LinearColors.accentInteractive,
@@ -627,7 +627,7 @@ class _TerminalTabState extends State<_TerminalTab> {
                     : Colors.transparent),
             borderRadius: BorderRadius.circular(LinearRadius.card),
             border: widget.isActive
-                ? Border(bottom: BorderSide(color: LinearColors.accentInteractive, width: 2))
+                ? const Border(bottom: BorderSide(color: LinearColors.accentInteractive, width: 2))
                 : null,
           ),
           child: Row(
@@ -641,7 +641,7 @@ class _TerminalTabState extends State<_TerminalTab> {
                     color: widget.isActive
                         ? LinearColors.textPrimary
                         : LinearColors.textTertiary,
-                    fontWeight: widget.isActive ? FontWeight(510) : FontWeight.w400,
+                    fontWeight: widget.isActive ? const FontWeight(510) : FontWeight.w400,
                   ),
                   overflow: TextOverflow.ellipsis,
                   maxLines: 1,
@@ -654,8 +654,8 @@ class _TerminalTabState extends State<_TerminalTab> {
                 child: InkWell(
                   onTap: widget.onClose,
                   borderRadius: BorderRadius.circular(LinearRadius.micro),
-                  child: Padding(
-                    padding: const EdgeInsets.all(LinearSpacing.spacing4),
+                  child: const Padding(
+                    padding: EdgeInsets.all(LinearSpacing.spacing4),
                     child: Icon(
                       Icons.close,
                       size: 16,
@@ -775,7 +775,7 @@ $error
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: theme.colorScheme.surfaceVariant,
+                color: theme.colorScheme.surfaceContainerHighest,
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Column(
