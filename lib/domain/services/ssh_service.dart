@@ -431,7 +431,9 @@ class SshService implements TerminalInputService {
       )) {
         output.add(data);
         if (!silent && !_isDisposed && !_outputController.isClosed) {
-          _outputController.add(data);
+          // 通过 _outputBuffer 路由，确保与交互输出的顺序一致
+          _outputBuffer.write(data);
+          _scheduleOutputFlush();
         }
       }
       return output.join();
