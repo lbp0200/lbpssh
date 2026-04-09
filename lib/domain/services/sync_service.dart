@@ -60,17 +60,20 @@ class SyncConfig {
 class SyncService with ChangeNotifier {
   final ConnectionRepository _repository;
   final Dio _dio;
+  final SharedPreferences? _prefs;
   SyncConfig? _config;
   SyncStatusEnum _status = SyncStatusEnum.idle;
   DateTime? _lastSyncTime;
 
-  SyncService(this._repository, {Dio? dio}) : _dio = dio ?? Dio() {
+  SyncService(this._repository, {Dio? dio, SharedPreferences? prefs})
+      : _dio = dio ?? Dio(),
+        _prefs = prefs {
     _loadConfig();
   }
 
   /// 加载同步配置
   Future<void> _loadConfig() async {
-    final prefs = await SharedPreferences.getInstance();
+    final prefs = _prefs ?? await SharedPreferences.getInstance();
     final configJson = prefs.getString(AppConstants.syncSettingsKey);
     if (configJson != null) {
       _config = SyncConfig.fromJson(jsonDecode(configJson) as Map<String, dynamic>);
@@ -80,7 +83,7 @@ class SyncService with ChangeNotifier {
   /// 保存同步配置
   Future<void> saveConfig(SyncConfig config) async {
     _config = config;
-    final prefs = await SharedPreferences.getInstance();
+    final prefs = _prefs ?? await SharedPreferences.getInstance();
     await prefs.setString(
       AppConstants.syncSettingsKey,
       jsonEncode(config.toJson()),
@@ -240,17 +243,13 @@ class SyncService with ChangeNotifier {
         fileSha = existingFile['sha'] as String?;
       }
 
-      final fileContent = <String, dynamic>{
-        'content': utf8.decode(base64Decode(contentBase64)),
-      };
-      if (fileSha != null) {
-        fileContent['sha'] = fileSha;
-      }
-
       final data = {
         'description': 'SSH Connections Config',
         'files': {
-          fileName: fileContent,
+          fileName: {
+            'content': utf8.decode(base64Decode(contentBase64)),
+            if (fileSha != null) 'sha': fileSha,
+          },
         },
       };
 
@@ -364,17 +363,13 @@ class SyncService with ChangeNotifier {
         fileSha = existingFile['sha'] as String?;
       }
 
-      final fileContent = <String, dynamic>{
-        'content': utf8.decode(base64Decode(contentBase64)),
-      };
-      if (fileSha != null) {
-        fileContent['sha'] = fileSha;
-      }
-
       final data = {
         'description': 'SSH Connections Config',
         'files': {
-          fileName: fileContent,
+          fileName: {
+            'content': utf8.decode(base64Decode(contentBase64)),
+            if (fileSha != null) 'sha': fileSha,
+          },
         },
       };
 

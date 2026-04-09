@@ -244,7 +244,7 @@ class KittyFileTransferEncoder {
     // 解析 OSC 5113 响应
     // 格式: ac=status;id=xxx;st=OK 或 ac=status;id=xxx;st=ERROR:message
     try {
-      final regex = RegExp(r'ac=status;id=([^;]+);st=([^:]+)(?::(.*))?');
+      final regex = RegExp(r'ac=status;id=([^;]+);st=([^:;]+)(?::(.*))?');
       final match = regex.firstMatch(response);
       if (match != null) {
         final sessionId = match.group(1)!;
@@ -421,7 +421,8 @@ class KittyFileTransferService {
     // 直接更新路径，不需要执行 cd 命令
     final parts = _currentPath.split('/');
     parts.removeLast();
-    _currentPath = parts.isEmpty ? '/' : parts.join('/');
+    _currentPath = parts.join('/');
+    if (_currentPath.isEmpty) _currentPath = '/';
   }
 
   /// 创建目录
