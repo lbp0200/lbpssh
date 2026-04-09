@@ -196,6 +196,8 @@ class LocalTerminalService implements TerminalInputService {
               if (!_isShuttingDown) {
                 // 直接输出，不做缓冲处理
                 _outputController.add(data);
+                // 背压控制：告知 PTY 应用已处理完本帧数据，可以发送下一帧
+                Future.microtask(() => _pty?.ackRead());
               }
             },
             onError: (Object error) {
