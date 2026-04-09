@@ -59,12 +59,12 @@ class SyncConfig {
 /// 配置同步服务
 class SyncService with ChangeNotifier {
   final ConnectionRepository _repository;
-  final Dio _dio = Dio();
+  final Dio _dio;
   SyncConfig? _config;
   SyncStatusEnum _status = SyncStatusEnum.idle;
   DateTime? _lastSyncTime;
 
-  SyncService(this._repository) {
+  SyncService(this._repository, {Dio? dio}) : _dio = dio ?? Dio() {
     _loadConfig();
   }
 
@@ -240,13 +240,17 @@ class SyncService with ChangeNotifier {
         fileSha = existingFile['sha'] as String?;
       }
 
+      final fileContent = <String, dynamic>{
+        'content': utf8.decode(base64Decode(contentBase64)),
+      };
+      if (fileSha != null) {
+        fileContent['sha'] = fileSha;
+      }
+
       final data = {
         'description': 'SSH Connections Config',
         'files': {
-          fileName: {
-            'content': utf8.decode(base64Decode(contentBase64)),
-            'sha': ?fileSha,
-          },
+          fileName: fileContent,
         },
       };
 
@@ -360,13 +364,17 @@ class SyncService with ChangeNotifier {
         fileSha = existingFile['sha'] as String?;
       }
 
+      final fileContent = <String, dynamic>{
+        'content': utf8.decode(base64Decode(contentBase64)),
+      };
+      if (fileSha != null) {
+        fileContent['sha'] = fileSha;
+      }
+
       final data = {
         'description': 'SSH Connections Config',
         'files': {
-          fileName: {
-            'content': utf8.decode(base64Decode(contentBase64)),
-            'sha': ?fileSha,
-          },
+          fileName: fileContent,
         },
       };
 
