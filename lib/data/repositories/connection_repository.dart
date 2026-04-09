@@ -10,8 +10,17 @@ class ConnectionRepository {
   File? _configFile;
   Map<String, SshConnection> _connectionsCache = {};
 
+  /// Creates a repository with a custom config file path.
+  /// Primarily intended for testing.
+  ConnectionRepository({File? configFile}) : _configFile = configFile;
+
   /// 初始化仓库
   Future<void> init() async {
+    if (_configFile != null) {
+      // Config file already set via constructor (e.g., for testing).
+      await _loadCache();
+      return;
+    }
     final dir = await getApplicationSupportDirectory();
     final configDir = Directory('${dir.path}/${AppConstants.configDirName}');
     if (!await configDir.exists()) {
