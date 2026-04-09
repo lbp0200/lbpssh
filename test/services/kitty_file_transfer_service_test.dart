@@ -949,6 +949,7 @@ drwxr-xr-x  2 user user 4096 2024-02-24 20:08 dir1
       late MockTerminalInputService mockInputService;
       late StreamController<FileTransferEvent> fileTransferController;
       late Directory tempDir;
+      late KittyFileTransferService service;
 
       setUp(() async {
         mockSession = MockTerminalSession();
@@ -962,9 +963,14 @@ drwxr-xr-x  2 user user 4096 2024-02-24 20:08 dir1
         when(() => mockSession.writeRaw(any())).thenReturn(null);
 
         tempDir = await Directory.systemTemp.createTemp('kitty_test_');
+        service = KittyFileTransferService(
+          session: mockSession,
+          initialPath: '/home/user',
+        );
       });
 
       tearDown(() async {
+        await service.dispose();
         await fileTransferController.close();
         if (await tempDir.exists()) {
           await tempDir.delete(recursive: true);
@@ -974,10 +980,6 @@ drwxr-xr-x  2 user user 4096 2024-02-24 20:08 dir1
       test(
           'Given session with fileTransferStream, When downloadFile called, Then sends recv OSC sequence',
           () async {
-        final service = KittyFileTransferService(
-          session: mockSession,
-          initialPath: '/home/user',
-        );
 
         // Start the download; it will timeout since we never emit 'end'
         final downloadFuture =

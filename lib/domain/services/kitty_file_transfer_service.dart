@@ -282,6 +282,7 @@ class KittyFileTransferService {
   final TerminalSession? _session;
   String _currentPath;
   SftpClient? _sftpClient;
+  IOSink? _activeDownloadSink;
 
   // ignore: prefer_const_constructors
   KittyFileTransferService({TerminalSession? session, String initialPath = '/'})
@@ -494,7 +495,8 @@ class KittyFileTransferService {
 
     // 创建本地文件
     final file = File(localPath);
-    final sink = file.openWrite();
+    _activeDownloadSink = file.openWrite();
+    final sink = _activeDownloadSink!;
 
     int transferred = 0;
     int totalSize = 0;
@@ -980,5 +982,11 @@ class KittyFileTransferService {
   Future<void> receiveFile(String sessionId, String remotePath) async {
     // 已由 downloadFile 实现
     throw UnimplementedError('请使用 downloadFile 方法');
+  }
+
+  /// 清理资源（关闭活动文件流）
+  Future<void> dispose() async {
+    await _activeDownloadSink?.close();
+    _activeDownloadSink = null;
   }
 }
