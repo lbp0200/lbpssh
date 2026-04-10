@@ -353,18 +353,19 @@ class SshService implements TerminalInputService {
       }
 
       // 创建交互式会话
+      // 修复：直接使用 PTY 模式，避免 pre-exec 消耗 MOTD
+      // 之前的 _getShellEnvironment() 会通过 execute() 打开额外通道，
+      // 导致首次通道被占用，欢迎信息只在第一个通道发送
       SSHSession? session;
       try {
-        // 第一次尝试：带环境变量
+        // 首选 PTY 模式（支持颜色、交互）
         session = await _client!.shell(
-          environment: await _getShellEnvironment(),
+          pty: const SSHPtyConfig(type: 'xterm', width: 80, height: 24),
         );
       } catch (e) {
-        // 第二次尝试：简化的 pty 配置
+        // 回退：不使用 PTY 的标准 shell
         try {
-          session = await _client!.shell(
-            pty: const SSHPtyConfig(type: 'xterm', width: 80, height: 24),
-          );
+          session = await _client!.shell();
         } catch (e2) {
           throw Exception('建立会话失败: $e2');
         }
@@ -530,109 +531,6 @@ class SshService implements TerminalInputService {
         _outputController.add('\r\n[连接已断开]\r\n');
       }
     }
-  }
-
-  /// 自动发现用户的默认shell环境
-  Future<Map<String, String>> _getShellEnvironment() async {
-    final environment = <String, String>{};
-
-    try {
-      // 尝试获取用户的默认shell
-      // 首先检查 $SHELL 环境变量
-      final session = await _client!.execute('echo \$SHELL');
-      String shellPath = '';
-
-      await for (final data in session.stdout.cast<List<int>>()) {
-        shellPath += String.fromCharCodes(data);
-      }
-      shellPath = shellPath.trim();
-
-      // 如果 \$SHELL 为空，尝试从 /etc/passwd 获取
-      if (shellPath.isEmpty) {
-        final passwdSession = await _client!.execute(
-          'grep "^\\\$(whoami):" /etc/passwd | cut -d: -f7',
-        );
-        await for (final data in passwdSession.stdout.cast<List<int>>()) {
-          shellPath += String.fromCharCodes(data);
-        }
-        shellPath = shellPath.trim();
-      }
-
-      // 设置SHELL环境变量
-      if (shellPath.isNotEmpty) {
-        environment['SHELL'] = shellPath;
-      } else {
-        // 默认常见的shell，按优先级排序
-        final commonShells = [
-          '/bin/zsh',
-          '/bin/bash',
-          '/bin/sh',
-          '/usr/bin/zsh',
-          '/usr/bin/bash',
-        ];
-
-        for (final shell in commonShells) {
-          try {
-            final testSession = await _client!.execute(
-              'test -x "$shell" && echo "$shell"',
-            );
-            String result = '';
-            await for (final data in testSession.stdout.cast<List<int>>()) {
-              result += String.fromCharCodes(data);
-            }
-            if (result.trim().isNotEmpty) {
-              environment['SHELL'] = shell;
-              break;
-            }
-          } catch (e) {
-            // 忽略错误，继续尝试下一个shell
-            continue;
-          }
-        }
-      }
-
-      // 设置其他常用的环境变量
-      environment['TERM'] = 'xterm-256color';
-      environment['LANG'] = 'en_US.UTF-8';
-      environment['LC_ALL'] = 'en_US.UTF-8';
-
-      // 尝试获取用户的HOME目录
-      try {
-        final homeSession = await _client!.execute('echo \$HOME');
-        String homePath = '';
-        await for (final data in homeSession.stdout.cast<List<int>>()) {
-          homePath += String.fromCharCodes(data);
-        }
-        homePath = homePath.trim();
-        if (homePath.isNotEmpty) {
-          environment['HOME'] = homePath;
-        }
-      } catch (e) {
-        // 忽略错误
-      }
-
-      // 尝试获取PATH
-      try {
-        final pathSession = await _client!.execute('echo \$PATH');
-        String pathValue = '';
-        await for (final data in pathSession.stdout.cast<List<int>>()) {
-          pathValue += String.fromCharCodes(data);
-        }
-        pathValue = pathValue.trim();
-        if (pathValue.isNotEmpty) {
-          environment['PATH'] = pathValue;
-        }
-      } catch (e) {
-        // 忽略错误
-      }
-    } catch (e) {
-      // 如果检测失败，使用最小环境变量
-      environment['SHELL'] = '/bin/bash';
-      environment['TERM'] = 'xterm-256color';
-      environment['LANG'] = 'en_US.UTF-8';
-    }
-
-    return environment;
   }
 
   /// 通过跳板机连接到目标服务器
