@@ -2,10 +2,20 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:dartssh2/dartssh2.dart';
+import 'package:test/test.dart';
+import 'ssh_test_utils.dart';
 
-Future<void> main() async {
+void main() {
+  test('Direct SSH connection (requires SSH server)', () async {
+    await _runTest();
+  }, skip: !shouldRunSSHIntegrationTests
+      ? 'Set ENABLE_SSH_INTEGRATION_TESTS=1 to run SSH integration tests'
+      : null);
+}
+
+Future<void> _runTest() async {
   print('=' * 70);
-  print('SSH Direct Connection Test - 192.168.1.250');
+  print('SSH Direct Connection Test - $sshTestHost');
   print('=' * 70);
   print('');
 
@@ -14,17 +24,17 @@ Future<void> main() async {
   try {
     print('Step 1: TCP connect...');
     final socket = await SSHSocket.connect(
-      '192.168.1.250',
+      sshTestHost,
       22,
       timeout: Duration(seconds: 5),
     );
     print('  ✓ Connected in ${stopwatch.elapsedMilliseconds}ms');
 
     print('\nStep 2: Loading SSH keys...');
-    final identities = await _loadIdentities();
+    final identities = await loadTestIdentities();
     if (identities.isEmpty) {
       stderr.writeln('✗ No SSH identities found');
-      exit(1);
+      fail('No SSH identities found');
     }
     print('  ✓ Loaded ${identities.length} key pair(s)');
 
@@ -99,6 +109,12 @@ Future<void> main() async {
       stdout.writeln('✓ Output appears complete');
     }
 
+    // Assertions
+    expect(full.length, greaterThan(1000), reason: 'Should have substantial output');
+    expect(lines.length, greaterThan(20), reason: 'Should have many lines');
+    expect(full.contains('Linux'), isTrue, reason: 'Should contain Linux info');
+    expect(full.contains('Last login:'), isTrue, reason: 'Should have login marker');
+
     session.close();
     client.close();
     await socket.close();
@@ -106,27 +122,6 @@ Future<void> main() async {
   } catch (e, st) {
     stderr.writeln('✗ Error: $e');
     if (st.toString().isNotEmpty) stderr.writeln(st);
-    exit(1);
+    rethrow;
   }
-}
-
-Future<List<SSHKeyPair>> _loadIdentities() async {
-  final identities = <SSHKeyPair>[];
-  final home = Platform.environment['HOME'] ?? '/Users/lbp';
-  final paths = ['$home/.ssh/id_rsa', '$home/.ssh/id_ed25519', '$home/.ssh/id_ecdsa'];
-
-  for (final p in paths) {
-    final f = File(p);
-    if (await f.exists()) {
-      try {
-        final content = await f.readAsString();
-        final pairs = SSHKeyPair.fromPem(content);
-        identities.addAll(pairs);
-        print('  ✓ $p (${pairs.length} pair(s))');
-      } catch (e) {
-        stderr.writeln('  ✗ Failed $p: $e');
-      }
-    }
-  }
-  return identities;
 }

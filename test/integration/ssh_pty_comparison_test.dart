@@ -2,17 +2,27 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:dartssh2/dartssh2.dart';
+import 'package:test/test.dart';
+import 'ssh_test_utils.dart';
 
-Future<void> main() async {
+void main() {
+  test('PTY vs NON-PTY comparison (requires SSH server)', () async {
+    await _runComparison();
+  }, skip: !shouldRunSSHIntegrationTests
+      ? 'Set ENABLE_SSH_INTEGRATION_TESTS=1 to run SSH integration tests'
+      : null);
+}
+
+Future<void> _runComparison() async {
   print('=' * 70);
   print('PTY vs NON-PTY Shell Comparison Test');
   print('=' * 70);
   print('');
 
-  final socket = await SSHSocket.connect('192.168.1.250', 22, timeout: Duration(seconds: 5));
-  print('✓ Connected to 192.168.1.250');
+  final socket = await SSHSocket.connect(sshTestHost, 22, timeout: Duration(seconds: 5));
+  print('✓ Connected to $sshTestHost');
 
-  final identities = await _loadIdentities();
+  final identities = await loadTestIdentities();
   final client = SSHClient(socket, username: 'lbp', identities: identities);
   print('✓ Authenticated\n');
 
@@ -36,13 +46,12 @@ Future<void> main() async {
   print(fullOut1);
   print('');
 
-  // Test 2: shell with PTY - use a fresh client/connection
+  // Test 2: shell with PTY - fresh connection
   print('--- Test 2: shell() with PTY (xterm 80x24) ---');
-  // Close old socket and create new connection to isolate PTY behavior
   client.close();
   await socket.close();
 
-  final socket2 = await SSHSocket.connect('192.168.1.250', 22, timeout: Duration(seconds: 5));
+  final socket2 = await SSHSocket.connect(sshTestHost, 22, timeout: Duration(seconds: 5));
   final client2 = SSHClient(socket2, username: 'lbp', identities: identities);
 
   final session2 = await client2.shell(pty: SSHPtyConfig(type: 'xterm', width: 80, height: 24));
@@ -66,22 +75,9 @@ Future<void> main() async {
   client2.close();
   await socket2.close();
 
-  client.close();
-  await socket.close();
+  // Assertions
+  expect(lines1.length, greaterThan(5), reason: 'Non-PTY should have full banner');
+  expect(lines2.length, greaterThan(5), reason: 'PTY should have full banner');
+  expect(fullOut2.length, greaterThan(1000), reason: 'PTY output should be substantial');
   print('✓ Test complete');
-}
-
-int min(int a, int b) => a < b ? a : b;
-
-Future<List<SSHKeyPair>> _loadIdentities() async {
-  final identities = <SSHKeyPair>[];
-  final home = Platform.environment['HOME'] ?? '/Users/lbp';
-  final keyPath = '$home/.ssh/id_rsa';
-  final file = File(keyPath);
-  if (await file.exists()) {
-    final content = await file.readAsString();
-    identities.addAll(SSHKeyPair.fromPem(content));
-    print('✓ Loaded SSH key');
-  }
-  return identities;
 }

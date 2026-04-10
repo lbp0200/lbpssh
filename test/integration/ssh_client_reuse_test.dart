@@ -2,16 +2,24 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:dartssh2/dartssh2.dart';
+import 'package:test/test.dart';
+import 'ssh_test_utils.dart';
 
-/// Test: Does reusing SSH client cause PTY output truncation?
-/// Runs PTY test FIRST, then non-PTY on same client
-void main() async {
+void main() {
+  test('SSH client reuse MOTD behavior (requires SSH server)', () async {
+    await _runTest();
+  }, skip: !shouldRunSSHIntegrationTests
+      ? 'Set ENABLE_SSH_INTEGRATION_TESTS=1 to run SSH integration tests'
+      : null);
+}
+
+Future<void> _runTest() async {
   print('=== Client Reuse Test: PTY First ===\n');
 
-  final socket = await SSHSocket.connect('192.168.1.250', 22, timeout: Duration(seconds: 5));
+  final socket = await SSHSocket.connect(sshTestHost, 22, timeout: Duration(seconds: 5));
   print('✓ Socket connected');
 
-  final identities = await _loadIdentities();
+  final identities = await loadTestIdentities();
   final client = SSHClient(socket, username: 'lbp', identities: identities);
   print('✓ Authenticated\n');
 
@@ -28,8 +36,8 @@ void main() async {
   print('First 300: ${fullOut1.substring(0, min(300, fullOut1.length))}');
   print('');
 
-  // Test 2: Non-PTY SECOND
-  print('--- Test 2: shell() without PTY ---');
+  // Test 2: Non-PTY SECOND (on same client)
+  print('--- Test 2: shell() without PTY (same client) ---');
   final session2 = await client.shell();
   final out2 = StringBuffer();
   final sub2 = session2.stdout.cast<List<int>>().transform(utf8.decoder).listen(out2.write);
@@ -43,24 +51,11 @@ void main() async {
 
   client.close();
   await socket.close();
-  print('✓ Test complete');
+
+  // Verify: First channel gets MOTD, second doesn't
+  expect(fullOut1.length, greaterThan(1000), reason: 'First channel should have full MOTD');
+  expect(fullOut2.length, lessThan(500), reason: 'Second channel on same client gets truncated');
+  print('✓ Confirmed: MOTD only on first channel per SSH connection');
 }
 
 int min(int a, int b) => a < b ? a : b;
-
-Future<List<SSHKeyPair>> _loadIdentities() async {
-  final identities = <SSHKeyPair>[];
-  final home = Platform.environment['HOME'] ?? '/Users/lbp';
-  final keyPath = '$home/.ssh/id_rsa';
-  final file = File(keyPath);
-  if (await file.exists()) {
-    try {
-      final keyContent = await file.readAsString();
-      identities.addAll(SSHKeyPair.fromPem(keyContent));
-      print('✓ Loaded ${identities.length} key(s)');
-    } catch (e) {
-      print('✗ Error: $e');
-    }
-  }
-  return identities;
-}
