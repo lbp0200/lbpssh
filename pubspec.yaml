@@ -116,7 +116,7 @@ dev_dependencies:
     sdk: flutter
 
   # Mocking
-  mocktail: ^1.0.4
+  mocktail: ^1.0.5
 
   # 代码生成
   build_runner: ^2.10.5
