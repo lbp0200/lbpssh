@@ -377,7 +377,7 @@ class SshService implements TerminalInputService {
       // 使用 UTF-8 解码器正确处理多字节字符（如中文）
       _session!.stdout
           .cast<List<int>>()
-          .transform(const Utf8Decoder())
+          .transform(const Utf8Decoder(allowMalformed: true))
           .listen(
             (data) {
               // 性能优化：批量处理输出
@@ -398,7 +398,7 @@ class SshService implements TerminalInputService {
 
       _session!.stderr
           .cast<List<int>>()
-          .transform(const Utf8Decoder())
+          .transform(const Utf8Decoder(allowMalformed: true))
           .listen(
             (data) {
               _outputController.add(data);
@@ -433,7 +433,7 @@ class SshService implements TerminalInputService {
       final session = await _client!.execute(command);
       final output = <String>[];
       await for (final data in session.stdout.cast<List<int>>().transform(
-        const Utf8Decoder(),
+        const Utf8Decoder(allowMalformed: true),
       )) {
         output.add(data);
         if (!silent && !_isDisposed && !_outputController.isClosed) {

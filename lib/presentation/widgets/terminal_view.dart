@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -239,8 +240,24 @@ class _TerminalViewWithSelectionState extends State<_TerminalViewWithSelection> 
   @override
   Widget build(BuildContext context) {
     final graphicsManager = widget.terminal.graphicsManager as dynamic;
-    final cellWidth = widget.config.fontSize * 0.6;
-    final cellHeight = widget.config.fontSize * widget.config.lineHeight;
+
+    // 使用与 kterm TerminalPainter._measureCharSize() 完全相同的计算方式
+    // 这样 GraphicsOverlayWidget 中的图片位置与终端字符单元格精确对齐
+    final fontFamily = widget.config.fontFamily.isEmpty ? 'Menlo' : widget.config.fontFamily;
+    final textStyle = TextStyle(
+      fontSize: widget.config.fontSize,
+      fontFamily: fontFamily,
+      height: widget.config.lineHeight,
+    );
+
+    // 使用 10 个 'm' 字符测量，与 kterm 内部逻辑一致
+    const measureChars = 'mmmmmmmmmm';
+    final fontWidth = _measureCharWidth(textStyle, measureChars.length);
+    final fontHeight = _measureCharHeight(textStyle);
+
+    // kterm 内部使用 maxIntrinsicWidth / 10 来计算 cellWidth
+    final cellWidth = fontWidth / measureChars.length;
+    final cellHeight = fontHeight;
 
     return Stack(
       children: [
@@ -260,7 +277,7 @@ class _TerminalViewWithSelectionState extends State<_TerminalViewWithSelection> 
               keyboardType: TextInputType.text,
               textStyle: TerminalStyle(
                 fontSize: widget.config.fontSize,
-                fontFamily: widget.config.fontFamily.isEmpty ? 'Menlo' : widget.config.fontFamily,
+                fontFamily: fontFamily,
                 height: widget.config.lineHeight,
               ),
               theme: TerminalTheme(
@@ -303,8 +320,34 @@ class _TerminalViewWithSelectionState extends State<_TerminalViewWithSelection> 
       ],
     );
   }
-}
 
+  /// 测量字符宽度（与 kterm TerminalPainter._measureCharSize 相同逻辑）
+  double _measureCharWidth(TextStyle style, int charCount) {
+    final paragraph = _buildParagraph(style, 'm' * charCount);
+    final width = paragraph.maxIntrinsicWidth;
+    paragraph.dispose();
+    return width;
+  }
+
+  /// 测量字符高度（与 kterm TerminalPainter._measureCharSize 相同逻辑）
+  double _measureCharHeight(TextStyle style) {
+    final paragraph = _buildParagraph(style, 'm');
+    final height = paragraph.height;
+    paragraph.dispose();
+    return height;
+  }
+
+  ui.Paragraph _buildParagraph(TextStyle style, String text) {
+    final builder = ui.ParagraphBuilder(
+      style.getParagraphStyle(),
+    );
+    builder.pushStyle(style.getTextStyle(textScaler: const TextScaler.linear(1.0)));
+    builder.addText(text);
+    final paragraph = builder.build();
+    paragraph.layout(const ui.ParagraphConstraints(width: double.infinity));
+    return paragraph;
+  }
+}
 
 /// 终端标签页视图
 class TerminalTabsView extends StatelessWidget {
@@ -424,7 +467,7 @@ class TerminalTabsView extends StatelessWidget {
                 const SizedBox(height: LinearSpacing.spacing16),
                 Container(
                   decoration: BoxDecoration(
-                    color: const Color(0x05ffffff),
+                    color: LinearColors.fillSurface,
                     borderRadius: BorderRadius.circular(LinearRadius.standard),
                     border: Border.all(color: LinearColors.borderSolid),
                   ),
@@ -489,7 +532,7 @@ class TerminalTabsView extends StatelessWidget {
                         vertical: LinearSpacing.spacing8,
                       ),
                       decoration: BoxDecoration(
-                        color: const Color(0x05ffffff),
+                        color: LinearColors.fillSurface,
                         borderRadius: BorderRadius.circular(LinearRadius.standard),
                         border: Border.all(color: LinearColors.borderSolid),
                       ),
@@ -623,7 +666,7 @@ class _TerminalTabState extends State<_TerminalTab> {
             color: widget.isActive
                 ? LinearColors.surface
                 : (_isHovered
-                    ? const Color(0x05ffffff)
+                    ? LinearColors.fillSurface
                     : Colors.transparent),
             borderRadius: BorderRadius.circular(LinearRadius.card),
             border: widget.isActive
@@ -773,10 +816,10 @@ $error
           children: [
             // 连接信息
             Container(
-              padding: const EdgeInsets.all(12),
+              padding: const EdgeInsets.all(LinearSpacing.spacing12),
               decoration: BoxDecoration(
                 color: theme.colorScheme.surfaceContainerHighest,
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: BorderRadius.circular(LinearRadius.standard),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -807,11 +850,11 @@ $error
             const SizedBox(height: 8),
             Container(
               width: double.infinity,
-              padding: const EdgeInsets.all(12),
+              padding: const EdgeInsets.all(LinearSpacing.spacing12),
               decoration: BoxDecoration(
                 color: theme.colorScheme.errorContainer.withValues(alpha: 0.3),
                 border: Border.all(color: theme.colorScheme.error.withValues(alpha: 0.5)),
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: BorderRadius.circular(LinearRadius.standard),
               ),
               child: SelectableText(
                 widget.errorMessage,
@@ -911,7 +954,7 @@ $error
         const SizedBox(height: 8),
         Container(
           width: double.infinity,
-          padding: const EdgeInsets.all(12),
+          padding: const EdgeInsets.all(LinearSpacing.spacing12),
           decoration: BoxDecoration(
             color: (isPtyError
                     ? theme.colorScheme.errorContainer.withValues(alpha: 0.1)
@@ -922,7 +965,7 @@ $error
                       ? theme.colorScheme.error.withValues(alpha: 0.3)
                       : theme.colorScheme.primary.withValues(alpha: 0.3)),
             ),
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(LinearRadius.standard),
           ),
           child: SelectableText(
             hint,

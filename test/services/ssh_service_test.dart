@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:typed_data';
 import 'package:dartssh2/dartssh2.dart';
-import 'package:flutter/widgets.dart' show TestWidgetsFlutterBinding;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:lbp_ssh/domain/services/ssh_service.dart';
@@ -96,7 +95,9 @@ SshConnection makeConnection({
   );
 }
 
-MockAppConfigService createMockAppConfigService({int keepaliveInterval = 30000}) {
+MockAppConfigService createMockAppConfigService({
+  int keepaliveInterval = 30000,
+}) {
   final mock = MockAppConfigService();
   final mockSsh = MockSshConfig();
   when(() => mockSsh.keepaliveInterval).thenReturn(keepaliveInterval);
@@ -124,8 +125,7 @@ void main() {
   // SshService Constructor
   // -------------------------------------------------------------------------
   group('SshService constructor', () {
-    test(
-        'Given SshService without AppConfigService, '
+    test('Given SshService without AppConfigService, '
         'When created, '
         'Then service is functional (uses default AppConfigService)', () {
       // Act
@@ -137,8 +137,7 @@ void main() {
       expect(service, isA<SshService>());
     });
 
-    test(
-        'Given SshService with AppConfigService, '
+    test('Given SshService with AppConfigService, '
         'When created, '
         'Then service uses provided AppConfigService', () {
       final mockConfig = createMockAppConfigService(keepaliveInterval: 60000);
@@ -157,8 +156,7 @@ void main() {
   // resize()
   // -------------------------------------------------------------------------
   group('resize()', () {
-    test(
-        'Given session is null, '
+    test('Given session is null, '
         'When resize called, '
         'Then does not throw', () {
       final mockConfig = createMockAppConfigService();
@@ -167,8 +165,7 @@ void main() {
       expect(() => service.resize(24, 80), returnsNormally);
     });
 
-    test(
-        'Given session is null, '
+    test('Given session is null, '
         'When resize called with zero dimensions, '
         'Then does not throw', () {
       final mockConfig = createMockAppConfigService();
@@ -177,8 +174,7 @@ void main() {
       expect(() => service.resize(0, 0), returnsNormally);
     });
 
-    test(
-        'Given session is null, '
+    test('Given session is null, '
         'When resize called with negative dimensions, '
         'Then does not throw', () {
       final mockConfig = createMockAppConfigService();
@@ -192,8 +188,7 @@ void main() {
   // sendInput()
   // -------------------------------------------------------------------------
   group('sendInput()', () {
-    test(
-        'Given not connected, '
+    test('Given not connected, '
         'When sendInput called, '
         'Then does nothing (no throw)', () {
       final mockConfig = createMockAppConfigService();
@@ -202,8 +197,7 @@ void main() {
       expect(() => service.sendInput('hello'), returnsNormally);
     });
 
-    test(
-        'Given not connected, '
+    test('Given not connected, '
         'When sendInput called with empty string, '
         'Then does nothing (no throw)', () {
       final mockConfig = createMockAppConfigService();
@@ -217,8 +211,7 @@ void main() {
   // disconnect()
   // -------------------------------------------------------------------------
   group('disconnect()', () {
-    test(
-        'Given already disposed, '
+    test('Given already disposed, '
         'When disconnect called, '
         'Then does nothing (no throw)', () async {
       final mockConfig = createMockAppConfigService();
@@ -228,8 +221,7 @@ void main() {
       expect(() => service.disconnect(), returnsNormally);
     });
 
-    test(
-        'Given disconnected, '
+    test('Given disconnected, '
         'When disconnect called, '
         'Then emits disconnected state', () async {
       final mockConfig = createMockAppConfigService();
@@ -243,8 +235,7 @@ void main() {
       expect(states, contains(SshConnectionState.disconnected));
     });
 
-    test(
-        'Given connecting state, '
+    test('Given connecting state, '
         'When disconnect called, '
         'Then emits disconnected state', () async {
       final mockConfig = createMockAppConfigService();
@@ -258,8 +249,7 @@ void main() {
       expect(states, contains(SshConnectionState.disconnected));
     });
 
-    test(
-        'Given error state, '
+    test('Given error state, '
         'When disconnect called, '
         'Then emits disconnected state', () async {
       final mockConfig = createMockAppConfigService();
@@ -278,8 +268,7 @@ void main() {
   // outputStream
   // -------------------------------------------------------------------------
   group('outputStream', () {
-    test(
-        'Given disposed, '
+    test('Given disposed, '
         'When output received, '
         'Then outputStream does not emit', () async {
       final mockConfig = createMockAppConfigService();
@@ -293,8 +282,7 @@ void main() {
       expect(outputs, isEmpty);
     });
 
-    test(
-        'Given not disposed, '
+    test('Given not disposed, '
         'When output received, '
         'Then outputStream is available', () async {
       final mockConfig = createMockAppConfigService();
@@ -314,8 +302,7 @@ void main() {
   // state property
   // -------------------------------------------------------------------------
   group('state property', () {
-    test(
-        'Given initial state, '
+    test('Given initial state, '
         'When created, '
         'Then state is disconnected', () {
       final mockConfig = createMockAppConfigService();
@@ -324,8 +311,7 @@ void main() {
       expect(service.state, SshConnectionState.disconnected);
     });
 
-    test(
-        'Given after disconnect, '
+    test('Given after disconnect, '
         'When state accessed, '
         'Then state is disconnected', () async {
       final mockConfig = createMockAppConfigService();
@@ -340,8 +326,7 @@ void main() {
   // sshStateStream
   // -------------------------------------------------------------------------
   group('sshStateStream', () {
-    test(
-        'Given subscribed, '
+    test('Given subscribed, '
         'When state changes, '
         'Then stream emits new state', () async {
       final mockConfig = createMockAppConfigService();
@@ -355,8 +340,7 @@ void main() {
       expect(states.last, SshConnectionState.disconnected);
     });
 
-    test(
-        'Given multiple subscribers, '
+    test('Given multiple subscribers, '
         'When state changes, '
         'Then all subscribers receive the state', () async {
       final mockConfig = createMockAppConfigService();
@@ -373,8 +357,7 @@ void main() {
       expect(states2.last, SshConnectionState.disconnected);
     });
 
-    test(
-        'Given stream listened to after state change, '
+    test('Given stream listened to after state change, '
         'Then does not receive past states', () async {
       final mockConfig = createMockAppConfigService();
       final service = SshService(appConfigService: mockConfig);
@@ -394,52 +377,35 @@ void main() {
   // connect() — Error handling (validation before socket creation)
   // -------------------------------------------------------------------------
   group('connect() error handling', () {
-    test(
-        'Given missing password, '
+    test('Given missing password, '
         'When connect called with password auth, '
         'Then throws Exception', () async {
       final mockConfig = createMockAppConfigService();
       final service = SshService(appConfigService: mockConfig);
 
-      final conn = makeConnection(
-        authType: AuthType.password,
-        password: null,
-      );
+      final conn = makeConnection(authType: AuthType.password, password: null);
 
       await expectLater(
         () => service.connect(conn),
-        throwsA(
-          predicate<Exception>(
-            (e) => e.toString().contains('密码'),
-          ),
-        ),
+        throwsA(predicate<Exception>((e) => e.toString().contains('密码'))),
       );
     });
 
-    test(
-        'Given empty password, '
+    test('Given empty password, '
         'When connect called with password auth, '
         'Then throws Exception', () async {
       final mockConfig = createMockAppConfigService();
       final service = SshService(appConfigService: mockConfig);
 
-      final conn = makeConnection(
-        authType: AuthType.password,
-        password: '',
-      );
+      final conn = makeConnection(authType: AuthType.password, password: '');
 
       await expectLater(
         () => service.connect(conn),
-        throwsA(
-          predicate<Exception>(
-            (e) => e.toString().contains('密码'),
-          ),
-        ),
+        throwsA(predicate<Exception>((e) => e.toString().contains('密码'))),
       );
     });
 
-    test(
-        'Given missing privateKeyContent, '
+    test('Given missing privateKeyContent, '
         'When connect called with key auth, '
         'Then throws Exception', () async {
       final mockConfig = createMockAppConfigService();
@@ -452,16 +418,11 @@ void main() {
 
       await expectLater(
         () => service.connect(conn),
-        throwsA(
-          predicate<Exception>(
-            (e) => e.toString().contains('私钥'),
-          ),
-        ),
+        throwsA(predicate<Exception>((e) => e.toString().contains('私钥'))),
       );
     });
 
-    test(
-        'Given missing keyPassphrase, '
+    test('Given missing keyPassphrase, '
         'When connect called with keyWithPassword auth, '
         'Then throws Exception', () async {
       final mockConfig = createMockAppConfigService();
@@ -476,16 +437,11 @@ void main() {
 
       await expectLater(
         () => service.connect(conn),
-        throwsA(
-          predicate<Exception>(
-            (e) => e.toString().contains('密钥密码'),
-          ),
-        ),
+        throwsA(predicate<Exception>((e) => e.toString().contains('密钥密码'))),
       );
     });
 
-    test(
-        'Given missing sshConfigHost, '
+    test('Given missing sshConfigHost, '
         'When connect called with sshConfig auth, '
         'Then throws Exception', () async {
       final mockConfig = createMockAppConfigService();
@@ -499,9 +455,7 @@ void main() {
       await expectLater(
         () => service.connect(conn),
         throwsA(
-          predicate<Exception>(
-            (e) => e.toString().contains('SSH Config'),
-          ),
+          predicate<Exception>((e) => e.toString().contains('SSH Config')),
         ),
       );
     });
@@ -511,8 +465,7 @@ void main() {
   // executeCommand()
   // -------------------------------------------------------------------------
   group('executeCommand()', () {
-    test(
-        'Given not connected, '
+    test('Given not connected, '
         'When executeCommand called, '
         'Then throws Exception', () async {
       final mockConfig = createMockAppConfigService();
@@ -520,16 +473,11 @@ void main() {
 
       await expectLater(
         () => service.executeCommand('ls'),
-        throwsA(
-          predicate<Exception>(
-            (e) => e.toString().contains('未连接到服务器'),
-          ),
-        ),
+        throwsA(predicate<Exception>((e) => e.toString().contains('未连接到服务器'))),
       );
     });
 
-    test(
-        'Given disconnected, '
+    test('Given disconnected, '
         'When executeCommand called, '
         'Then throws Exception', () async {
       final mockConfig = createMockAppConfigService();
@@ -538,16 +486,11 @@ void main() {
 
       await expectLater(
         () => service.executeCommand('ls'),
-        throwsA(
-          predicate<Exception>(
-            (e) => e.toString().contains('未连接到服务器'),
-          ),
-        ),
+        throwsA(predicate<Exception>((e) => e.toString().contains('未连接到服务器'))),
       );
     });
 
-    test(
-        'Given not connected, '
+    test('Given not connected, '
         'When executeCommand called with silent flag, '
         'Then throws Exception', () async {
       final mockConfig = createMockAppConfigService();
@@ -555,11 +498,7 @@ void main() {
 
       await expectLater(
         () => service.executeCommand('ls', silent: true),
-        throwsA(
-          predicate<Exception>(
-            (e) => e.toString().contains('未连接到服务器'),
-          ),
-        ),
+        throwsA(predicate<Exception>((e) => e.toString().contains('未连接到服务器'))),
       );
     });
   });
@@ -568,8 +507,7 @@ void main() {
   // getSftpClient()
   // -------------------------------------------------------------------------
   group('getSftpClient()', () {
-    test(
-        'Given not connected, '
+    test('Given not connected, '
         'When getSftpClient called, '
         'Then returns null', () async {
       final mockConfig = createMockAppConfigService();
@@ -580,8 +518,7 @@ void main() {
       expect(result, isNull);
     });
 
-    test(
-        'Given disconnected, '
+    test('Given disconnected, '
         'When getSftpClient called, '
         'Then returns null', () async {
       final mockConfig = createMockAppConfigService();
@@ -598,8 +535,7 @@ void main() {
   // dispose()
   // -------------------------------------------------------------------------
   group('dispose()', () {
-    test(
-        'When dispose called, '
+    test('When dispose called, '
         'Then closes streams and subsequent disconnect is no-op', () async {
       final mockConfig = createMockAppConfigService();
       final service = SshService(appConfigService: mockConfig);
@@ -616,8 +552,7 @@ void main() {
       expect(states, isEmpty);
     });
 
-    test(
-        'Given multiple dispose calls, '
+    test('Given multiple dispose calls, '
         'Then does not throw', () {
       final mockConfig = createMockAppConfigService();
       final service = SshService(appConfigService: mockConfig);
@@ -626,8 +561,7 @@ void main() {
       expect(() => service.dispose(), returnsNormally);
     });
 
-    test(
-        'When dispose called, '
+    test('When dispose called, '
         'Then state property is still accessible', () {
       final mockConfig = createMockAppConfigService();
       final service = SshService(appConfigService: mockConfig);

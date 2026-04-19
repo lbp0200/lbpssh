@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
 import 'package:dartssh2/dartssh2.dart';
 
@@ -23,7 +22,10 @@ void skipSSHIntegrationTest() {
 
 Future<List<SSHKeyPair>> loadTestIdentities() async {
   final identities = <SSHKeyPair>[];
-  final home = Platform.environment['HOME'] ?? Platform.environment['USERPROFILE'] ?? '/Users/lbp';
+  final home =
+      Platform.environment['HOME'] ??
+      Platform.environment['USERPROFILE'] ??
+      '/Users/lbp';
 
   final keyPaths = [
     '$home/.ssh/id_rsa',

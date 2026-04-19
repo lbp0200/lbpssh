@@ -1,16 +1,19 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 import 'package:dartssh2/dartssh2.dart';
 import 'package:test/test.dart';
 import 'ssh_test_utils.dart';
 
 void main() {
-  test('Pre-exec consumes MOTD (requires SSH server)', () async {
-    await _runTest();
-  }, skip: !shouldRunSSHIntegrationTests
-      ? 'Set ENABLE_SSH_INTEGRATION_TESTS=1 to run SSH integration tests'
-      : null);
+  test(
+    'Pre-exec consumes MOTD (requires SSH server)',
+    () async {
+      await _runTest();
+    },
+    skip: !shouldRunSSHIntegrationTests
+        ? 'Set ENABLE_SSH_INTEGRATION_TESTS=1 to run SSH integration tests'
+        : null,
+  );
 }
 
 Future<void> _runTest() async {
@@ -21,14 +24,24 @@ Future<void> _runTest() async {
 
 Future<void> _testShellOnly() async {
   print('--- Test 1: shell() only, no pre-exec ---');
-  final socket = await SSHSocket.connect(sshTestHost, 22, timeout: Duration(seconds: 5));
-  final client = SSHClient(socket, username: 'lbp', identities: await loadTestIdentities());
+  final socket = await SSHSocket.connect(
+    sshTestHost,
+    22,
+    timeout: Duration(seconds: 5),
+  );
+  final client = SSHClient(
+    socket,
+    username: 'lbp',
+    identities: await loadTestIdentities(),
+  );
   print('✓ Authenticated');
 
-  final session = await client.shell(pty: SSHPtyConfig(type: 'xterm', width: 80, height: 24));
+  final session = await client.shell(
+    pty: SSHPtyConfig(type: 'xterm', width: 80, height: 24),
+  );
   final out = StringBuffer();
   session.stdout.cast<List<int>>().transform(utf8.decoder).listen(out.write);
-  await Future.delayed(Duration(seconds: 5));
+  await Future<void>.delayed(Duration(seconds: 5));
   session.close();
   client.close();
   await socket.close();
@@ -41,25 +54,35 @@ Future<void> _testShellOnly() async {
 
 Future<void> _testWithPreExec() async {
   print('--- Test 2: execute() before shell() ---');
-  final socket = await SSHSocket.connect(sshTestHost, 22, timeout: Duration(seconds: 5));
-  final client = SSHClient(socket, username: 'lbp', identities: await loadTestIdentities());
+  final socket = await SSHSocket.connect(
+    sshTestHost,
+    22,
+    timeout: Duration(seconds: 5),
+  );
+  final client = SSHClient(
+    socket,
+    username: 'lbp',
+    identities: await loadTestIdentities(),
+  );
   print('✓ Authenticated');
 
   print('Running pre-shell execute commands...');
   final shellSession = await client.execute('echo \$SHELL');
-  await for (final data in shellSession.stdout.cast<List<int>>()) {}
+  await for (final _ in shellSession.stdout.cast<List<int>>()) {}
   shellSession.close();
 
   final pwdSession = await client.execute('pwd');
-  await for (final data in pwdSession.stdout.cast<List<int>>()) {}
+  await for (final _ in pwdSession.stdout.cast<List<int>>()) {}
   pwdSession.close();
 
   print('Pre-shell commands completed, now creating shell...');
 
-  final session = await client.shell(pty: SSHPtyConfig(type: 'xterm', width: 80, height: 24));
+  final session = await client.shell(
+    pty: SSHPtyConfig(type: 'xterm', width: 80, height: 24),
+  );
   final out = StringBuffer();
   session.stdout.cast<List<int>>().transform(utf8.decoder).listen(out.write);
-  await Future.delayed(Duration(seconds: 5));
+  await Future<void>.delayed(Duration(seconds: 5));
   session.close();
   client.close();
   await socket.close();

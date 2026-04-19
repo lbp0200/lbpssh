@@ -1,16 +1,19 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 import 'package:dartssh2/dartssh2.dart';
 import 'package:test/test.dart';
 import 'ssh_test_utils.dart';
 
 void main() {
-  test('PTY vs NON-PTY comparison (requires SSH server)', () async {
-    await _runComparison();
-  }, skip: !shouldRunSSHIntegrationTests
-      ? 'Set ENABLE_SSH_INTEGRATION_TESTS=1 to run SSH integration tests'
-      : null);
+  test(
+    'PTY vs NON-PTY comparison (requires SSH server)',
+    () async {
+      await _runComparison();
+    },
+    skip: !shouldRunSSHIntegrationTests
+        ? 'Set ENABLE_SSH_INTEGRATION_TESTS=1 to run SSH integration tests'
+        : null,
+  );
 }
 
 Future<void> _runComparison() async {
@@ -19,7 +22,11 @@ Future<void> _runComparison() async {
   print('=' * 70);
   print('');
 
-  final socket = await SSHSocket.connect(sshTestHost, 22, timeout: Duration(seconds: 5));
+  final socket = await SSHSocket.connect(
+    sshTestHost,
+    22,
+    timeout: Duration(seconds: 5),
+  );
   print('✓ Connected to $sshTestHost');
 
   final identities = await loadTestIdentities();
@@ -30,8 +37,11 @@ Future<void> _runComparison() async {
   print('--- Test 1: shell() without PTY ---');
   final session1 = await client.shell();
   final out1 = StringBuffer();
-  final sub1 = session1.stdout.cast<List<int>>().transform(utf8.decoder).listen(out1.write);
-  await Future.delayed(Duration(seconds: 5));
+  final sub1 = session1.stdout
+      .cast<List<int>>()
+      .transform(utf8.decoder)
+      .listen(out1.write);
+  await Future<void>.delayed(Duration(seconds: 5));
   await sub1.cancel();
   session1.close();
   final fullOut1 = out1.toString();
@@ -51,13 +61,22 @@ Future<void> _runComparison() async {
   client.close();
   await socket.close();
 
-  final socket2 = await SSHSocket.connect(sshTestHost, 22, timeout: Duration(seconds: 5));
+  final socket2 = await SSHSocket.connect(
+    sshTestHost,
+    22,
+    timeout: Duration(seconds: 5),
+  );
   final client2 = SSHClient(socket2, username: 'lbp', identities: identities);
 
-  final session2 = await client2.shell(pty: SSHPtyConfig(type: 'xterm', width: 80, height: 24));
+  final session2 = await client2.shell(
+    pty: SSHPtyConfig(type: 'xterm', width: 80, height: 24),
+  );
   final out2 = StringBuffer();
-  final sub2 = session2.stdout.cast<List<int>>().transform(utf8.decoder).listen(out2.write);
-  await Future.delayed(Duration(seconds: 5));
+  final sub2 = session2.stdout
+      .cast<List<int>>()
+      .transform(utf8.decoder)
+      .listen(out2.write);
+  await Future<void>.delayed(Duration(seconds: 5));
   await sub2.cancel();
   session2.close();
   final fullOut2 = out2.toString();
@@ -76,8 +95,16 @@ Future<void> _runComparison() async {
   await socket2.close();
 
   // Assertions
-  expect(lines1.length, greaterThan(5), reason: 'Non-PTY should have full banner');
+  expect(
+    lines1.length,
+    greaterThan(5),
+    reason: 'Non-PTY should have full banner',
+  );
   expect(lines2.length, greaterThan(5), reason: 'PTY should have full banner');
-  expect(fullOut2.length, greaterThan(1000), reason: 'PTY output should be substantial');
+  expect(
+    fullOut2.length,
+    greaterThan(1000),
+    reason: 'PTY output should be substantial',
+  );
   print('✓ Test complete');
 }

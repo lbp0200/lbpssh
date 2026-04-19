@@ -44,7 +44,7 @@ class ConnectionList extends StatelessWidget {
                 Icon(
                   Icons.dns_outlined,
                   size: 56,
-                  color: LinearColors.textPrimary.withValues(alpha: 0.2),
+                  color: LinearColors.textPrimary.withValues(alpha: 0.5),
                 ),
                 const SizedBox(height: LinearSpacing.spacing16),
                 Text(
@@ -88,13 +88,13 @@ class ConnectionList extends StatelessWidget {
                 );
               },
             ),
-            if (!isCompact)
+              if (!isCompact)
               Positioned(
                 bottom: LinearSpacing.spacing8,
                 right: LinearSpacing.spacing8,
                 child: Container(
                   decoration: BoxDecoration(
-                    color: const Color(0x05ffffff),
+                    color: LinearColors.fillSurface,
                     borderRadius: BorderRadius.circular(LinearRadius.standard),
                     border: Border.all(color: LinearColors.borderSolid),
                   ),
@@ -185,6 +185,7 @@ class _ConnectionListItem extends StatefulWidget {
 
 class _ConnectionListItemState extends State<_ConnectionListItem> {
   bool _isHovered = false;
+  bool _isFocused = false;
 
   @override
   Widget build(BuildContext context) {
@@ -203,14 +204,16 @@ class _ConnectionListItemState extends State<_ConnectionListItem> {
           curve: Curves.easeInOut,
           decoration: BoxDecoration(
             color: _isHovered
-                ? const Color(0x0Dffffff)
-                : const Color(0x05ffffff),
+                ? LinearColors.fillSurfaceHover
+                : LinearColors.fillSurface,
             borderRadius: BorderRadius.circular(LinearRadius.card),
             border: Border.all(
-              color: _isHovered
-                  ? LinearColors.borderStandard
-                  : Colors.transparent,
-              width: 1,
+              color: _isFocused
+                  ? LinearColors.accentInteractive
+                  : _isHovered
+                      ? LinearColors.borderStandard
+                      : LinearColors.borderSubtle,
+              width: _isFocused ? 2 : 1,
             ),
           ),
           child: Material(
@@ -218,7 +221,11 @@ class _ConnectionListItemState extends State<_ConnectionListItem> {
             borderRadius: BorderRadius.circular(LinearRadius.card),
             child: InkWell(
               onTap: widget.onTap,
+              onFocusChange: (hasFocus) {
+                setState(() => _isFocused = hasFocus);
+              },
               borderRadius: BorderRadius.circular(LinearRadius.card),
+              focusColor: LinearColors.accentInteractive.withValues(alpha: 0.12),
               hoverColor: LinearColors.accentInteractive.withValues(alpha: 0.08),
               child: Container(
                 padding: const EdgeInsets.symmetric(
@@ -249,6 +256,9 @@ class _ConnectionListItemState extends State<_ConnectionListItem> {
                             widget.connection.name,
                             style: theme.textTheme.titleSmall?.copyWith(
                               fontWeight: FontWeight.w500,
+                              color: _isHovered
+                                  ? LinearColors.textPrimary
+                                  : LinearColors.textSecondary,
                             ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
@@ -258,7 +268,9 @@ class _ConnectionListItemState extends State<_ConnectionListItem> {
                             '${widget.connection.username}@${widget.connection.host}:${widget.connection.port}',
                             style: theme.textTheme.bodySmall?.copyWith(
                               fontFamily: 'monospace',
-                              color: LinearColors.textTertiary,
+                              color: _isHovered
+                                  ? LinearColors.textSecondary
+                                  : LinearColors.textTertiary,
                             ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
@@ -271,7 +283,7 @@ class _ConnectionListItemState extends State<_ConnectionListItem> {
                         icon: Icon(
                           Icons.folder_copy_outlined,
                           size: 20,
-                          color: LinearColors.textTertiary.withValues(alpha: 0.6),
+                          color: LinearColors.textSecondary,
                         ),
                         onPressed: widget.onSftpTap,
                         tooltip: 'SFTP',
@@ -376,7 +388,8 @@ class _CompactConnectionItem extends StatelessWidget {
                   Text(
                     connection.name,
                     style: theme.textTheme.labelSmall?.copyWith(
-                      color: LinearColors.textSecondary,
+                      color: LinearColors.textPrimary,
+                      fontWeight: FontWeight.w500,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -397,7 +410,7 @@ class _CompactConnectionItem extends StatelessWidget {
                 child: Icon(
                   Icons.folder_copy_outlined,
                   size: 14,
-                  color: LinearColors.textQuaternary.withValues(alpha: 0.4),
+                  color: LinearColors.textSecondary,
                 ),
               ),
             ),

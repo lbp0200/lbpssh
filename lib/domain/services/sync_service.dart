@@ -52,7 +52,8 @@ class SyncConfig {
     gistFileName: json['gistFileName'] as String?,
     autoSync: (json['autoSync'] as bool?) ?? false,
     syncIntervalMinutes:
-        (json['syncIntervalMinutes'] as int?) ?? AppConstants.defaultSyncIntervalMinutes,
+        (json['syncIntervalMinutes'] as int?) ??
+        AppConstants.defaultSyncIntervalMinutes,
   );
 }
 
@@ -66,8 +67,8 @@ class SyncService with ChangeNotifier {
   DateTime? _lastSyncTime;
 
   SyncService(this._repository, {Dio? dio, SharedPreferences? prefs})
-      : _dio = dio ?? Dio(),
-        _prefs = prefs {
+    : _dio = dio ?? Dio(),
+      _prefs = prefs {
     _loadConfig();
   }
 
@@ -76,7 +77,9 @@ class SyncService with ChangeNotifier {
     final prefs = _prefs ?? await SharedPreferences.getInstance();
     final configJson = prefs.getString(AppConstants.syncSettingsKey);
     if (configJson != null) {
-      _config = SyncConfig.fromJson(jsonDecode(configJson) as Map<String, dynamic>);
+      _config = SyncConfig.fromJson(
+        jsonDecode(configJson) as Map<String, dynamic>,
+      );
     }
   }
 
@@ -200,7 +203,7 @@ class SyncService with ChangeNotifier {
         },
       };
 
-      final response = await _dio.post(
+      final response = await _dio.post<Map<String, dynamic>>(
         url,
         data: data,
         options: Options(
@@ -215,7 +218,7 @@ class SyncService with ChangeNotifier {
       final newConfig = SyncConfig(
         platform: _config!.platform,
         accessToken: _config!.accessToken,
-        gistId: response.data['id'] as String,
+        gistId: response.data!['id'] as String,
         gistFileName: fileName,
         autoSync: _config!.autoSync,
         syncIntervalMinutes: _config!.syncIntervalMinutes,
@@ -226,7 +229,7 @@ class SyncService with ChangeNotifier {
       final url = 'https://api.github.com/gists/${_config!.gistId}';
 
       // 先获取现有 Gist 以获取文件 SHA
-      final getResponse = await _dio.get(
+      final getResponse = await _dio.get<Map<String, dynamic>>(
         url,
         options: Options(
           headers: {
@@ -236,7 +239,7 @@ class SyncService with ChangeNotifier {
         ),
       );
 
-      final files = getResponse.data['files'] as Map<String, dynamic>;
+      final files = getResponse.data!['files'] as Map<String, dynamic>;
       final existingFile = files[fileName];
       String? fileSha;
       if (existingFile != null) {
@@ -253,7 +256,7 @@ class SyncService with ChangeNotifier {
         },
       };
 
-      await _dio.patch(
+      await _dio.patch<Map<String, dynamic>>(
         url,
         data: data,
         options: Options(
@@ -275,7 +278,7 @@ class SyncService with ChangeNotifier {
     final fileName = _config!.gistFileName ?? AppConstants.defaultSyncFileName;
     final url = 'https://api.github.com/gists/${_config!.gistId}';
 
-    final response = await _dio.get(
+    final response = await _dio.get<Map<String, dynamic>>(
       url,
       options: Options(
         headers: {
@@ -285,7 +288,7 @@ class SyncService with ChangeNotifier {
       ),
     );
 
-    final files = response.data['files'] as Map<String, dynamic>;
+    final files = response.data!['files'] as Map<String, dynamic>;
     final file = files[fileName];
     if (file == null) {
       throw Exception('Gist 中未找到文件: $fileName');
@@ -316,7 +319,7 @@ class SyncService with ChangeNotifier {
         },
       };
 
-      final response = await _dio.post(
+      final response = await _dio.post<Map<String, dynamic>>(
         url,
         data: data,
         options: Options(headers: {'Content-Type': 'application/json'}),
@@ -349,7 +352,7 @@ class SyncService with ChangeNotifier {
       // 先获取现有 Gist 以获取文件 SHA
       final getUrl =
           'https://gitee.com/api/v5/gists/$gistId?access_token=$token';
-      final getResponse = await _dio.get(getUrl);
+      final getResponse = await _dio.get<Map<String, dynamic>>(getUrl);
 
       if (getResponse.data is! Map<String, dynamic>) {
         throw Exception('Gist ID 无效或 Token 权限不足');
@@ -373,7 +376,7 @@ class SyncService with ChangeNotifier {
         },
       };
 
-      await _dio.post(
+      await _dio.post<Map<String, dynamic>>(
         url,
         data: data,
         options: Options(headers: {'Content-Type': 'application/json'}),
@@ -393,7 +396,7 @@ class SyncService with ChangeNotifier {
     final url =
         'https://gitee.com/api/v5/gists/${_config!.gistId}?access_token=$token';
 
-    final response = await _dio.get(url);
+    final response = await _dio.get<Map<String, dynamic>>(url);
 
     // 如果返回的是 List，说明 Token 无效或 gistId 错误
     if (response.data is List) {

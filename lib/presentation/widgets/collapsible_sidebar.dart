@@ -7,8 +7,8 @@ import '../screens/app_settings_screen.dart';
 import 'connection_list.dart';
 
 class CollapsibleSidebar extends StatefulWidget {
-  final Function(SshConnection)? onConnectionTap;
-  final Function(SshConnection)? onSftpTap;
+  final void Function(SshConnection)? onConnectionTap;
+  final void Function(SshConnection)? onSftpTap;
 
   const CollapsibleSidebar({super.key, this.onConnectionTap, this.onSftpTap});
 
@@ -86,9 +86,9 @@ class _CollapsibleSidebarState extends State<CollapsibleSidebar>
       _showSearch = false;
       _animationController.forward();
     });
-    Navigator.push(
+    Navigator.push<void>(
       context,
-      MaterialPageRoute(builder: (context) => const AppSettingsScreen()),
+      MaterialPageRoute<void>(builder: (context) => const AppSettingsScreen()),
     );
   }
 
@@ -104,9 +104,7 @@ class _CollapsibleSidebarState extends State<CollapsibleSidebar>
 
         return Container(
           width: currentWidth,
-          decoration: const BoxDecoration(
-            color: LinearColors.panel,
-          ),
+          decoration: const BoxDecoration(color: LinearColors.panel),
           child: Column(
             children: [
               _buildHeader(theme, isCompactMode),
@@ -168,7 +166,10 @@ class _CollapsibleSidebarState extends State<CollapsibleSidebar>
       decoration: InputDecoration(
         hintText: '搜索连接...',
         hintStyle: const TextStyle(color: LinearColors.textQuaternary),
-        prefixIcon: Icon(Icons.search, color: LinearColors.textQuaternary.withValues(alpha: 0.6)),
+        prefixIcon: Icon(
+          Icons.search,
+          color: LinearColors.textQuaternary.withValues(alpha: 0.6),
+        ),
         suffixIcon: IconButton(
           icon: const Icon(Icons.close),
           onPressed: _toggleSearch,
@@ -192,7 +193,7 @@ class _CollapsibleSidebarState extends State<CollapsibleSidebar>
           borderSide: const BorderSide(color: LinearColors.accentInteractive),
         ),
         filled: true,
-        fillColor: const Color(0x05ffffff),
+        fillColor: LinearColors.fillSurface,
       ),
       onChanged: (value) {
         context.read<ConnectionProvider>().setSearchQuery(value);
@@ -226,11 +227,7 @@ class _CollapsibleSidebarState extends State<CollapsibleSidebar>
           hoverColor: LinearColors.accentInteractive.withValues(alpha: 0.1),
           child: Container(
             padding: const EdgeInsets.all(LinearSpacing.spacing8),
-            child: Icon(
-              icon,
-              color: LinearColors.textSecondary,
-              size: 22,
-            ),
+            child: Icon(icon, color: LinearColors.textSecondary, size: 22),
           ),
         ),
       ),

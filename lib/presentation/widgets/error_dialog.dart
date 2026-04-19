@@ -181,10 +181,10 @@ class _ErrorDialogState extends State<ErrorDialog> {
               if (widget.extraContext != null && widget.extraContext!.isNotEmpty) ...[
                 const SizedBox(height: 12),
                 Container(
-                  padding: const EdgeInsets.all(12),
+                  padding: const EdgeInsets.all(LinearSpacing.spacing12),
                   decoration: BoxDecoration(
                     color: LinearColors.panel,
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(LinearRadius.standard),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -223,7 +223,7 @@ class _ErrorDialogState extends State<ErrorDialog> {
       actions: [
         Container(
           decoration: BoxDecoration(
-            color: const Color(0x05ffffff),
+            color: LinearColors.fillSurface,
             borderRadius: BorderRadius.circular(LinearRadius.standard),
             border: Border.all(color: LinearColors.borderSolid),
           ),

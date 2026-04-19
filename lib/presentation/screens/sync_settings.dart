@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../../core/theme/app_theme.dart';
 import '../../domain/services/sync_service.dart'
     show SyncStatusEnum, SyncPlatform, SyncConfig;
 import '../providers/sync_provider.dart';
@@ -132,16 +133,30 @@ class _SyncSettingsScreenState extends State<SyncSettingsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('同步设置')),
+      backgroundColor: LinearColors.background,
+      appBar: AppBar(
+        title: const Text('同步设置'),
+        backgroundColor: LinearColors.panel,
+        surfaceTintColor: Colors.transparent,
+        foregroundColor: LinearColors.textPrimary,
+      ),
       body: Form(
         key: _formKey,
         child: ListView(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(LinearSpacing.spacing16),
           children: [
             // 平台选择
             DropdownButtonFormField<SyncPlatform>(
               initialValue: _platform,
-              decoration: const InputDecoration(labelText: '同步平台'),
+              decoration: InputDecoration(
+                labelText: '同步平台',
+                filled: true,
+                fillColor: LinearColors.fillSurface,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(LinearRadius.standard),
+                  borderSide: BorderSide(color: LinearColors.borderStandard),
+                ),
+              ),
               items: const [
                 DropdownMenuItem(
                   value: SyncPlatform.gist,
@@ -158,12 +173,18 @@ class _SyncSettingsScreenState extends State<SyncSettingsScreen> {
                 });
               },
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: LinearSpacing.spacing16),
 
             // Token 认证
             Card(
+              elevation: 0,
+              color: LinearColors.surface,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(LinearRadius.card),
+                side: BorderSide(color: LinearColors.borderStandard),
+              ),
               child: Padding(
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.all(LinearSpacing.spacing16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -171,12 +192,12 @@ class _SyncSettingsScreenState extends State<SyncSettingsScreen> {
                       _platform == SyncPlatform.giteeGist
                           ? 'Gitee Token'
                           : 'GitHub Token',
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        color: LinearColors.textPrimary,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: LinearSpacing.spacing8),
                     Text(
                       _platform == SyncPlatform.giteeGist
                           ? '请输入 Gitee Personal Access Token，'
@@ -186,7 +207,7 @@ class _SyncSettingsScreenState extends State<SyncSettingsScreen> {
                                 '并勾选 gist 权限。',
                       style: const TextStyle(fontSize: 12),
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: LinearSpacing.spacing16),
                     TextFormField(
                       controller: _tokenController,
                       decoration: InputDecoration(
@@ -196,6 +217,8 @@ class _SyncSettingsScreenState extends State<SyncSettingsScreen> {
                         hintText: _platform == SyncPlatform.giteeGist
                             ? 'xxxxxxxxxxxxxxxxxxxx'
                             : 'ghp_xxxxxxxxxxxxxxxxxxxx',
+                        filled: true,
+                        fillColor: LinearColors.fillSurface,
                         suffixIcon: IconButton(
                           icon: Icon(
                             _obscureToken
@@ -221,7 +244,7 @@ class _SyncSettingsScreenState extends State<SyncSettingsScreen> {
                         return null;
                       },
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: LinearSpacing.spacing8),
                     TextButton.icon(
                       onPressed: () async {
                         final url = _platform == SyncPlatform.giteeGist
@@ -242,7 +265,7 @@ class _SyncSettingsScreenState extends State<SyncSettingsScreen> {
                 ),
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: LinearSpacing.spacing16),
 
             // Gist 配置
             TextFormField(
@@ -255,6 +278,8 @@ class _SyncSettingsScreenState extends State<SyncSettingsScreen> {
                     ? '例如：mluri6dyosvgzthfb43jw39'
                     : '例如：abc123def456',
                 helperText: '留空点击上传将创建新 Gist，有值则同步现有 Gist。',
+                filled: true,
+                fillColor: LinearColors.fillSurface,
               ),
               onChanged: (value) {
                 // 如果输入的是 URL，提取 Gist ID
@@ -279,12 +304,14 @@ class _SyncSettingsScreenState extends State<SyncSettingsScreen> {
                 }
               },
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: LinearSpacing.spacing16),
             TextFormField(
               controller: _gistFileNameController,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 labelText: 'Gist 文件名',
                 hintText: 'ssh_connections.json',
+                filled: true,
+                fillColor: LinearColors.fillSurface,
               ),
               validator: (value) {
                 if (value == null || value.isEmpty) {
@@ -293,7 +320,7 @@ class _SyncSettingsScreenState extends State<SyncSettingsScreen> {
                 return null;
               },
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: LinearSpacing.spacing24),
 
             // 自动同步
             SwitchListTile(
@@ -308,10 +335,14 @@ class _SyncSettingsScreenState extends State<SyncSettingsScreen> {
             ),
 
             if (_autoSync) ...[
-              const SizedBox(height: 16),
+              const SizedBox(height: LinearSpacing.spacing16),
               TextFormField(
                 initialValue: _syncInterval.toString(),
-                decoration: const InputDecoration(labelText: '同步间隔（分钟）'),
+                decoration: InputDecoration(
+                  labelText: '同步间隔（分钟）',
+                  filled: true,
+                  fillColor: LinearColors.fillSurface,
+                ),
                 keyboardType: TextInputType.number,
                 onChanged: (value) {
                   _syncInterval = int.tryParse(value) ?? 5;
@@ -319,7 +350,7 @@ class _SyncSettingsScreenState extends State<SyncSettingsScreen> {
               ),
             ],
 
-            const SizedBox(height: 32),
+            const SizedBox(height: LinearSpacing.spacing32),
 
             // 操作按钮
             Row(
@@ -330,7 +361,7 @@ class _SyncSettingsScreenState extends State<SyncSettingsScreen> {
                     child: const Text('测试连接'),
                   ),
                 ),
-                const SizedBox(width: 16),
+                const SizedBox(width: LinearSpacing.spacing16),
                 Expanded(
                   child: ElevatedButton(
                     onPressed: _saveConfig,
@@ -340,7 +371,7 @@ class _SyncSettingsScreenState extends State<SyncSettingsScreen> {
               ],
             ),
 
-            const SizedBox(height: 16),
+            const SizedBox(height: LinearSpacing.spacing16),
 
             // 同步操作
             Consumer<SyncProvider>(
@@ -355,7 +386,7 @@ class _SyncSettingsScreenState extends State<SyncSettingsScreen> {
                       icon: const Icon(Icons.upload),
                       label: const Text('上传配置'),
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: LinearSpacing.spacing8),
                     ElevatedButton.icon(
                       onPressed: provider.status == SyncStatusEnum.syncing
                           ? null
@@ -365,12 +396,12 @@ class _SyncSettingsScreenState extends State<SyncSettingsScreen> {
                     ),
                     if (provider.status == SyncStatusEnum.syncing)
                       const Padding(
-                        padding: EdgeInsets.all(16),
+                        padding: EdgeInsets.all(LinearSpacing.spacing16),
                         child: Center(child: CircularProgressIndicator()),
                       ),
                     if (provider.lastSyncTime != null)
                       Padding(
-                        padding: const EdgeInsets.all(8),
+                        padding: const EdgeInsets.all(LinearSpacing.spacing8),
                         child: Text(
                           '最后同步时间: ${provider.lastSyncTime}',
                           style: Theme.of(context).textTheme.bodySmall,

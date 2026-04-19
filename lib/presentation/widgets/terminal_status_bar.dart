@@ -102,19 +102,19 @@ class _TerminalStatusBarState extends State<TerminalStatusBar> {
           ),
         ),
       ),
-      padding: const EdgeInsets.symmetric(horizontal: 8),
+      padding: const EdgeInsets.symmetric(horizontal: LinearSpacing.spacing8),
       child: Row(
         children: [
           // 状态指示器
           Container(
-            width: 8,
-            height: 8,
+            width: LinearSpacing.spacing8,
+            height: LinearSpacing.spacing8,
             decoration: BoxDecoration(
               color: indicatorColor,
               shape: BoxShape.circle,
             ),
           ),
-          const SizedBox(width: 6),
+          const SizedBox(width: LinearSpacing.spacing4 + 2),
           Text(
             statusText,
             style: const TextStyle(
@@ -124,7 +124,7 @@ class _TerminalStatusBarState extends State<TerminalStatusBar> {
           ),
           // 延迟（仅 SSH 连接显示）
           if (!widget.session.isLocal && isConnected) ...[
-            const SizedBox(width: 8),
+            const SizedBox(width: LinearSpacing.spacing8),
             Text(
               '• $_latency',
               style: const TextStyle(
@@ -135,7 +135,7 @@ class _TerminalStatusBarState extends State<TerminalStatusBar> {
           ],
           // 连接时长
           if (isConnected || isDisconnected) ...[
-            const SizedBox(width: 8),
+            const SizedBox(width: LinearSpacing.spacing8),
             Text(
               '• ${_formatDuration(_connectionDuration)}',
               style: const TextStyle(
@@ -146,7 +146,7 @@ class _TerminalStatusBarState extends State<TerminalStatusBar> {
           ],
           // 服务器信息
           if (widget.session.serverInfo != null) ...[
-            const SizedBox(width: 8),
+            const SizedBox(width: LinearSpacing.spacing8),
             Text(
               '• ${widget.session.serverInfo}',
               style: const TextStyle(
@@ -164,7 +164,7 @@ class _TerminalStatusBarState extends State<TerminalStatusBar> {
               label: const Text('Reconnect', style: TextStyle(fontSize: 12, color: LinearColors.textTertiary)),
               style: TextButton.styleFrom(
                 foregroundColor: LinearColors.textTertiary,
-                padding: const EdgeInsets.symmetric(horizontal: 8),
+                padding: const EdgeInsets.symmetric(horizontal: LinearSpacing.spacing8),
                 minimumSize: Size.zero,
               ),
             ),

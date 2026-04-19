@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:lbp_ssh/core/theme/app_theme.dart';
 import 'package:lbp_ssh/data/models/ssh_connection.dart';
 import 'package:lbp_ssh/domain/services/kitty_file_transfer_service.dart';
 import 'package:lbp_ssh/presentation/providers/sftp_provider.dart';
@@ -282,7 +283,7 @@ class _SftpBrowserScreenState extends State<SftpBrowserScreen> {
 
   void _showError(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message), backgroundColor: Colors.red),
+      SnackBar(content: Text(message), backgroundColor: LinearColors.error),
     );
   }
 
@@ -324,10 +325,10 @@ class _SftpBrowserScreenState extends State<SftpBrowserScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.error, size: 48, color: Colors.red[300]),
-            const SizedBox(height: 16),
-            Text(_error!, style: TextStyle(color: Colors.red[300])),
-            const SizedBox(height: 16),
+            Icon(Icons.error, size: 48, color: Theme.of(context).colorScheme.error),
+            const SizedBox(height: LinearSpacing.spacing16),
+            Text(_error!, style: TextStyle(color: Theme.of(context).colorScheme.error)),
+            const SizedBox(height: LinearSpacing.spacing16),
             ElevatedButton(onPressed: _connect, child: const Text('重试')),
           ],
         ),

@@ -105,7 +105,13 @@ class _AppSettingsScreenState extends State<AppSettingsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('设置')),
+      backgroundColor: LinearColors.background,
+      appBar: AppBar(
+        title: const Text('设置'),
+        backgroundColor: LinearColors.panel,
+        surfaceTintColor: Colors.transparent,
+        foregroundColor: LinearColors.textPrimary,
+      ),
       body: Row(
         children: [
           Container(
@@ -268,15 +274,20 @@ class _TerminalSettingsPageState extends State<TerminalSettingsPage> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            '终端显示设置',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
+    return Container(
+      color: LinearColors.background,
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(LinearSpacing.spacing16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              '终端显示设置',
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                color: LinearColors.textPrimary,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
           const SizedBox(height: 16),
           _buildFontFamilySelector(),
           const SizedBox(height: 16),
@@ -331,9 +342,11 @@ class _TerminalSettingsPageState extends State<TerminalSettingsPage> {
               Expanded(
                 child: TextFormField(
                   controller: _fontWeightController,
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
                     labelText: '字重',
                     suffixText: '100-900',
+                    filled: true,
+                    fillColor: LinearColors.fillSurface,
                   ),
                   keyboardType: TextInputType.number,
                   inputFormatters: [FilteringTextInputFormatter.digitsOnly],
@@ -355,9 +368,11 @@ class _TerminalSettingsPageState extends State<TerminalSettingsPage> {
               Expanded(
                 child: TextFormField(
                   controller: _letterSpacingController,
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
                     labelText: '字母间距',
                     suffixText: 'em',
+                    filled: true,
+                    fillColor: LinearColors.fillSurface,
                   ),
                   keyboardType: TextInputType.number,
                   onChanged: (value) {
@@ -372,9 +387,11 @@ class _TerminalSettingsPageState extends State<TerminalSettingsPage> {
               Expanded(
                 child: TextFormField(
                   controller: _lineHeightController,
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
                     labelText: '行高',
                     suffixText: '倍',
+                    filled: true,
+                    fillColor: LinearColors.fillSurface,
                   ),
                   keyboardType: TextInputType.number,
                   onChanged: (value) {
@@ -390,9 +407,11 @@ class _TerminalSettingsPageState extends State<TerminalSettingsPage> {
           const SizedBox(height: 16),
           TextFormField(
             controller: _paddingController,
-            decoration: const InputDecoration(
+            decoration: InputDecoration(
               labelText: '内边距',
               suffixText: 'px',
+              filled: true,
+              fillColor: LinearColors.fillSurface,
             ),
             keyboardType: TextInputType.number,
             inputFormatters: [FilteringTextInputFormatter.digitsOnly],
@@ -403,21 +422,28 @@ class _TerminalSettingsPageState extends State<TerminalSettingsPage> {
               }
             },
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: LinearSpacing.spacing24),
           // 实时预览区域
           _buildTerminalPreview(),
-          const SizedBox(height: 24),
-          const Text(
+          const SizedBox(height: LinearSpacing.spacing24),
+          Text(
             '颜色设置',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+              color: LinearColors.textPrimary,
+              fontWeight: FontWeight.w600,
+            ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: LinearSpacing.spacing16),
           Row(
             children: [
               Expanded(
                 child: TextFormField(
                   initialValue: _config.backgroundColor,
-                  decoration: const InputDecoration(labelText: '背景颜色'),
+                  decoration: InputDecoration(
+                    labelText: '背景颜色',
+                    filled: true,
+                    fillColor: LinearColors.fillSurface,
+                  ),
                   onChanged: (value) {
                     _config = _config.copyWith(backgroundColor: value);
                   },
@@ -427,7 +453,11 @@ class _TerminalSettingsPageState extends State<TerminalSettingsPage> {
               Expanded(
                 child: TextFormField(
                   initialValue: _config.foregroundColor,
-                  decoration: const InputDecoration(labelText: '前景颜色'),
+                  decoration: InputDecoration(
+                    labelText: '前景颜色',
+                    filled: true,
+                    fillColor: LinearColors.fillSurface,
+                  ),
                   onChanged: (value) {
                     _config = _config.copyWith(foregroundColor: value);
                   },
@@ -438,17 +468,24 @@ class _TerminalSettingsPageState extends State<TerminalSettingsPage> {
           const SizedBox(height: 16),
           TextFormField(
             initialValue: _config.cursorColor,
-            decoration: const InputDecoration(labelText: '光标颜色'),
+            decoration: InputDecoration(
+              labelText: '光标颜色',
+              filled: true,
+              fillColor: LinearColors.fillSurface,
+            ),
             onChanged: (value) {
               _config = _config.copyWith(cursorColor: value);
             },
           ),
-          const SizedBox(height: 32),
-          const Text(
+          const SizedBox(height: LinearSpacing.spacing32),
+          Text(
             '终端兼容性设置',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+              color: LinearColors.textPrimary,
+              fontWeight: FontWeight.w600,
+            ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: LinearSpacing.spacing16),
           SwitchListTile(
             title: const Text('启用 Kitty 协议'),
             subtitle: const Text(
@@ -501,37 +538,45 @@ class _TerminalSettingsPageState extends State<TerminalSettingsPage> {
               ),
             ],
           ),
-          const SizedBox(height: 32),
+          const SizedBox(height: LinearSpacing.spacing32),
           const Divider(),
-          const SizedBox(height: 24),
-          const Text(
+          const SizedBox(height: LinearSpacing.spacing24),
+          Text(
             '默认终端应用',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+              color: LinearColors.textPrimary,
+              fontWeight: FontWeight.w600,
+            ),
           ),
-          const SizedBox(height: 8),
-          const Text(
+          const SizedBox(height: LinearSpacing.spacing8),
+          Text(
             '选择执行 SSH 连接时打开的终端应用',
-            style: TextStyle(color: Colors.grey),
+            style: TextStyle(color: LinearColors.textTertiary),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: LinearSpacing.spacing16),
           _buildDefaultTerminalSettings(),
-          const SizedBox(height: 32),
+          const SizedBox(height: LinearSpacing.spacing32),
           const Divider(),
-          const SizedBox(height: 24),
-          const Text(
+          const SizedBox(height: LinearSpacing.spacing24),
+          Text(
             'SSH 连接设置',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+              color: LinearColors.textPrimary,
+              fontWeight: FontWeight.w600,
+            ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: LinearSpacing.spacing16),
           Row(
             children: [
               Expanded(
                 child: TextFormField(
                   controller: _keepaliveController,
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
                     labelText: 'Keepalive 间隔',
                     suffixText: '秒',
                     helperText: '定期发送保活数据包，防止连接因空闲断开',
+                    filled: true,
+                    fillColor: LinearColors.fillSurface,
                   ),
                   keyboardType: TextInputType.number,
                   inputFormatters: [FilteringTextInputFormatter.digitsOnly],
@@ -589,6 +634,7 @@ class _TerminalSettingsPageState extends State<TerminalSettingsPage> {
           ),
         ],
       ),
+      ),
     );
   }
 
@@ -604,25 +650,30 @@ class _TerminalSettingsPageState extends State<TerminalSettingsPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           '本地终端 Shell',
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+            color: LinearColors.textPrimary,
+            fontWeight: FontWeight.w600,
+          ),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: LinearSpacing.spacing8),
         Text(
           '选择或输入本地终端使用的 Shell 路径',
           style: TextStyle(
-            color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+            color: LinearColors.textTertiary,
           ),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: LinearSpacing.spacing16),
         DropdownButtonFormField<String>(
           initialValue: commonShells.any((s) => s['path'] == _config.shellPath)
               ? _config.shellPath
               : null,
-          decoration: const InputDecoration(
+          decoration: InputDecoration(
             labelText: 'Shell',
             hintText: '选择常用 Shell 或输入自定义路径',
+            filled: true,
+            fillColor: LinearColors.fillSurface,
           ),
           items: [
             // 自动检测选项
@@ -664,9 +715,11 @@ class _TerminalSettingsPageState extends State<TerminalSettingsPage> {
         const SizedBox(height: 16),
         TextFormField(
           initialValue: _config.shellPath,
-          decoration: const InputDecoration(
+          decoration: InputDecoration(
             labelText: '自定义 Shell 路径',
             hintText: '例如：/usr/bin/zsh',
+            filled: true,
+            fillColor: LinearColors.fillSurface,
           ),
           onChanged: (value) {
             setState(() {
@@ -704,27 +757,30 @@ class _TerminalSettingsPageState extends State<TerminalSettingsPage> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text(
+            Text(
               '终端预览',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                color: LinearColors.textPrimary,
+                fontWeight: FontWeight.w600,
+              ),
             ),
             Text(
               '提示：使用下方按钮或滑块调整字体大小',
               style: TextStyle(
                 fontSize: 11,
-                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
+                color: LinearColors.textTertiary,
               ),
             ),
           ],
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: LinearSpacing.spacing12),
         Container(
           height: 200,
           padding: EdgeInsets.all(_config.padding.toDouble()),
           decoration: BoxDecoration(
             color: bgColor,
-            border: Border.all(color: Theme.of(context).dividerColor),
-            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: LinearColors.borderStandard),
+            borderRadius: BorderRadius.circular(LinearRadius.card),
           ),
           child: SingleChildScrollView(
             child: Column(
@@ -801,9 +857,14 @@ class _TerminalSettingsPageState extends State<TerminalSettingsPage> {
           initialValue: _popularFonts.contains(_config.fontFamily)
               ? _config.fontFamily
               : null,
-          decoration: const InputDecoration(
+          isDense: false,
+          itemHeight: 50,
+          decoration: InputDecoration(
             labelText: '字体家族',
             hintText: '选择或输入字体',
+            filled: true,
+            fillColor: LinearColors.fillSurface,
+            contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 22),
           ),
           items: [
             // 编程字体分类
@@ -858,8 +919,10 @@ class _TerminalSettingsPageState extends State<TerminalSettingsPage> {
             Expanded(
               child: TextFormField(
                 controller: _fontFamilyController,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   hintText: '输入自定义字体名称',
+                  filled: true,
+                  fillColor: LinearColors.fillSurface,
                 ),
                 onChanged: (value) {
                   _config = _config.copyWith(fontFamily: value);
@@ -913,7 +976,7 @@ class _TerminalSettingsPageState extends State<TerminalSettingsPage> {
           '提示：确保系统已安装所选字体。推荐使用等宽编程字体以获得最佳终端体验。',
           style: TextStyle(
             fontSize: 11,
-            color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
+            color: LinearColors.textTertiary,
           ),
         ),
       ],
@@ -927,18 +990,23 @@ class ConnectionManagementPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        // 顶部操作栏
-        Padding(
-          padding: const EdgeInsets.all(16),
-          child: Row(
-            children: [
-              const Text(
-                '已保存的连接',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
+    return Container(
+      color: LinearColors.background,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          // 顶部操作栏
+          Padding(
+            padding: const EdgeInsets.all(LinearSpacing.spacing16),
+            child: Row(
+              children: [
+                Text(
+                  '已保存的连接',
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    color: LinearColors.textPrimary,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
               const Spacer(),
               ElevatedButton.icon(
                 onPressed: () {
@@ -985,18 +1053,14 @@ class ConnectionManagementPage extends StatelessWidget {
                       Icon(
                         Icons.cloud_off,
                         size: 64,
-                        color: Theme.of(
-                          context,
-                        ).colorScheme.onSurface.withValues(alpha: 0.3),
+                        color: LinearColors.textTertiary.withValues(alpha: 0.3),
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: LinearSpacing.spacing16),
                       Text(
                         '暂无连接配置',
                         style: Theme.of(context).textTheme.titleMedium
                             ?.copyWith(
-                              color: Theme.of(
-                                context,
-                              ).colorScheme.onSurface.withValues(alpha: 0.5),
+                              color: LinearColors.textTertiary,
                             ),
                       ),
                       const SizedBox(height: 8),
@@ -1018,7 +1082,7 @@ class ConnectionManagementPage extends StatelessWidget {
               }
 
               return ListView.builder(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
+                padding: const EdgeInsets.symmetric(horizontal: LinearSpacing.spacing16),
                 itemCount: connections.length,
                 itemBuilder: (context, index) {
                   final connection = connections[index];
@@ -1029,74 +1093,164 @@ class ConnectionManagementPage extends StatelessWidget {
           ),
         ),
       ],
+      ),
     );
   }
 }
 
-class _ConnectionManagementItem extends StatelessWidget {
+class _ConnectionManagementItem extends StatefulWidget {
   final SshConnection connection;
 
   const _ConnectionManagementItem({required this.connection});
 
   @override
+  State<_ConnectionManagementItem> createState() => _ConnectionManagementItemState();
+}
+
+class _ConnectionManagementItemState extends State<_ConnectionManagementItem> {
+  bool _isHovered = false;
+
+  @override
   Widget build(BuildContext context) {
     final provider = Provider.of<ConnectionProvider>(context, listen: false);
+    final theme = Theme.of(context);
 
-    return Card(
-      margin: const EdgeInsets.symmetric(vertical: 4),
-      child: ListTile(
-        leading: Icon(
-          Icons.vpn_key,
-          color: Theme.of(context).colorScheme.primary,
-        ),
-        title: Text(connection.name),
-        subtitle: Text(
-          '${connection.username}@${connection.host}:${connection.port}',
-        ),
-        trailing: PopupMenuButton(
-          itemBuilder: (context) => [
-            const PopupMenuItem(
-              value: 'edit',
-              child: Row(
-                children: [
-                  Icon(Icons.edit, size: 20),
-                  SizedBox(width: 8),
-                  Text('编辑'),
-                ],
-              ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: LinearSpacing.spacing8,
+        vertical: 3,
+      ),
+      child: MouseRegion(
+        onEnter: (_) => setState(() => _isHovered = true),
+        onExit: (_) => setState(() => _isHovered = false),
+        child: AnimatedContainer(
+          duration: LinearDuration.fast,
+          curve: Curves.easeInOut,
+          decoration: BoxDecoration(
+            color: _isHovered
+                ? LinearColors.fillSurfaceHover
+                : LinearColors.fillSurface,
+            borderRadius: BorderRadius.circular(LinearRadius.card),
+            border: Border.all(
+              color: _isHovered
+                  ? LinearColors.borderStandard
+                  : LinearColors.borderSubtle,
+              width: 1,
             ),
-            const PopupMenuItem(
-              value: 'delete',
-              child: Row(
-                children: [
-                  Icon(Icons.delete, size: 20, color: Colors.red),
-                  SizedBox(width: 8),
-                  Text('删除', style: TextStyle(color: Colors.red)),
-                ],
-              ),
-            ),
-          ],
-          onSelected: (value) {
-            if (value == 'edit') {
-              Navigator.of(context).push(
-                MaterialPageRoute<ConnectionFormScreen>(
-                  builder: (context) =>
-                      ConnectionFormScreen(connection: connection),
+          ),
+          child: Material(
+            color: Colors.transparent,
+            borderRadius: BorderRadius.circular(LinearRadius.card),
+            child: InkWell(
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute<ConnectionFormScreen>(
+                    builder: (context) =>
+                        ConnectionFormScreen(connection: widget.connection),
+                  ),
+                );
+              },
+              borderRadius: BorderRadius.circular(LinearRadius.card),
+              focusColor: LinearColors.accentInteractive.withValues(alpha: 0.12),
+              hoverColor: LinearColors.accentInteractive.withValues(alpha: 0.08),
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: LinearSpacing.spacing12,
+                  vertical: LinearSpacing.spacing8 + 2,
                 ),
-              );
-            } else if (value == 'delete') {
-              _showDeleteDialog(context, provider);
-            }
-          },
-        ),
-        onTap: () {
-          Navigator.of(context).push(
-            MaterialPageRoute<ConnectionFormScreen>(
-              builder: (context) =>
-                  ConnectionFormScreen(connection: connection),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 36,
+                      height: 36,
+                      decoration: BoxDecoration(
+                        color: LinearColors.accentInteractive.withValues(alpha: 0.15),
+                        borderRadius: BorderRadius.circular(LinearRadius.standard),
+                      ),
+                      child: const Icon(
+                        Icons.terminal,
+                        color: LinearColors.accentInteractive,
+                        size: 20,
+                      ),
+                    ),
+                    const SizedBox(width: LinearSpacing.spacing12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            widget.connection.name,
+                            style: theme.textTheme.titleSmall?.copyWith(
+                              fontWeight: FontWeight.w500,
+                              color: _isHovered
+                                  ? LinearColors.textPrimary
+                                  : LinearColors.textSecondary,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            '${widget.connection.username}@${widget.connection.host}:${widget.connection.port}',
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              fontFamily: 'monospace',
+                              color: _isHovered
+                                  ? LinearColors.textSecondary
+                                  : LinearColors.textTertiary,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
+                      ),
+                    ),
+                    PopupMenuButton(
+                      icon: Icon(
+                        Icons.more_vert,
+                        size: 20,
+                        color: LinearColors.textTertiary.withValues(alpha: 0.6),
+                      ),
+                      itemBuilder: (context) => [
+                        const PopupMenuItem(
+                          value: 'edit',
+                          child: Row(
+                            children: [
+                              Icon(Icons.edit, size: 20, color: LinearColors.textPrimary),
+                              SizedBox(width: LinearSpacing.spacing8),
+                              Text('编辑'),
+                            ],
+                          ),
+                        ),
+                        const PopupMenuItem(
+                          value: 'delete',
+                          child: Row(
+                            children: [
+                              Icon(Icons.delete, size: 20, color: LinearColors.error),
+                              SizedBox(width: LinearSpacing.spacing8),
+                              Text('删除', style: TextStyle(color: LinearColors.error)),
+                            ],
+                          ),
+                        ),
+                      ],
+                      onSelected: (value) {
+                        if (value == 'edit') {
+                          Navigator.of(context).push(
+                            MaterialPageRoute<ConnectionFormScreen>(
+                              builder: (context) =>
+                                  ConnectionFormScreen(connection: widget.connection),
+                            ),
+                          );
+                        } else if (value == 'delete') {
+                          _showDeleteDialog(context, provider);
+                        }
+                      },
+                    ),
+                  ],
+                ),
+              ),
             ),
-          );
-        },
+          ),
+        ),
       ),
     );
   }
@@ -1109,7 +1263,7 @@ class _ConnectionManagementItem extends StatelessWidget {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('确认删除'),
-        content: Text('确定要删除连接 "${connection.name}" 吗？'),
+        content: Text('确定要删除连接 "${widget.connection.name}" 吗？'),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
@@ -1124,7 +1278,7 @@ class _ConnectionManagementItem extends StatelessWidget {
     );
 
     if (confirmed == true) {
-      await provider.deleteConnection(connection.id);
+      await provider.deleteConnection(widget.connection.id);
       if (context.mounted) {
         ScaffoldMessenger.of(
           context,

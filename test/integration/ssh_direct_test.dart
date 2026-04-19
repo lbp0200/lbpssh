@@ -6,11 +6,15 @@ import 'package:test/test.dart';
 import 'ssh_test_utils.dart';
 
 void main() {
-  test('Direct SSH connection (requires SSH server)', () async {
-    await _runTest();
-  }, skip: !shouldRunSSHIntegrationTests
-      ? 'Set ENABLE_SSH_INTEGRATION_TESTS=1 to run SSH integration tests'
-      : null);
+  test(
+    'Direct SSH connection (requires SSH server)',
+    () async {
+      await _runTest();
+    },
+    skip: !shouldRunSSHIntegrationTests
+        ? 'Set ENABLE_SSH_INTEGRATION_TESTS=1 to run SSH integration tests'
+        : null,
+  );
 }
 
 Future<void> _runTest() async {
@@ -57,27 +61,21 @@ Future<void> _runTest() async {
     final output = StringBuffer();
     final chunks = <int>[];
 
-    session.stdout
-        .cast<List<int>>()
-        .transform(utf8.decoder)
-        .listen(
-          (data) {
-            output.write(data);
-            chunks.add(data.length);
-          },
-          onError: (e) => stderr.writeln('STDOUT ERROR: $e'),
-        );
+    session.stdout.cast<List<int>>().transform(utf8.decoder).listen((data) {
+      output.write(data);
+      chunks.add(data.length);
+    }, onError: (Object e) => stderr.writeln('STDOUT ERROR: $e'));
 
     session.stderr
         .cast<List<int>>()
         .transform(utf8.decoder)
         .listen(
           (data) => stderr.writeln('STDERR: $data'),
-          onError: (e) => stderr.writeln('STDERR ERROR: $e'),
+          onError: (Object e) => stderr.writeln('STDERR ERROR: $e'),
         );
 
     print('  → Waiting 6s for welcome banner...');
-    await Future.delayed(Duration(seconds: 6));
+    await Future<void>.delayed(Duration(seconds: 6));
 
     final full = output.toString();
     final lines = full.split('\n');
@@ -94,9 +92,13 @@ Future<void> _runTest() async {
     print('');
 
     print('Content checks:');
-    print('  ${full.contains('Last login:') ? '✓' : '✗'} Contains "Last login:"');
+    print(
+      '  ${full.contains('Last login:') ? '✓' : '✗'} Contains "Last login:"',
+    );
     print('  ${full.contains('Linux') ? '✓' : '✗'} Contains "Linux"');
-    print('  ${full.contains('_') && full.contains('|') ? '✓' : '✗'} Contains ASCII art');
+    print(
+      '  ${full.contains('_') && full.contains('|') ? '✓' : '✗'} Contains ASCII art',
+    );
     print('  ${full.contains('\x1b') ? '✓' : '✗'} Contains ANSI codes');
 
     print('\n--- Full Output ---');
@@ -110,15 +112,22 @@ Future<void> _runTest() async {
     }
 
     // Assertions
-    expect(full.length, greaterThan(1000), reason: 'Should have substantial output');
+    expect(
+      full.length,
+      greaterThan(1000),
+      reason: 'Should have substantial output',
+    );
     expect(lines.length, greaterThan(20), reason: 'Should have many lines');
     expect(full.contains('Linux'), isTrue, reason: 'Should contain Linux info');
-    expect(full.contains('Last login:'), isTrue, reason: 'Should have login marker');
+    expect(
+      full.contains('Last login:'),
+      isTrue,
+      reason: 'Should have login marker',
+    );
 
     session.close();
     client.close();
     await socket.close();
-
   } catch (e, st) {
     stderr.writeln('✗ Error: $e');
     if (st.toString().isNotEmpty) stderr.writeln(st);

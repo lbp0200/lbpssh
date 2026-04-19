@@ -19,7 +19,8 @@ class LinearColors {
   static const Color accentHover = Color(0xFF828fff);
 
   // Fill Colors
-  static Color fillSurface = const Color(0x05ffffff); // rgba(255,255,255,0.02)
+  static Color fillSurface = const Color(0x1afffffff); // rgba(255,255,255,0.1) - default
+  static Color fillSurfaceHover = const Color(0x26ffffff); // rgba(255,255,255,0.15) - hover
 
   // Borders (semi-transparent)
   static Color borderSubtle = const Color(0x0Dffffff); // rgba(255,255,255,0.05)
@@ -112,7 +113,10 @@ class AppTheme {
         borderRadius: BorderRadius.circular(6),
         borderSide: const BorderSide(color: lightAccent, width: 2),
       ),
-      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+      isDense: false,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 20),
+      labelStyle: const TextStyle(color: lightTextSecondary, height: 1.2),
+      hintStyle: const TextStyle(color: lightTextTertiary),
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
@@ -184,7 +188,8 @@ class AppTheme {
     ),
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
-      fillColor: const Color(0x05ffffff),
+      isDense: false,
+      fillColor: const Color(0x1afffffff),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(LinearRadius.standard),
         borderSide: BorderSide(color: LinearColors.borderStandard),
@@ -197,8 +202,8 @@ class AppTheme {
         borderRadius: BorderRadius.circular(LinearRadius.standard),
         borderSide: const BorderSide(color: LinearColors.accentInteractive, width: 2),
       ),
-      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-      labelStyle: const TextStyle(color: LinearColors.textSecondary),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 20),
+      labelStyle: const TextStyle(color: LinearColors.textSecondary, height: 1.2),
       hintStyle: const TextStyle(color: LinearColors.textQuaternary),
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../data/models/ssh_connection.dart';
+import '../../core/theme/app_theme.dart';
 import '../providers/connection_provider.dart';
 import '../screens/connection_form.dart';
 
@@ -44,11 +45,9 @@ class CompactConnectionList extends StatelessWidget {
                 Icon(
                   Icons.add_circle_outline,
                   size: 24,
-                  color: Theme.of(
-                    context,
-                  ).colorScheme.onSurface.withValues(alpha: 0.3),
+                  color: LinearColors.textTertiary.withValues(alpha: 0.3),
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: LinearSpacing.spacing4),
                 IconButton(
                   onPressed: () => _showConnectionForm(context, null),
                   icon: const Icon(Icons.add),
@@ -59,6 +58,7 @@ class CompactConnectionList extends StatelessWidget {
                     minWidth: 32,
                     minHeight: 32,
                   ),
+                  color: LinearColors.accentInteractive,
                 ),
               ],
             ),
@@ -68,7 +68,7 @@ class CompactConnectionList extends StatelessWidget {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(height: 4),
+            const SizedBox(height: LinearSpacing.spacing4),
             IconButton(
               onPressed: () => _showConnectionForm(context, null),
               icon: const Icon(Icons.add_circle_outline),
@@ -76,12 +76,12 @@ class CompactConnectionList extends StatelessWidget {
               tooltip: '新建连接',
               padding: EdgeInsets.zero,
               constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
-              color: Theme.of(context).colorScheme.primary,
+              color: LinearColors.accentInteractive,
             ),
-            const SizedBox(height: 4),
+            const SizedBox(height: LinearSpacing.spacing4),
             Expanded(
               child: ListView.builder(
-                padding: const EdgeInsets.symmetric(vertical: 2),
+                padding: EdgeInsets.symmetric(vertical: LinearSpacing.spacing1),
                 itemCount: connections.length,
                 itemBuilder: (context, index) {
                   final connection = connections[index];
@@ -162,7 +162,7 @@ class _CompactConnectionItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+      margin: EdgeInsets.symmetric(horizontal: LinearSpacing.spacing4, vertical: LinearSpacing.spacing1),
       child: Tooltip(
         message:
             '${connection.name}\n${connection.username}@${connection.host}:${connection.port}',
@@ -173,8 +173,8 @@ class _CompactConnectionItem extends StatelessWidget {
               value: 'connect',
               child: Row(
                 children: [
-                  const Icon(Icons.play_arrow, size: 20),
-                  const SizedBox(width: 8),
+                  const Icon(Icons.play_arrow, size: 20, color: LinearColors.textPrimary),
+                  const SizedBox(width: LinearSpacing.spacing8),
                   Text('连接到 ${connection.name}'),
                 ],
               ),
@@ -183,8 +183,8 @@ class _CompactConnectionItem extends StatelessWidget {
               value: 'edit',
               child: Row(
                 children: [
-                  const Icon(Icons.edit, size: 20),
-                  const SizedBox(width: 8),
+                  const Icon(Icons.edit, size: 20, color: LinearColors.textPrimary),
+                  const SizedBox(width: LinearSpacing.spacing8),
                   Text('编辑 ${connection.name}'),
                 ],
               ),
@@ -193,9 +193,9 @@ class _CompactConnectionItem extends StatelessWidget {
               value: 'delete',
               child: Row(
                 children: [
-                  Icon(Icons.delete, size: 20, color: Colors.red),
-                  SizedBox(width: 8),
-                  Text('删除', style: TextStyle(color: Colors.red)),
+                  Icon(Icons.delete, size: 20, color: LinearColors.error),
+                  SizedBox(width: LinearSpacing.spacing8),
+                  Text('删除', style: TextStyle(color: LinearColors.error)),
                 ],
               ),
             ),
@@ -220,17 +220,18 @@ class _CompactConnectionItem extends StatelessWidget {
             child: Container(
               width: double.infinity,
               height: 40,
-              margin: const EdgeInsets.symmetric(horizontal: 4),
+              margin: const EdgeInsets.symmetric(horizontal: LinearSpacing.spacing4),
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(6),
-                color: Theme.of(context).colorScheme.surface,
+                borderRadius: BorderRadius.circular(LinearRadius.standard),
+                color: LinearColors.fillSurface,
                 border: Border.all(
-                  color: Theme.of(context).dividerColor.withValues(alpha: 0.3),
+                  color: LinearColors.borderSubtle,
+                  width: 1,
                 ),
               ),
               child: Icon(
                 Icons.computer,
-                color: Theme.of(context).colorScheme.primary,
+                color: LinearColors.accentInteractive,
                 size: 20,
               ),
             ),

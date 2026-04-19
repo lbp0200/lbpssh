@@ -29,8 +29,12 @@ class _ImportExportSettingsScreenState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: LinearColors.background,
       appBar: AppBar(
         title: const Text('导入导出配置'),
+        backgroundColor: LinearColors.panel,
+        surfaceTintColor: Colors.transparent,
+        foregroundColor: LinearColors.textPrimary,
         actions: [
           if (_showImportPreview)
             IconButton(
@@ -75,13 +79,16 @@ class _ImportExportSettingsScreenState
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Row(
+            Row(
               children: [
                 Icon(Icons.info_outline),
                 SizedBox(width: LinearSpacing.spacing8),
                 Text(
                   '当前SSH连接统计',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    color: LinearColors.textPrimary,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ],
             ),
@@ -180,13 +187,16 @@ class _ImportExportSettingsScreenState
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Row(
+            Row(
               children: [
                 Icon(Icons.file_upload),
                 SizedBox(width: LinearSpacing.spacing8),
                 Text(
                   '导出配置',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    color: LinearColors.textPrimary,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ],
             ),
@@ -235,13 +245,16 @@ class _ImportExportSettingsScreenState
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Row(
+            Row(
               children: [
                 Icon(Icons.file_download),
                 SizedBox(width: LinearSpacing.spacing8),
                 Text(
                   '导入配置',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    color: LinearColors.textPrimary,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ],
             ),
@@ -290,13 +303,16 @@ class _ImportExportSettingsScreenState
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Row(
+            Row(
               children: [
                 Icon(Icons.preview),
                 SizedBox(width: LinearSpacing.spacing8),
                 Text(
                   '导入预览',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    color: LinearColors.textPrimary,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ],
             ),

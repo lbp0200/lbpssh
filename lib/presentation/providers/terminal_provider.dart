@@ -82,17 +82,18 @@ class TerminalProvider extends ChangeNotifier {
       rethrow;
     }
 
-    // PTY 启动后，等待一帧让终端 widget 完成布局，然后同步尺寸
+    // PTY 启动后，等待 Flutter 完成布局然后同步尺寸
+    // 使用 post-frame callback 确保 kterm 的 performLayout 已执行
+    // 这样 session.terminal.viewWidth/viewHeight 就是正确的视口尺寸
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      // 延迟一点确保 kterm 完成布局计算
-      Future.delayed(const Duration(milliseconds: 100), () {
-        if (session.terminal.viewWidth > 0 && session.terminal.viewHeight > 0) {
-          localService.resize(
-            session.terminal.viewHeight,
-            session.terminal.viewWidth,
-          );
-        }
-      });
+      // 在回调中再次使用 addPostFrameCallback 确保在下一帧之前
+      // kterm 的 onResize 已触发（如果需要 resize 的话）
+      // 直接使用当前视口尺寸进行 resize
+      final cols = session.terminal.viewWidth;
+      final rows = session.terminal.viewHeight;
+      if (cols > 0 && rows > 0) {
+        localService.resize(rows, cols);
+      }
     });
 
     // 设置目录变化回调（当检测到 cd 命令时）
