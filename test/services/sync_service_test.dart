@@ -912,7 +912,7 @@ void main() {
         ),
       ).thenAnswer(
         (_) async => Response<Map<String, dynamic>>(
-          data: {'id': 'new_gist_id'},
+          data: {'id': 'gitee_new_gist_id'},
           statusCode: 201,
           requestOptions: RequestOptions(path: ''),
         ),
