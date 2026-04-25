@@ -48,7 +48,7 @@ dependencies:
   # 数据存储（已迁移到 JSON 文件）
 
   # 终端模拟器
-  kterm: ^1.1.5
+  kterm: ^1.1.6
   flutter_pty: ^0.4.0+2
 
   # 路由
