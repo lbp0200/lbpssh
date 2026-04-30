@@ -1,108 +1,50 @@
-# ----------------------------------------------------------------------------
-# Flutter & Dart 核心文件
-# ----------------------------------------------------------------------------
-.dart_tool/
-.flutter-plugins
-.flutter-plugins-dependencies
-.packages
-.pub-cache/
-.pub/
-build/
+```
+# Compiled and build artifacts
+*.pyc
+__pycache__/
+*.o
+*.obj
+*.class
+*.exe
+*.dll
+*.so
+*.a
+*.out
 
-# 如果你使用了 build_runner (代码生成)，通常生成的 .g.dart 不需要忽略，
-# 但如果有特定环境的生成文件可以按需添加
-# *.freezed.dart
-# *.g.dart
-
-# ----------------------------------------------------------------------------
-# Android 相关
-# ----------------------------------------------------------------------------
-android/**/generated/
-android/app/debug/
-android/app/release/
-android/app/profile/
-android/local.properties
-android/key.properties
-android/app/*.jks
-android/app/*.keystore
-android/app/*.p12
-android/app/*.pfx
-android/app/google-services.json
-
-# ----------------------------------------------------------------------------
-# iOS/macOS 相关
-# ----------------------------------------------------------------------------
-ios/Flutter/Generated.xcconfig
-ios/Flutter/flutter_export_environment.sh
-ios/Flutter/App.framework
-ios/Flutter/Flutter.framework
-ios/Flutter/Flutter.podspec
-ios/Runner/GeneratedPluginRegistrant.*
-ios/.generated/
-ios/Pods/
-ios/.symlinks/
-
-# macOS Flutter 自动生成
-macos/Flutter/GeneratedPluginRegistrant.*
-macos/Flutter/.last_build_id
-**/doc/api/
-*.last_build_id
-
-# macOS 系统残留
-.DS_Store
-**/DerivedData/
-macos/DerivedData/
-macos/.symlinks/
-macos/Pods/
-
-# ----------------------------------------------------------------------------
-# 桌面端 (Linux/Windows) 相关
-# ----------------------------------------------------------------------------
-linux/flutter/ephemeral/
-linux/flutter/generated_plugin_registrant.cc
-linux/flutter/generated_plugins.cmake
-windows/flutter/ephemeral/
-windows/flutter/generated_plugin_registrant.cc
-windows/flutter/generated_plugins.cmake
-windows/CMakeSettings.json
-windows/out/
-
-# ----------------------------------------------------------------------------
-# 敏感信息与环境配置 (重点优化：针对 SSH 相关项目)
-# ----------------------------------------------------------------------------
-# 绝对不要提交本地环境变量和私钥
+# Dependencies
+node_modules/
+venv/
+.venv/
 .env
+.env.local
 .env.*
-*.pem
-*.key
-*.pub
-# 如果你有存放 SSH 密钥或临时测试用的私钥文件，请务必忽略
-/assets/ssh/
 
-# ----------------------------------------------------------------------------
-# IDE & 编辑器配置
-# ----------------------------------------------------------------------------
-# VS Code
+# Logs and temp files
+*.log
+*.tmp
+*.swp
+*.swo
+
+# Editors
 .vscode/
-!.vscode/extensions.json
-!.vscode/launch.json
-!.vscode/tasks.json
-
-# IntelliJ / Android Studio
 .idea/
-*.iml
-*.iws
 
-# ----------------------------------------------------------------------------
-# 测试相关
-# ----------------------------------------------------------------------------
+# Coverage
 coverage/
+htmlcov/
+.coverage
 
-# ----------------------------------------------------------------------------
-# 其他
-# ----------------------------------------------------------------------------
-pubspec.lock  # 建议保留 (对于 Application 项目建议提交，确保团队依赖版本一致)
-              # 除非你正在开发一个 Package 库项目，则可以忽略。
-.claude
-.worktrees
-.opencode
+# Build directories
+dist/
+build/
+target/
+.gradle/
+
+# Python specific
+.mypy_cache/
+.pytest_cache/
+
+# System files
+.DS_Store
+Thumbs.db
+```
