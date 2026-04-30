@@ -122,6 +122,12 @@ class SshService implements TerminalInputService {
   /// 获取 OS 类型
   String get osType => _osType;
 
+  /// 最近一次设置的PTY宽度
+  int _ptyWidth = 80;
+
+  /// 最近一次设置的PTY高度
+  int _ptyHeight = 24;
+
   /// 输出流
   @override
   Stream<String> get outputStream => _outputController.stream;
@@ -358,9 +364,9 @@ class SshService implements TerminalInputService {
       // 导致首次通道被占用，欢迎信息只在第一个通道发送
       SSHSession? session;
       try {
-        // 首选 PTY 模式（支持颜色、交互）
+        // 首选 PTY 模式（支持颜色、交互），使用保存的最新尺寸
         session = await _client!.shell(
-          pty: const SSHPtyConfig(type: 'xterm', width: 80, height: 24),
+          pty: SSHPtyConfig(type: 'xterm', width: _ptyWidth, height: _ptyHeight),
         );
       } catch (e) {
         // 回退：不使用 PTY 的标准 shell
@@ -468,8 +474,11 @@ class SshService implements TerminalInputService {
   /// 调整终端尺寸
   @override
   void resize(int rows, int columns) {
-    // 移除连接状态检查，确保连接建立前的尺寸变化也能记录
-    // SSH 连接成功后，dartssh2 会自动应用最近一次 resize 参数
+    // 保存最新的尺寸，确保连接建立前的尺寸变化不会丢失
+    _ptyHeight = rows;
+    _ptyWidth = columns;
+
+    // 如果会话已经创建，立刻发送resize请求
     if (_session != null) {
       try {
         _session!.resizeTerminal(columns, rows);

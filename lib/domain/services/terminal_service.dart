@@ -271,7 +271,8 @@ class TerminalSession {
     terminal.onOutput = (data) {
       // 跳过空数据
       if (data.isEmpty) return;
-      // 发送输入到 SSH/本地终端
+
+      // 正常发送所有输入到 SSH/本地终端（包括方向键）
       try {
         inputService.sendInput(data);
       } catch (e) {

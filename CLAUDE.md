@@ -97,6 +97,35 @@ Providers use `ChangeNotifier` via `MultiProvider` in `main.dart`. Follow the pa
 - Sensitive data encrypted with user-provided master password
 - Configuration stored in local JSON file (`~/.config/lbpSSH/ssh_connections.json` on Linux)
 
+## Debugging
+
+### Flutter DevTools via WebSocket
+
+Flutter DevTools browser UI requires a Chrome extension. Instead, connect directly to the VM Service WebSocket:
+
+```bash
+# 1. Run the app and get the VM Service URL from output:
+flutter run -d macos
+# Look for: "A Dart VM Service on macOS is available at: http://127.0.0.1:XXXXX/..."
+
+# 2. Connect via Python WebSocket (see memory: flutter_devtools_websocket.md)
+```
+
+常用 `ext.flutter.*` 方法：
+
+| 方法 | 用途 |
+|------|------|
+| `ext.flutter.debugDumpApp` | 获取完整 widget tree |
+| `ext.flutter.debugDumpRenderTree` | 获取 renderObject tree（输出很大，建议用 HTTP 方式） |
+| `ext.flutter.isWidgetTreeReady` | 检查 widget tree 是否就绪 |
+| `ext.flutter.didSendFirstFrameEvent` | 检查首帧是否已发送 |
+| `ext.flutter.inspector.getDetailsSubtree` | 获取某节点的完整子树 |
+
+注意：
+- WebSocket 单帧约 1MB 限制，`debugDumpRenderTree` 需改用 HTTP
+- App 暂停时部分方法会 NPE，需先 resume
+- isolateId 每次运行都不同，需动态获取
+
 ## Kitty Protocol References
 
 - **Kitty 协议文档**: `/Users/lbp/Projects/KittyProtocol/docs/kitty/docs`
