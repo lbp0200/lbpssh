@@ -87,6 +87,10 @@ class TerminalSession {
     // 这样可以确保与所有 SSH 服务器兼容
     terminal.setKittyMode(false);
 
+    // 禁用终端 reflow，避免 resize 时光标位置错乱
+    // kterm 的 reflow 在调整宽度后不会重新计算光标位置，导致光标跳到错误行
+    terminal.reflowEnabled = false;
+
     // 监听终端通知（Kitty 协议）
     terminal.onNotification = (title, body) {
       _notificationController.add((title: title, body: body));
@@ -285,15 +289,22 @@ class TerminalSession {
     int currentCols = 80;
     int currentRows = 24;
 
+    // 防抖定时器，避免频繁 resize 导致远程 shell 状态混乱
+    Timer? resizeDebounceTimer;
+
     terminal.onResize = (width, height, pixelWidth, pixelHeight) {
       currentCols = width;
       currentRows = height;
-      // 对所有终端输入服务（包括 SSH 和本地）调整尺寸
-      inputService.resize(height, width);
+      resizeDebounceTimer?.cancel();
+      resizeDebounceTimer = Timer(const Duration(milliseconds: 200), () {
+        // 对所有终端输入服务（包括 SSH 和本地）调整尺寸
+        inputService.resize(currentRows, currentCols);
+      });
     };
 
     // 首次布局后确保同步终端尺寸
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      resizeDebounceTimer?.cancel();
       // 使用保存的尺寸变量，确保一致性
       if (currentRows > 0 && currentCols > 0) {
         inputService.resize(currentRows, currentCols);

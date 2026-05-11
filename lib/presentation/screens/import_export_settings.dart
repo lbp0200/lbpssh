@@ -28,27 +28,20 @@ class _ImportExportSettingsScreenState
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: LinearColors.background,
-      appBar: AppBar(
-        title: const Text('导入导出配置'),
-        backgroundColor: LinearColors.panel,
-        surfaceTintColor: Colors.transparent,
-        foregroundColor: LinearColors.textPrimary,
-        actions: [
-          if (_showImportPreview)
-            IconButton(
-              onPressed: () => _clearImportPreview(),
-              icon: const Icon(Icons.clear),
-              tooltip: '清除预览',
-            ),
-        ],
-      ),
-      body: Consumer<ImportExportProvider>(
+    return Consumer<ImportExportProvider>(
         builder: (context, provider, child) {
           return ListView(
             padding: const EdgeInsets.all(LinearSpacing.spacing16),
             children: [
+              if (_showImportPreview)
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: IconButton(
+                    onPressed: () => _clearImportPreview(),
+                    icon: const Icon(Icons.clear),
+                    tooltip: '清除预览',
+                  ),
+                ),
               _buildStatsCard(),
               const SizedBox(height: LinearSpacing.spacing24),
               _buildExportSection(provider),
@@ -60,8 +53,7 @@ class _ImportExportSettingsScreenState
             ],
           );
         },
-      ),
-    );
+      );
   }
 
   Widget _buildStatsCard() {
@@ -81,7 +73,7 @@ class _ImportExportSettingsScreenState
           children: [
             Row(
               children: [
-                Icon(Icons.info_outline),
+                const Icon(Icons.info_outline, color: LinearColors.textSecondary),
                 SizedBox(width: LinearSpacing.spacing8),
                 Text(
                   '当前SSH连接统计',
@@ -189,7 +181,7 @@ class _ImportExportSettingsScreenState
           children: [
             Row(
               children: [
-                Icon(Icons.file_upload),
+                const Icon(Icons.file_upload, color: LinearColors.textSecondary),
                 SizedBox(width: LinearSpacing.spacing8),
                 Text(
                   '导出配置',
@@ -247,7 +239,7 @@ class _ImportExportSettingsScreenState
           children: [
             Row(
               children: [
-                Icon(Icons.file_download),
+                const Icon(Icons.file_download, color: LinearColors.textSecondary),
                 SizedBox(width: LinearSpacing.spacing8),
                 Text(
                   '导入配置',
@@ -305,7 +297,7 @@ class _ImportExportSettingsScreenState
           children: [
             Row(
               children: [
-                Icon(Icons.preview),
+                const Icon(Icons.preview, color: LinearColors.textSecondary),
                 SizedBox(width: LinearSpacing.spacing8),
                 Text(
                   '导入预览',

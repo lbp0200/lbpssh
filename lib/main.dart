@@ -42,7 +42,11 @@ void main() async {
 
   // 初始化窗口管理器并设置最大化
   await windowManager.ensureInitialized();
-  await windowManager.maximize();
+  await windowManager.waitUntilReadyToShow(null, () async {
+    await windowManager.show();
+    await windowManager.focus();
+    await windowManager.maximize();
+  });
 
   final connectionRepository = ConnectionRepository();
   await connectionRepository.init();
@@ -50,6 +54,7 @@ void main() async {
   final terminalService = TerminalService();
   final syncService = SyncService(connectionRepository);
   final appConfigService = AppConfigService.getInstance();
+  await AppConfigService.ensureInitialized();
   final importExportService = ImportExportService(connectionRepository);
 
   runApp(

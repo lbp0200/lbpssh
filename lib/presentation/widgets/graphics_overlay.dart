@@ -34,21 +34,29 @@ class _GraphicsOverlayWidgetState extends State<GraphicsOverlayWidget> {
 
   void _startPolling() {
     Future.doWhile(() async {
-      await Future<void>.delayed(const Duration(milliseconds: 100));
-      if (mounted) {
-        // 使用 setState 触发重建以检查新的图形
-        setState(() {});
-        return true;
+      await Future<void>.delayed(const Duration(milliseconds: 500));
+      if (!mounted) return false;
+      try {
+        final placements = widget.graphicsManager.placements;
+        if (placements is Map && placements.isNotEmpty) {
+          setState(() {});
+        }
+      } catch (_) {
+        // 忽略图形管理器访问异常
       }
-      return false;
+      return true;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: _buildImageWidgets(),
-    );
+    try {
+      final widgets = _buildImageWidgets();
+      if (widgets.isEmpty) return const SizedBox.shrink();
+      return Stack(children: widgets);
+    } catch (_) {
+      return const SizedBox.shrink();
+    }
   }
 
   List<Widget> _buildImageWidgets() {

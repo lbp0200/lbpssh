@@ -51,11 +51,14 @@ class AppConfigService with ChangeNotifier {
 
   factory AppConfigService.getInstance() {
     _instance ??= AppConfigService._internal();
+    return _instance!;
+  }
+
+  static Future<void> ensureInitialized() async {
     if (!_initialized) {
-      _loadFromPrefs();
+      await _loadFromPrefs();
       _initialized = true;
     }
-    return _instance!;
   }
 
   TerminalConfig get terminal => _terminal;

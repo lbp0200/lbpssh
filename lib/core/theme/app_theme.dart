@@ -18,9 +18,9 @@ class LinearColors {
   static const Color accentInteractive = Color(0xFF7170ff);
   static const Color accentHover = Color(0xFF828fff);
 
-  // Fill Colors
-  static Color fillSurface = const Color(0x1afffffff); // rgba(255,255,255,0.1) - default
-  static Color fillSurfaceHover = const Color(0x26ffffff); // rgba(255,255,255,0.15) - hover
+   // Fill Colors
+   static Color fillSurface = Color(0x33FFFFFF); // rgba(255,255,255,0.2) - default (higher contrast for dark mode)
+   static Color fillSurfaceHover = const Color(0x46ffffff); // rgba(255,255,255,0.25) - hover
 
   // Borders (semi-transparent)
   static Color borderSubtle = const Color(0x0Dffffff); // rgba(255,255,255,0.05)
@@ -189,7 +189,7 @@ class AppTheme {
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
       isDense: false,
-      fillColor: const Color(0x1afffffff),
+      fillColor: const Color(0x1AFFFFFF),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(LinearRadius.standard),
         borderSide: BorderSide(color: LinearColors.borderStandard),

@@ -20,6 +20,7 @@ class _SyncSettingsScreenState extends State<SyncSettingsScreen> {
   final _gistIdController = TextEditingController();
   final _gistFileNameController = TextEditingController();
   final _tokenController = TextEditingController();
+  final _syncIntervalController = TextEditingController();
 
   SyncPlatform _platform = SyncPlatform.gist;
   bool _autoSync = false;
@@ -48,6 +49,7 @@ class _SyncSettingsScreenState extends State<SyncSettingsScreen> {
     } else {
       _gistFileNameController.text = 'ssh_connections.json';
     }
+    _syncIntervalController.text = _syncInterval.toString();
   }
 
   @override
@@ -55,6 +57,7 @@ class _SyncSettingsScreenState extends State<SyncSettingsScreen> {
     _gistIdController.dispose();
     _gistFileNameController.dispose();
     _tokenController.dispose();
+    _syncIntervalController.dispose();
     super.dispose();
   }
 
@@ -132,15 +135,7 @@ class _SyncSettingsScreenState extends State<SyncSettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: LinearColors.background,
-      appBar: AppBar(
-        title: const Text('同步设置'),
-        backgroundColor: LinearColors.panel,
-        surfaceTintColor: Colors.transparent,
-        foregroundColor: LinearColors.textPrimary,
-      ),
-      body: Form(
+    return Form(
         key: _formKey,
         child: ListView(
           padding: const EdgeInsets.all(LinearSpacing.spacing16),
@@ -337,7 +332,7 @@ class _SyncSettingsScreenState extends State<SyncSettingsScreen> {
             if (_autoSync) ...[
               const SizedBox(height: LinearSpacing.spacing16),
               TextFormField(
-                initialValue: _syncInterval.toString(),
+                controller: _syncIntervalController,
                 decoration: InputDecoration(
                   labelText: '同步间隔（分钟）',
                   filled: true,
@@ -414,8 +409,7 @@ class _SyncSettingsScreenState extends State<SyncSettingsScreen> {
             ),
           ],
         ),
-      ),
-    );
+      );
   }
 
   Future<void> _uploadConfig(SyncProvider provider) async {
