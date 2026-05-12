@@ -1,33 +1,36 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide ConnectionState;
 import 'package:flutter_test/flutter_test.dart';
-import 'package:provider/provider.dart';
-import 'package:mocktail/mocktail.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lbp_ssh/data/models/ssh_connection.dart';
-import 'package:lbp_ssh/presentation/providers/connection_provider.dart';
+import 'package:lbp_ssh/presentation/providers_riverpod/connection_provider_riverpod.dart';
 import 'package:lbp_ssh/presentation/widgets/compact_connection_list.dart';
 
-class MockConnectionProvider extends Mock implements ConnectionProvider {}
+class _MockConnectionNotifier extends ConnectionNotifier {
+  final ConnectionState _state;
+  _MockConnectionNotifier(this._state);
+
+  @override
+  ConnectionState build() => _state;
+}
 
 void main() {
-  late MockConnectionProvider mockProvider;
-
-  setUp(() {
-    mockProvider = MockConnectionProvider();
-  });
-
   Widget createTestWidget({
     List<SshConnection> connections = const [],
     String? error,
     bool isLoading = false,
   }) {
-    when(() => mockProvider.isLoading).thenReturn(isLoading);
-    when(() => mockProvider.error).thenReturn(error);
-    when(() => mockProvider.connections).thenReturn(connections);
+    final state = ConnectionState(
+      isLoading: isLoading,
+      error: error,
+      connections: connections,
+    );
 
     return MaterialApp(
       home: Scaffold(
-        body: ChangeNotifierProvider<ConnectionProvider>.value(
-          value: mockProvider,
+        body: ProviderScope(
+          overrides: [
+            connectionProvider.overrideWith(() => _MockConnectionNotifier(state)),
+          ],
           child: CompactConnectionList(
             onConnectionTap: (_) {},
           ),
@@ -50,7 +53,7 @@ void main() {
 
         await tester.pumpWidget(createTestWidget(isLoading: true));
 
-(find.byType(CircularProgressIndicator), findsOneWidget);
+        expect(find.byType(CircularProgressIndicator), findsOneWidget);
       });
     });
 

@@ -1,33 +1,41 @@
 import 'dart:math' as math;
 
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide ConnectionState;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lbp_ssh/core/theme/app_theme.dart';
 import 'package:lbp_ssh/presentation/widgets/connection_list.dart';
-import 'package:provider/provider.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lbp_ssh/data/models/ssh_connection.dart';
-import 'package:lbp_ssh/presentation/providers/connection_provider.dart';
+import 'package:lbp_ssh/presentation/providers_riverpod/connection_provider_riverpod.dart';
 
-class MockConnectionProvider extends Mock implements ConnectionProvider {}
+class _MockConnectionNotifier extends ConnectionNotifier {
+  final ConnectionState _state;
+  _MockConnectionNotifier(this._state);
+
+  @override
+  ConnectionState build() => _state;
+}
 
 /// 创建测试 Widget 的辅助函数
 Widget createTestWidget({
   List<SshConnection> connections = const [],
   bool isCompact = false,
 }) {
-  final mockProvider = MockConnectionProvider();
-  when(() => mockProvider.isLoading).thenReturn(false);
-  when(() => mockProvider.error).thenReturn(null);
-  when(() => mockProvider.filteredConnections).thenReturn(connections);
-  when(() => mockProvider.connections).thenReturn(connections);
-
   return MaterialApp(
     theme: AppTheme.darkTheme,
     home: Scaffold(
       backgroundColor: LinearColors.background,
-      body: ChangeNotifierProvider<ConnectionProvider>.value(
-        value: mockProvider,
+      body: ProviderScope(
+        overrides: [
+          connectionProvider.overrideWith(() => _MockConnectionNotifier(
+            ConnectionState(
+              isLoading: false,
+              error: null,
+              connections: connections,
+            ),
+          )),
+        ],
         child: ConnectionList(
           isCompact: isCompact,
           onConnectionTap: (_) {},
