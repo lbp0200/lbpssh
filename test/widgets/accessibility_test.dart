@@ -333,9 +333,9 @@ void main() {
 /// and L2 is the relative luminance of the darker color
 double _calculateContrastRatio(Color foreground, Color background) {
   double getRelativeLuminance(Color color) {
-    double r = color.red / 255.0;
-    double g = color.green / 255.0;
-    double b = color.blue / 255.0;
+    double r = color.r;
+    double g = color.g;
+    double b = color.b;
 
     // Apply gamma correction
     r = r <= 0.03928

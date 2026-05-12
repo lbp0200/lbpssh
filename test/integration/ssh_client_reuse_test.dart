@@ -22,7 +22,7 @@ Future<void> _runTest() async {
   final socket = await SSHSocket.connect(
     sshTestHost,
     22,
-    timeout: Duration(seconds: 5),
+    timeout: const Duration(seconds: 5),
   );
   print('✓ Socket connected');
 
@@ -33,14 +33,14 @@ Future<void> _runTest() async {
   // Test 1: PTY FIRST
   print('--- Test 1: shell() with PTY (xterm 80x24) ---');
   final session1 = await client.shell(
-    pty: SSHPtyConfig(type: 'xterm', width: 80, height: 24),
+    pty: const SSHPtyConfig(type: 'xterm', width: 80, height: 24),
   );
   final out1 = StringBuffer();
   final sub1 = session1.stdout
       .cast<List<int>>()
       .transform(utf8.decoder)
       .listen(out1.write);
-  await Future<void>.delayed(Duration(seconds: 5));
+  await Future<void>.delayed(const Duration(seconds: 5));
   await sub1.cancel();
   session1.close();
   final fullOut1 = out1.toString();
@@ -56,7 +56,7 @@ Future<void> _runTest() async {
       .cast<List<int>>()
       .transform(utf8.decoder)
       .listen(out2.write);
-  await Future<void>.delayed(Duration(seconds: 5));
+  await Future<void>.delayed(const Duration(seconds: 5));
   await sub2.cancel();
   session2.close();
   final fullOut2 = out2.toString();

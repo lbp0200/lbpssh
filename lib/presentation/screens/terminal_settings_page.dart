@@ -415,7 +415,7 @@ class _TerminalSettingsPageState extends State<TerminalSettingsPage> {
             ),
           ),
           const SizedBox(height: LinearSpacing.spacing8),
-          Text(
+          const Text(
             '选择执行 SSH 连接时打开的终端应用',
             style: TextStyle(color: LinearColors.textTertiary),
           ),
@@ -528,7 +528,7 @@ class _TerminalSettingsPageState extends State<TerminalSettingsPage> {
           ),
         ),
         const SizedBox(height: LinearSpacing.spacing8),
-        Text(
+        const Text(
           '选择或输入本地终端使用的 Shell 路径',
           style: TextStyle(
             color: LinearColors.textTertiary,
@@ -542,7 +542,7 @@ class _TerminalSettingsPageState extends State<TerminalSettingsPage> {
           style: const TextStyle(color: LinearColors.textPrimary),
           dropdownColor: LinearColors.surface,
           iconEnabledColor: LinearColors.textPrimary,
-          decoration: InputDecoration(
+          decoration: const InputDecoration(
             labelText: 'Shell',
             hintText: '选择常用 Shell 或输入自定义路径',
             filled: true,
@@ -567,7 +567,7 @@ class _TerminalSettingsPageState extends State<TerminalSettingsPage> {
                 ],
               ),
             ),
-            DropdownMenuItem(
+            const DropdownMenuItem(
               value: '__divider__',
               enabled: false,
               child: Divider(color: LinearColors.borderStandard),
@@ -661,7 +661,7 @@ class _TerminalSettingsPageState extends State<TerminalSettingsPage> {
                 fontWeight: FontWeight.w600,
               ),
             ),
-            Text(
+            const Text(
               '提示：使用下方按钮或滑块调整字体大小',
               style: TextStyle(
                 fontSize: 11,
@@ -759,12 +759,12 @@ class _TerminalSettingsPageState extends State<TerminalSettingsPage> {
           style: const TextStyle(color: LinearColors.textPrimary),
           dropdownColor: LinearColors.surface,
           iconEnabledColor: LinearColors.textPrimary,
-          decoration: InputDecoration(
+          decoration: const InputDecoration(
             labelText: '字体家族',
             hintText: '选择或输入字体',
             filled: true,
             fillColor: LinearColors.fillSurface,
-            contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 22),
+            contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 22),
           ),
           items: [
             // 编程字体分类
@@ -792,7 +792,7 @@ class _TerminalSettingsPageState extends State<TerminalSettingsPage> {
                 ),
               );
             }),
-            DropdownMenuItem(
+            const DropdownMenuItem(
               value: 'divider_item',
               enabled: false,
               child: Divider(color: LinearColors.borderStandard),
@@ -890,7 +890,7 @@ class _TerminalSettingsPageState extends State<TerminalSettingsPage> {
           ),
         ),
         const SizedBox(height: LinearSpacing.spacing8),
-        Text(
+        const Text(
           '提示：确保系统已安装所选字体。推荐使用等宽编程字体以获得最佳终端体验。',
           style: TextStyle(
             fontSize: 11,

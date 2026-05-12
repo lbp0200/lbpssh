@@ -149,7 +149,7 @@ class _SyncSettingsScreenState extends State<SyncSettingsScreen> {
                 fillColor: LinearColors.fillSurface,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(LinearRadius.standard),
-                  borderSide: BorderSide(color: LinearColors.borderStandard),
+                  borderSide: const BorderSide(color: LinearColors.borderStandard),
                 ),
               ),
               items: const [
@@ -176,7 +176,7 @@ class _SyncSettingsScreenState extends State<SyncSettingsScreen> {
               color: LinearColors.surface,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(LinearRadius.card),
-                side: BorderSide(color: LinearColors.borderStandard),
+                side: const BorderSide(color: LinearColors.borderStandard),
               ),
               child: Padding(
                 padding: const EdgeInsets.all(LinearSpacing.spacing16),
@@ -302,7 +302,7 @@ class _SyncSettingsScreenState extends State<SyncSettingsScreen> {
             const SizedBox(height: LinearSpacing.spacing16),
             TextFormField(
               controller: _gistFileNameController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'Gist 文件名',
                 hintText: 'ssh_connections.json',
                 filled: true,
@@ -333,7 +333,7 @@ class _SyncSettingsScreenState extends State<SyncSettingsScreen> {
               const SizedBox(height: LinearSpacing.spacing16),
               TextFormField(
                 controller: _syncIntervalController,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: '同步间隔（分钟）',
                   filled: true,
                   fillColor: LinearColors.fillSurface,

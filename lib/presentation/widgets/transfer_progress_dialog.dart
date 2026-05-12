@@ -55,7 +55,7 @@ class _TransferProgressDialogState extends State<TransferProgressDialog> {
       backgroundColor: LinearColors.surface,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(LinearRadius.panel),
-        side: BorderSide(color: LinearColors.borderStandard),
+        side: const BorderSide(color: LinearColors.borderStandard),
       ),
       title: const Row(
         children: [

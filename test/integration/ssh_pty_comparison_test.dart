@@ -25,7 +25,7 @@ Future<void> _runComparison() async {
   final socket = await SSHSocket.connect(
     sshTestHost,
     22,
-    timeout: Duration(seconds: 5),
+    timeout: const Duration(seconds: 5),
   );
   print('✓ Connected to $sshTestHost');
 
@@ -41,7 +41,7 @@ Future<void> _runComparison() async {
       .cast<List<int>>()
       .transform(utf8.decoder)
       .listen(out1.write);
-  await Future<void>.delayed(Duration(seconds: 5));
+  await Future<void>.delayed(const Duration(seconds: 5));
   await sub1.cancel();
   session1.close();
   final fullOut1 = out1.toString();
@@ -64,19 +64,19 @@ Future<void> _runComparison() async {
   final socket2 = await SSHSocket.connect(
     sshTestHost,
     22,
-    timeout: Duration(seconds: 5),
+    timeout: const Duration(seconds: 5),
   );
   final client2 = SSHClient(socket2, username: 'lbp', identities: identities);
 
   final session2 = await client2.shell(
-    pty: SSHPtyConfig(type: 'xterm', width: 80, height: 24),
+    pty: const SSHPtyConfig(type: 'xterm', width: 80, height: 24),
   );
   final out2 = StringBuffer();
   final sub2 = session2.stdout
       .cast<List<int>>()
       .transform(utf8.decoder)
       .listen(out2.write);
-  await Future<void>.delayed(Duration(seconds: 5));
+  await Future<void>.delayed(const Duration(seconds: 5));
   await sub2.cancel();
   session2.close();
   final fullOut2 = out2.toString();

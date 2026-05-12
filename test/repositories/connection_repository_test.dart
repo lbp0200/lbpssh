@@ -26,21 +26,21 @@ SshConnection createTestConnection({
 void main() {
   group('ConnectionRepository', () {
     late ConnectionRepository repo;
-    late File _configFile;
+    late File configFile;
 
     setUp(() async {
       // Create a fresh temp file per test.
       final tempDir = await Directory.systemTemp.createTemp('lbp_ssh_repo_test_');
-      _configFile = File('${tempDir.path}/ssh_connections.json');
-      await _configFile.writeAsString('[]');
+      configFile = File('${tempDir.path}/ssh_connections.json');
+      await configFile.writeAsString('[]');
 
-      repo = ConnectionRepository(configFile: _configFile);
+      repo = ConnectionRepository(configFile: configFile);
       await repo.init();
     });
 
     tearDown(() async {
       await repo.close();
-      final dir = _configFile.parent;
+      final dir = configFile.parent;
       try {
         if (await dir.exists()) {
           await dir.delete(recursive: true);

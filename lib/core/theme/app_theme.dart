@@ -19,12 +19,12 @@ class LinearColors {
   static const Color accentHover = Color(0xFF828fff);
 
    // Fill Colors
-   static Color fillSurface = Color(0x33FFFFFF); // rgba(255,255,255,0.2) - default (higher contrast for dark mode)
-   static Color fillSurfaceHover = const Color(0x46ffffff); // rgba(255,255,255,0.25) - hover
+   static const Color fillSurface = Color(0x33FFFFFF); // rgba(255,255,255,0.2) - default (higher contrast for dark mode)
+   static const Color fillSurfaceHover = Color(0x46ffffff); // rgba(255,255,255,0.25) - hover
 
   // Borders (semi-transparent)
-  static Color borderSubtle = const Color(0x0Dffffff); // rgba(255,255,255,0.05)
-  static Color borderStandard = const Color(0x14ffffff); // rgba(255,255,255,0.08)
+  static const Color borderSubtle = Color(0x0Dffffff); // rgba(255,255,255,0.05)
+  static const Color borderStandard = Color(0x14ffffff); // rgba(255,255,255,0.08)
   static const Color borderSolid = Color(0xFF23252a);
 
   // Functional Status Colors
@@ -183,7 +183,7 @@ class AppTheme {
       color: LinearColors.surface,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(LinearRadius.card),
-        side: BorderSide(color: LinearColors.borderStandard),
+        side: const BorderSide(color: LinearColors.borderStandard),
       ),
     ),
     inputDecorationTheme: InputDecorationTheme(
@@ -192,11 +192,11 @@ class AppTheme {
       fillColor: const Color(0x1AFFFFFF),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(LinearRadius.standard),
-        borderSide: BorderSide(color: LinearColors.borderStandard),
+        borderSide: const BorderSide(color: LinearColors.borderStandard),
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(LinearRadius.standard),
-        borderSide: BorderSide(color: LinearColors.borderStandard),
+        borderSide: const BorderSide(color: LinearColors.borderStandard),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(LinearRadius.standard),
@@ -262,7 +262,7 @@ class AppTheme {
       backgroundColor: LinearColors.surface,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(LinearRadius.panel),
-        side: BorderSide(color: LinearColors.borderStandard),
+        side: const BorderSide(color: LinearColors.borderStandard),
       ),
     ),
     snackBarTheme: SnackBarThemeData(
@@ -275,7 +275,7 @@ class AppTheme {
       color: LinearColors.surface,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(LinearRadius.card),
-        side: BorderSide(color: LinearColors.borderStandard),
+        side: const BorderSide(color: LinearColors.borderStandard),
       ),
     ),
     navigationRailTheme: const NavigationRailThemeData(

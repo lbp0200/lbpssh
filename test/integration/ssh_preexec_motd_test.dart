@@ -27,7 +27,7 @@ Future<void> _testShellOnly() async {
   final socket = await SSHSocket.connect(
     sshTestHost,
     22,
-    timeout: Duration(seconds: 5),
+    timeout: const Duration(seconds: 5),
   );
   final client = SSHClient(
     socket,
@@ -37,11 +37,11 @@ Future<void> _testShellOnly() async {
   print('✓ Authenticated');
 
   final session = await client.shell(
-    pty: SSHPtyConfig(type: 'xterm', width: 80, height: 24),
+    pty: const SSHPtyConfig(type: 'xterm', width: 80, height: 24),
   );
   final out = StringBuffer();
   session.stdout.cast<List<int>>().transform(utf8.decoder).listen(out.write);
-  await Future<void>.delayed(Duration(seconds: 5));
+  await Future<void>.delayed(const Duration(seconds: 5));
   session.close();
   client.close();
   await socket.close();
@@ -57,7 +57,7 @@ Future<void> _testWithPreExec() async {
   final socket = await SSHSocket.connect(
     sshTestHost,
     22,
-    timeout: Duration(seconds: 5),
+    timeout: const Duration(seconds: 5),
   );
   final client = SSHClient(
     socket,
@@ -78,11 +78,11 @@ Future<void> _testWithPreExec() async {
   print('Pre-shell commands completed, now creating shell...');
 
   final session = await client.shell(
-    pty: SSHPtyConfig(type: 'xterm', width: 80, height: 24),
+    pty: const SSHPtyConfig(type: 'xterm', width: 80, height: 24),
   );
   final out = StringBuffer();
   session.stdout.cast<List<int>>().transform(utf8.decoder).listen(out.write);
-  await Future<void>.delayed(Duration(seconds: 5));
+  await Future<void>.delayed(const Duration(seconds: 5));
   session.close();
   client.close();
   await socket.close();

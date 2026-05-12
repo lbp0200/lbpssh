@@ -35,7 +35,6 @@ class TerminalViewWidget extends StatefulWidget {
 class _TerminalViewWidgetState extends State<TerminalViewWidget> {
   StreamSubscription<({String title, String body})>? _notificationSubscription;
   String? _subscribedSessionId;
-  bool _isDragging = false;
 
   void _subscribeToNotifications(TerminalSession session) {
     if (_subscribedSessionId == session.id) return;
@@ -124,62 +123,16 @@ class _TerminalViewWidgetState extends State<TerminalViewWidget> {
 
             return LayoutBuilder(
               builder: (context, constraints) {
-                return DropTarget(
-                  onDragEntered: (details) {
-                    setState(() {
-                      _isDragging = true;
-                    });
-                  },
-                  onDragExited: (details) {
-                    setState(() {
-                      _isDragging = false;
-                    });
-                  },
-                  onDragDone: (details) {
-                    setState(() {
-                      _isDragging = false;
-                    });
-                    _handleFileDrop(details.files);
-                  },
-                  child: Stack(
-                    children: [
-                      SizedBox(
-                        width: constraints.maxWidth,
-                        height: constraints.maxHeight,
-                        child: _TerminalViewWithSelection(
-                          terminal: session.terminal,
-                          controller: session.controller,
-                          config: config,
-                        ),
-                      ),
-                      // 拖拽提示覆盖层
-                      if (_isDragging)
-                        Container(
-                          width: constraints.maxWidth,
-                          height: constraints.maxHeight,
-                          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
-                          child: Center(
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(
-                                  Icons.upload_file,
-                                  size: 64,
-                                  color: Theme.of(context).colorScheme.primary,
-                                ),
-                                const SizedBox(height: 16),
-                                Text(
-                                  '释放以上传文件到服务器',
-                                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                                    color: Theme.of(context).colorScheme.primary,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                    ],
+                return _TerminalDropTarget(
+                  onDrop: _handleFileDrop,
+                  child: SizedBox(
+                    width: constraints.maxWidth,
+                    height: constraints.maxHeight,
+                    child: _TerminalViewWithSelection(
+                      terminal: session.terminal,
+                      controller: session.controller,
+                      config: config,
+                    ),
                   ),
                 );
               },
@@ -187,6 +140,77 @@ class _TerminalViewWidgetState extends State<TerminalViewWidget> {
           },
         );
       },
+    );
+  }
+}
+
+/// 拖放区域组件 - 管理自己的拖动状态
+/// 避免拖动事件导致整个终端树重建
+class _TerminalDropTarget extends StatefulWidget {
+  final Widget child;
+  final void Function(List<XFile> files) onDrop;
+
+  const _TerminalDropTarget({
+    required this.child,
+    required this.onDrop,
+  });
+
+  @override
+  State<_TerminalDropTarget> createState() => _TerminalDropTargetState();
+}
+
+class _TerminalDropTargetState extends State<_TerminalDropTarget> {
+  bool _isDragging = false;
+  final GlobalKey _overlayKey = GlobalKey();
+
+  @override
+  Widget build(BuildContext context) {
+    return DropTarget(
+      onDragEntered: (_) {
+        if (!mounted) return;
+        setState(() => _isDragging = true);
+      },
+      onDragExited: (_) {
+        if (!mounted) return;
+        setState(() => _isDragging = false);
+      },
+      onDragDone: (details) {
+        if (!mounted) return;
+        setState(() => _isDragging = false);
+        widget.onDrop(details.files);
+      },
+      child: Stack(
+        children: [
+          widget.child,
+          if (_isDragging)
+            Positioned.fill(
+              key: _overlayKey,
+              child: Container(
+                color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
+                child: Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.upload_file,
+                        size: 64,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        '释放以上传文件到服务器',
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          color: Theme.of(context).colorScheme.primary,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+        ],
+      ),
     );
   }
 }
@@ -209,6 +233,13 @@ class _TerminalViewWithSelection extends StatefulWidget {
 
 class _TerminalViewWithSelectionState extends State<_TerminalViewWithSelection> {
   String? _lastSelection;
+
+  // 字体度量缓存 - 避免每帧重建 Paragraph
+  String? _cachedFontFamily;
+  double? _cachedFontSize;
+  double? _cachedLineHeight;
+  double _cachedCellWidth = 10;  // fallback 默认值
+  double _cachedCellHeight = 18;
 
   @override
   void initState() {
@@ -244,20 +275,32 @@ class _TerminalViewWithSelectionState extends State<_TerminalViewWithSelection> 
     // 使用与 kterm TerminalPainter._measureCharSize() 完全相同的计算方式
     // 这样 GraphicsOverlayWidget 中的图片位置与终端字符单元格精确对齐
     final fontFamily = widget.config.fontFamily.isEmpty ? 'Menlo' : widget.config.fontFamily;
-    final textStyle = TextStyle(
-      fontSize: widget.config.fontSize,
-      fontFamily: fontFamily,
-      height: widget.config.lineHeight,
-    );
 
-    // 使用 10 个 'm' 字符测量，与 kterm 内部逻辑一致
-    const measureChars = 'mmmmmmmmmm';
-    final fontWidth = _measureCharWidth(textStyle, measureChars.length);
-    final fontHeight = _measureCharHeight(textStyle);
+    // 缓存字体度量，避免每帧重建 ui.Paragraph
+    if (_cachedFontFamily != fontFamily ||
+        _cachedFontSize != widget.config.fontSize ||
+        _cachedLineHeight != widget.config.lineHeight) {
+      _cachedFontFamily = fontFamily;
+      _cachedFontSize = widget.config.fontSize;
+      _cachedLineHeight = widget.config.lineHeight;
 
-    // kterm 内部使用 maxIntrinsicWidth / 10 来计算 cellWidth
-    final cellWidth = fontWidth / measureChars.length;
-    final cellHeight = fontHeight;
+      final textStyle = TextStyle(
+        fontSize: widget.config.fontSize,
+        fontFamily: fontFamily,
+        height: widget.config.lineHeight,
+      );
+
+      // 使用 10 个 'm' 字符测量，与 kterm 内部逻辑一致
+      const measureChars = 'mmmmmmmmmm';
+      final fontWidth = _measureCharWidth(textStyle, measureChars.length);
+      final fontHeight = _measureCharHeight(textStyle);
+
+      // kterm 内部使用 maxIntrinsicWidth / 10 来计算 cellWidth
+      _cachedCellWidth = fontWidth / measureChars.length;
+      _cachedCellHeight = fontHeight;
+    }
+    final cellWidth = _cachedCellWidth;
+    final cellHeight = _cachedCellHeight;
 
     return Stack(
       children: [

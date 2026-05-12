@@ -81,7 +81,7 @@ class CompactConnectionList extends StatelessWidget {
             const SizedBox(height: LinearSpacing.spacing4),
             Expanded(
               child: ListView.builder(
-                padding: EdgeInsets.symmetric(vertical: LinearSpacing.spacing1),
+                padding: const EdgeInsets.symmetric(vertical: LinearSpacing.spacing1),
                 itemCount: connections.length,
                 itemBuilder: (context, index) {
                   final connection = connections[index];
@@ -162,7 +162,7 @@ class _CompactConnectionItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: LinearSpacing.spacing4, vertical: LinearSpacing.spacing1),
+      margin: const EdgeInsets.symmetric(horizontal: LinearSpacing.spacing4, vertical: LinearSpacing.spacing1),
       child: Tooltip(
         message:
             '${connection.name}\n${connection.username}@${connection.host}:${connection.port}',
@@ -229,7 +229,7 @@ class _CompactConnectionItem extends StatelessWidget {
                   width: 1,
                 ),
               ),
-              child: Icon(
+              child: const Icon(
                 Icons.computer,
                 color: LinearColors.accentInteractive,
                 size: 20,

@@ -124,11 +124,10 @@ dev_dependencies:
   riverpod_generator: ^4.0.3
   flutter_launcher_icons: ^0.14.4
 
-  # Golden tests
-  golden_toolkit: ^0.15.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
+  test: any
 flutter_launcher_icons:
   image_path: "assets/icon/app_icon.png" # 你的原图路径（必须是 1024x1024）# 只启用 Windows、macOS、Linux 三个桌面平台
   windows:

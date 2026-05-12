@@ -110,7 +110,7 @@ class _AppSettingsScreenState extends State<AppSettingsScreen> {
         children: [
           Container(
             width: 200,
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               color: LinearColors.panel,
               border: Border(
                 right: BorderSide(color: LinearColors.borderSubtle),

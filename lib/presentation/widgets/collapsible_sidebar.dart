@@ -182,11 +182,11 @@ class _CollapsibleSidebarState extends State<CollapsibleSidebar>
         ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(LinearRadius.standard),
-          borderSide: BorderSide(color: LinearColors.borderStandard),
+          borderSide: const BorderSide(color: LinearColors.borderStandard),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(LinearRadius.standard),
-          borderSide: BorderSide(color: LinearColors.borderStandard),
+          borderSide: const BorderSide(color: LinearColors.borderStandard),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(LinearRadius.standard),

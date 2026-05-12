@@ -374,11 +374,11 @@ class _ConnectionFormScreenState extends State<ConnectionFormScreen> {
                 fillColor: LinearColors.fillSurface,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(LinearRadius.standard),
-                  borderSide: BorderSide(color: LinearColors.borderStandard),
+                  borderSide: const BorderSide(color: LinearColors.borderStandard),
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(LinearRadius.standard),
-                  borderSide: BorderSide(color: LinearColors.borderStandard),
+                  borderSide: const BorderSide(color: LinearColors.borderStandard),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(LinearRadius.standard),
@@ -408,11 +408,11 @@ class _ConnectionFormScreenState extends State<ConnectionFormScreen> {
                       fillColor: LinearColors.fillSurface,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(LinearRadius.standard),
-                        borderSide: BorderSide(color: LinearColors.borderStandard),
+                        borderSide: const BorderSide(color: LinearColors.borderStandard),
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(LinearRadius.standard),
-                        borderSide: BorderSide(color: LinearColors.borderStandard),
+                        borderSide: const BorderSide(color: LinearColors.borderStandard),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(LinearRadius.standard),
@@ -439,11 +439,11 @@ class _ConnectionFormScreenState extends State<ConnectionFormScreen> {
                       fillColor: LinearColors.fillSurface,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(LinearRadius.standard),
-                        borderSide: BorderSide(color: LinearColors.borderStandard),
+                        borderSide: const BorderSide(color: LinearColors.borderStandard),
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(LinearRadius.standard),
-                        borderSide: BorderSide(color: LinearColors.borderStandard),
+                        borderSide: const BorderSide(color: LinearColors.borderStandard),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(LinearRadius.standard),
@@ -477,11 +477,11 @@ class _ConnectionFormScreenState extends State<ConnectionFormScreen> {
                 fillColor: LinearColors.fillSurface,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(LinearRadius.standard),
-                  borderSide: BorderSide(color: LinearColors.borderStandard),
+                  borderSide: const BorderSide(color: LinearColors.borderStandard),
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(LinearRadius.standard),
-                  borderSide: BorderSide(color: LinearColors.borderStandard),
+                  borderSide: const BorderSide(color: LinearColors.borderStandard),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(LinearRadius.standard),
@@ -508,11 +508,11 @@ class _ConnectionFormScreenState extends State<ConnectionFormScreen> {
                 fillColor: LinearColors.fillSurface,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(LinearRadius.standard),
-                  borderSide: BorderSide(color: LinearColors.borderStandard),
+                  borderSide: const BorderSide(color: LinearColors.borderStandard),
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(LinearRadius.standard),
-                  borderSide: BorderSide(color: LinearColors.borderStandard),
+                  borderSide: const BorderSide(color: LinearColors.borderStandard),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(LinearRadius.standard),
@@ -565,11 +565,11 @@ class _ConnectionFormScreenState extends State<ConnectionFormScreen> {
                   fillColor: LinearColors.fillSurface,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(LinearRadius.standard),
-                    borderSide: BorderSide(color: LinearColors.borderStandard),
+                    borderSide: const BorderSide(color: LinearColors.borderStandard),
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(LinearRadius.standard),
-                    borderSide: BorderSide(color: LinearColors.borderStandard),
+                    borderSide: const BorderSide(color: LinearColors.borderStandard),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(LinearRadius.standard),
@@ -616,11 +616,11 @@ class _ConnectionFormScreenState extends State<ConnectionFormScreen> {
                             fillColor: LinearColors.fillSurface,
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(LinearRadius.standard),
-                              borderSide: BorderSide(color: LinearColors.borderStandard),
+                              borderSide: const BorderSide(color: LinearColors.borderStandard),
                             ),
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(LinearRadius.standard),
-                              borderSide: BorderSide(color: LinearColors.borderStandard),
+                              borderSide: const BorderSide(color: LinearColors.borderStandard),
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(LinearRadius.standard),
@@ -702,11 +702,11 @@ class _ConnectionFormScreenState extends State<ConnectionFormScreen> {
                   fillColor: LinearColors.fillSurface,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(LinearRadius.standard),
-                    borderSide: BorderSide(color: LinearColors.borderStandard),
+                    borderSide: const BorderSide(color: LinearColors.borderStandard),
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(LinearRadius.standard),
-                    borderSide: BorderSide(color: LinearColors.borderStandard),
+                    borderSide: const BorderSide(color: LinearColors.borderStandard),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(LinearRadius.standard),
@@ -765,11 +765,11 @@ class _ConnectionFormScreenState extends State<ConnectionFormScreen> {
                     fillColor: LinearColors.fillSurface,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(LinearRadius.standard),
-                      borderSide: BorderSide(color: LinearColors.borderStandard),
+                      borderSide: const BorderSide(color: LinearColors.borderStandard),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(LinearRadius.standard),
-                      borderSide: BorderSide(color: LinearColors.borderStandard),
+                      borderSide: const BorderSide(color: LinearColors.borderStandard),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(LinearRadius.standard),
@@ -869,11 +869,11 @@ class _ConnectionFormScreenState extends State<ConnectionFormScreen> {
                         fillColor: LinearColors.fillSurface,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(LinearRadius.standard),
-                          borderSide: BorderSide(color: LinearColors.borderStandard),
+                          borderSide: const BorderSide(color: LinearColors.borderStandard),
                         ),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(LinearRadius.standard),
-                          borderSide: BorderSide(color: LinearColors.borderStandard),
+                          borderSide: const BorderSide(color: LinearColors.borderStandard),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(LinearRadius.standard),
@@ -894,11 +894,11 @@ class _ConnectionFormScreenState extends State<ConnectionFormScreen> {
                         fillColor: LinearColors.fillSurface,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(LinearRadius.standard),
-                          borderSide: BorderSide(color: LinearColors.borderStandard),
+                          borderSide: const BorderSide(color: LinearColors.borderStandard),
                         ),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(LinearRadius.standard),
-                          borderSide: BorderSide(color: LinearColors.borderStandard),
+                          borderSide: const BorderSide(color: LinearColors.borderStandard),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(LinearRadius.standard),
@@ -921,11 +921,11 @@ class _ConnectionFormScreenState extends State<ConnectionFormScreen> {
                   fillColor: LinearColors.fillSurface,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(LinearRadius.standard),
-                    borderSide: BorderSide(color: LinearColors.borderStandard),
+                    borderSide: const BorderSide(color: LinearColors.borderStandard),
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(LinearRadius.standard),
-                    borderSide: BorderSide(color: LinearColors.borderStandard),
+                    borderSide: const BorderSide(color: LinearColors.borderStandard),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(LinearRadius.standard),
@@ -944,11 +944,11 @@ class _ConnectionFormScreenState extends State<ConnectionFormScreen> {
                   fillColor: LinearColors.fillSurface,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(LinearRadius.standard),
-                    borderSide: BorderSide(color: LinearColors.borderStandard),
+                    borderSide: const BorderSide(color: LinearColors.borderStandard),
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(LinearRadius.standard),
-                    borderSide: BorderSide(color: LinearColors.borderStandard),
+                    borderSide: const BorderSide(color: LinearColors.borderStandard),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(LinearRadius.standard),
@@ -980,11 +980,11 @@ class _ConnectionFormScreenState extends State<ConnectionFormScreen> {
                     fillColor: LinearColors.fillSurface,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(LinearRadius.standard),
-                      borderSide: BorderSide(color: LinearColors.borderStandard),
+                      borderSide: const BorderSide(color: LinearColors.borderStandard),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(LinearRadius.standard),
-                      borderSide: BorderSide(color: LinearColors.borderStandard),
+                      borderSide: const BorderSide(color: LinearColors.borderStandard),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(LinearRadius.standard),
@@ -1026,11 +1026,11 @@ class _ConnectionFormScreenState extends State<ConnectionFormScreen> {
                         fillColor: LinearColors.fillSurface,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(LinearRadius.standard),
-                          borderSide: BorderSide(color: LinearColors.borderStandard),
+                          borderSide: const BorderSide(color: LinearColors.borderStandard),
                         ),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(LinearRadius.standard),
-                          borderSide: BorderSide(color: LinearColors.borderStandard),
+                          borderSide: const BorderSide(color: LinearColors.borderStandard),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(LinearRadius.standard),
@@ -1059,11 +1059,11 @@ class _ConnectionFormScreenState extends State<ConnectionFormScreen> {
                         fillColor: LinearColors.fillSurface,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(LinearRadius.standard),
-                          borderSide: BorderSide(color: LinearColors.borderStandard),
+                          borderSide: const BorderSide(color: LinearColors.borderStandard),
                         ),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(LinearRadius.standard),
-                          borderSide: BorderSide(color: LinearColors.borderStandard),
+                          borderSide: const BorderSide(color: LinearColors.borderStandard),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(LinearRadius.standard),
@@ -1101,11 +1101,11 @@ class _ConnectionFormScreenState extends State<ConnectionFormScreen> {
                         fillColor: LinearColors.fillSurface,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(LinearRadius.standard),
-                          borderSide: BorderSide(color: LinearColors.borderStandard),
+                          borderSide: const BorderSide(color: LinearColors.borderStandard),
                         ),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(LinearRadius.standard),
-                          borderSide: BorderSide(color: LinearColors.borderStandard),
+                          borderSide: const BorderSide(color: LinearColors.borderStandard),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(LinearRadius.standard),
@@ -1127,11 +1127,11 @@ class _ConnectionFormScreenState extends State<ConnectionFormScreen> {
                         fillColor: LinearColors.fillSurface,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(LinearRadius.standard),
-                          borderSide: BorderSide(color: LinearColors.borderStandard),
+                          borderSide: const BorderSide(color: LinearColors.borderStandard),
                         ),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(LinearRadius.standard),
-                          borderSide: BorderSide(color: LinearColors.borderStandard),
+                          borderSide: const BorderSide(color: LinearColors.borderStandard),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(LinearRadius.standard),
@@ -1167,11 +1167,11 @@ class _ConnectionFormScreenState extends State<ConnectionFormScreen> {
                 fillColor: LinearColors.fillSurface,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(LinearRadius.standard),
-                  borderSide: BorderSide(color: LinearColors.borderStandard),
+                  borderSide: const BorderSide(color: LinearColors.borderStandard),
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(LinearRadius.standard),
-                  borderSide: BorderSide(color: LinearColors.borderStandard),
+                  borderSide: const BorderSide(color: LinearColors.borderStandard),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(LinearRadius.standard),
@@ -1250,11 +1250,11 @@ class _ManualPathDialogState extends State<_ManualPathDialog> {
               fillColor: LinearColors.fillSurface,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(LinearRadius.standard),
-                borderSide: BorderSide(color: LinearColors.borderStandard),
+                borderSide: const BorderSide(color: LinearColors.borderStandard),
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(LinearRadius.standard),
-                borderSide: BorderSide(color: LinearColors.borderStandard),
+                borderSide: const BorderSide(color: LinearColors.borderStandard),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(LinearRadius.standard),

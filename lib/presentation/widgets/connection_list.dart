@@ -280,7 +280,7 @@ class _ConnectionListItemState extends State<_ConnectionListItem> {
                     ),
                     if (widget.onSftpTap != null)
                       IconButton(
-                        icon: Icon(
+                        icon: const Icon(
                           Icons.folder_copy_outlined,
                           size: 20,
                           color: LinearColors.textSecondary,
@@ -405,8 +405,8 @@ class _CompactConnectionItem extends StatelessWidget {
             child: InkWell(
               onTap: onSftpTap,
               borderRadius: BorderRadius.circular(LinearRadius.micro),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 2),
+              child: const Padding(
+                padding: EdgeInsets.symmetric(vertical: 2),
                 child: Icon(
                   Icons.folder_copy_outlined,
                   size: 14,

@@ -64,7 +64,7 @@ class _ImportExportSettingsScreenState
       color: LinearColors.surface,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(LinearRadius.card),
-        side: BorderSide(color: LinearColors.borderStandard),
+        side: const BorderSide(color: LinearColors.borderStandard),
       ),
       child: Padding(
         padding: const EdgeInsets.all(LinearSpacing.spacing16),
@@ -74,7 +74,7 @@ class _ImportExportSettingsScreenState
             Row(
               children: [
                 const Icon(Icons.info_outline, color: LinearColors.textSecondary),
-                SizedBox(width: LinearSpacing.spacing8),
+                const SizedBox(width: LinearSpacing.spacing8),
                 Text(
                   '当前SSH连接统计',
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
@@ -172,7 +172,7 @@ class _ImportExportSettingsScreenState
       color: LinearColors.surface,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(LinearRadius.card),
-        side: BorderSide(color: LinearColors.borderStandard),
+        side: const BorderSide(color: LinearColors.borderStandard),
       ),
       child: Padding(
         padding: const EdgeInsets.all(LinearSpacing.spacing16),
@@ -182,7 +182,7 @@ class _ImportExportSettingsScreenState
             Row(
               children: [
                 const Icon(Icons.file_upload, color: LinearColors.textSecondary),
-                SizedBox(width: LinearSpacing.spacing8),
+                const SizedBox(width: LinearSpacing.spacing8),
                 Text(
                   '导出配置',
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
@@ -230,7 +230,7 @@ class _ImportExportSettingsScreenState
       color: LinearColors.surface,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(LinearRadius.card),
-        side: BorderSide(color: LinearColors.borderStandard),
+        side: const BorderSide(color: LinearColors.borderStandard),
       ),
       child: Padding(
         padding: const EdgeInsets.all(LinearSpacing.spacing16),
@@ -240,7 +240,7 @@ class _ImportExportSettingsScreenState
             Row(
               children: [
                 const Icon(Icons.file_download, color: LinearColors.textSecondary),
-                SizedBox(width: LinearSpacing.spacing8),
+                const SizedBox(width: LinearSpacing.spacing8),
                 Text(
                   '导入配置',
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
@@ -288,7 +288,7 @@ class _ImportExportSettingsScreenState
       color: LinearColors.surface,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(LinearRadius.card),
-        side: BorderSide(color: LinearColors.borderStandard),
+        side: const BorderSide(color: LinearColors.borderStandard),
       ),
       child: Padding(
         padding: const EdgeInsets.all(LinearSpacing.spacing16),
@@ -298,7 +298,7 @@ class _ImportExportSettingsScreenState
             Row(
               children: [
                 const Icon(Icons.preview, color: LinearColors.textSecondary),
-                SizedBox(width: LinearSpacing.spacing8),
+                const SizedBox(width: LinearSpacing.spacing8),
                 Text(
                   '导入预览',
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(

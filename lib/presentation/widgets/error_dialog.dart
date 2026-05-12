@@ -136,7 +136,7 @@ class _ErrorDialogState extends State<ErrorDialog> {
       backgroundColor: LinearColors.surface,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(LinearRadius.panel),
-        side: BorderSide(color: LinearColors.borderStandard),
+        side: const BorderSide(color: LinearColors.borderStandard),
       ),
       title: Row(
         key: const Key('error_dialog_title'),

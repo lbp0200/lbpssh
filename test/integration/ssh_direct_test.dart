@@ -30,7 +30,7 @@ Future<void> _runTest() async {
     final socket = await SSHSocket.connect(
       sshTestHost,
       22,
-      timeout: Duration(seconds: 5),
+      timeout: const Duration(seconds: 5),
     );
     print('  ✓ Connected in ${stopwatch.elapsedMilliseconds}ms');
 
@@ -47,13 +47,13 @@ Future<void> _runTest() async {
       socket,
       username: 'lbp',
       identities: identities,
-      keepAliveInterval: Duration(seconds: 30),
+      keepAliveInterval: const Duration(seconds: 30),
     );
     print('  ✓ Authenticated');
 
     print('\nStep 4: Creating shell session...');
     final session = await client.shell(
-      pty: SSHPtyConfig(type: 'xterm', width: 80, height: 24),
+      pty: const SSHPtyConfig(type: 'xterm', width: 80, height: 24),
     );
     print('  ✓ Shell ready');
 
@@ -75,13 +75,13 @@ Future<void> _runTest() async {
         );
 
     print('  → Waiting 6s for welcome banner...');
-    await Future<void>.delayed(Duration(seconds: 6));
+    await Future<void>.delayed(const Duration(seconds: 6));
 
     final full = output.toString();
     final lines = full.split('\n');
     final nonEmpty = lines.where((l) => l.trim().isNotEmpty).length;
 
-    print('\n' + '=' * 70);
+    print('\n${'=' * 70}');
     print('RESULTS');
     print('=' * 70);
     print('Total time:      ${stopwatch.elapsedMilliseconds}ms');
