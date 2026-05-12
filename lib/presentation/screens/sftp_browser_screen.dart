@@ -1,11 +1,11 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lbp_ssh/core/theme/app_theme.dart';
 import 'package:lbp_ssh/data/models/ssh_connection.dart';
 import 'package:lbp_ssh/domain/services/kitty_file_transfer_service.dart';
-import 'package:lbp_ssh/presentation/providers/sftp_provider.dart';
+import 'package:lbp_ssh/presentation/providers_riverpod/sftp_provider_riverpod.dart';
 import 'package:lbp_ssh/presentation/widgets/transfer_progress_dialog.dart';
 
 /// 远程文件项（用于显示文件列表）
@@ -28,16 +28,16 @@ class FileItem {
 }
 
 /// SFTP 浏览器界面
-class SftpBrowserScreen extends StatefulWidget {
+class SftpBrowserScreen extends ConsumerStatefulWidget {
   final SshConnection connection;
 
   const SftpBrowserScreen({super.key, required this.connection});
 
   @override
-  State<SftpBrowserScreen> createState() => _SftpBrowserScreenState();
+  ConsumerState<SftpBrowserScreen> createState() => _SftpBrowserScreenState();
 }
 
-class _SftpBrowserScreenState extends State<SftpBrowserScreen> {
+class _SftpBrowserScreenState extends ConsumerState<SftpBrowserScreen> {
   KittyFileTransferService? _transferService;
   List<FileItem> _items = [];
   bool _loading = false;
@@ -59,8 +59,7 @@ class _SftpBrowserScreenState extends State<SftpBrowserScreen> {
     });
 
     try {
-      final provider = context.read<SftpProvider>();
-      final tab = await provider.openTab(widget.connection);
+      final tab = await ref.read(sftpProvider.notifier).openTab(widget.connection);
       setState(() {
         _transferService = tab.service;
         _currentPath = tab.currentPath;

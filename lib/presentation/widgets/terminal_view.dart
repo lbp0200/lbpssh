@@ -3,15 +3,15 @@ import 'dart:io';
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:kterm/kterm.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:desktop_drop/desktop_drop.dart';
 import 'package:cross_file/cross_file.dart';
 
-import '../providers/app_config_provider.dart';
-import '../providers/connection_provider.dart';
-import '../providers/terminal_provider.dart';
+import '../providers_riverpod/app_config_provider_riverpod.dart';
+import '../providers_riverpod/connection_provider_riverpod.dart';
+import '../providers_riverpod/terminal_provider_riverpod.dart';
 import '../../core/theme/app_theme.dart';
 import '../../data/models/ssh_connection.dart';
 import '../../data/models/terminal_config.dart';
@@ -23,16 +23,16 @@ import 'graphics_overlay.dart';
 import 'terminal_status_bar.dart';
 
 /// 终端视图组件
-class TerminalViewWidget extends StatefulWidget {
+class TerminalViewWidget extends ConsumerStatefulWidget {
   final String sessionId;
 
   const TerminalViewWidget({super.key, required this.sessionId});
 
   @override
-  State<TerminalViewWidget> createState() => _TerminalViewWidgetState();
+  ConsumerState<TerminalViewWidget> createState() => _TerminalViewWidgetState();
 }
 
-class _TerminalViewWidgetState extends State<TerminalViewWidget> {
+class _TerminalViewWidgetState extends ConsumerState<TerminalViewWidget> {
   StreamSubscription<({String title, String body})>? _notificationSubscription;
   String? _subscribedSessionId;
 
@@ -56,8 +56,8 @@ class _TerminalViewWidgetState extends State<TerminalViewWidget> {
     if (files.isEmpty) return;
 
     // 获取 TerminalSession
-    final terminalProvider = context.read<TerminalProvider>();
-    final session = terminalProvider.getSession(widget.sessionId);
+    final terminalNotifier = ref.read(terminalProvider.notifier);
+    final session = terminalNotifier.getSession(widget.sessionId);
 
     if (session == null) {
       if (mounted) {
@@ -104,40 +104,32 @@ class _TerminalViewWidgetState extends State<TerminalViewWidget> {
 
   @override
   Widget build(BuildContext context) {
-    // 先监听 TerminalProvider 获取 session
-    return Consumer<TerminalProvider>(
-      builder: (context, terminalProvider, child) {
-        final session = terminalProvider.activeSession;
+    // 监听 TerminalProvider 获取 session
+    final activeSession = ref.watch(terminalProvider).activeSession;
 
-        if (session == null) {
-          return const Center(child: Text('请选择一个连接'));
-        }
+    if (activeSession == null) {
+      return const Center(child: Text('请选择一个连接'));
+    }
 
-        // Subscribe to notification stream for the active session
-        _subscribeToNotifications(session);
+    // Subscribe to notification stream for the active session
+    _subscribeToNotifications(activeSession);
 
-        // 再监听 AppConfigProvider 获取配置
-        return Consumer<AppConfigProvider>(
-          builder: (context, configProvider, child) {
-            final config = configProvider.terminalConfig;
+    // 监听 TerminalConfig
+    final config = ref.watch(terminalConfigProvider);
 
-            return LayoutBuilder(
-              builder: (context, constraints) {
-                return _TerminalDropTarget(
-                  onDrop: _handleFileDrop,
-                  child: SizedBox(
-                    width: constraints.maxWidth,
-                    height: constraints.maxHeight,
-                    child: _TerminalViewWithSelection(
-                      terminal: session.terminal,
-                      controller: session.controller,
-                      config: config,
-                    ),
-                  ),
-                );
-              },
-            );
-          },
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return _TerminalDropTarget(
+          onDrop: _handleFileDrop,
+          child: SizedBox(
+            width: constraints.maxWidth,
+            height: constraints.maxHeight,
+            child: _TerminalViewWithSelection(
+              terminal: activeSession.terminal,
+              controller: activeSession.controller,
+              config: config,
+            ),
+          ),
         );
       },
     );
@@ -393,63 +385,220 @@ class _TerminalViewWithSelectionState extends State<_TerminalViewWithSelection> 
 }
 
 /// 终端标签页视图
-class TerminalTabsView extends StatelessWidget {
+class TerminalTabsView extends ConsumerWidget {
   const TerminalTabsView({super.key});
 
-  Future<void> _createLocalTerminal(BuildContext context) async {
-    final terminalProvider = Provider.of<TerminalProvider>(
-      context,
-      listen: false,
-    );
-    try {
-      await terminalProvider.createLocalTerminal();
-    } catch (e) {
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('创建终端失败: $e')),
-        );
-      }
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final currentState = ref.watch(terminalProvider);
+    final sessions = currentState.sessions;
+    final activeSessionId = currentState.activeSessionId;
+    final connections = ref.watch(connectionProvider).connections;
+    final theme = Theme.of(context);
+
+    if (sessions.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.terminal,
+              size: 64,
+              color: LinearColors.textPrimary.withValues(alpha: 0.2),
+            ),
+            const SizedBox(height: LinearSpacing.spacing16),
+            Text(
+              '点击左侧连接以打开终端',
+              style: theme.textTheme.titleMedium?.copyWith(
+                color: LinearColors.textTertiary,
+              ),
+            ),
+            const SizedBox(height: LinearSpacing.spacing16),
+            Container(
+              decoration: BoxDecoration(
+                color: LinearColors.fillSurface,
+                borderRadius: BorderRadius.circular(LinearRadius.standard),
+                border: Border.all(color: LinearColors.borderSolid),
+              ),
+              child: TextButton.icon(
+                onPressed: () async {
+                  try {
+                    await ref.read(terminalProvider.notifier).createLocalTerminal();
+                  } catch (e, stackTrace) {
+                    if (context.mounted) {
+                      showErrorDialog(
+                        context,
+                        title: '创建终端失败',
+                        error: e,
+                        stackTrace: stackTrace,
+                      );
+                    }
+                  }
+                },
+                icon: const Icon(Icons.add),
+                label: const Text('创建本地终端'),
+              ),
+            ),
+          ],
+        ),
+      );
     }
-  }
 
-  Future<void> _handleConnectionTap(
-    BuildContext context,
-    SshConnection connection,
-  ) async {
-    final terminalProvider = Provider.of<TerminalProvider>(
-      context,
-      listen: false,
-    );
+    return Column(
+      children: [
+        // 标签页栏
+        Container(
+          height: 48,
+          decoration: const BoxDecoration(
+            color: LinearColors.panel,
+          ),
+          child: Row(
+            children: [
+              // 标签列表
+              Expanded(
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: sessions.length,
+                  itemBuilder: (context, index) {
+                    final session = sessions[index];
+                    final isActive = session.id == activeSessionId;
 
-    final existingSession =
-        terminalProvider.sessions.where((s) => s.id == connection.id).firstOrNull;
+                    return _TerminalTab(
+                      session: session,
+                      isActive: isActive,
+                      onTap: () => ref.read(terminalProvider.notifier).switchToSession(session.id),
+                      onClose: () => ref.read(terminalProvider.notifier).closeSession(session.id),
+                    );
+                  },
+                ),
+              ),
+              // 下拉菜单按钮
+              PopupMenuButton<String>(
+                padding: EdgeInsets.zero,
+                child: Container(
+                  margin: const EdgeInsets.symmetric(
+                    horizontal: LinearSpacing.spacing8,
+                    vertical: LinearSpacing.spacing8,
+                  ),
+                  decoration: BoxDecoration(
+                    color: LinearColors.fillSurface,
+                    borderRadius: BorderRadius.circular(LinearRadius.standard),
+                    border: Border.all(color: LinearColors.borderSolid),
+                  ),
+                  child: const Icon(
+                    Icons.add,
+                    size: 20,
+                    color: LinearColors.accentInteractive,
+                  ),
+                ),
+                itemBuilder: (context) {
+                  final items = <PopupMenuEntry<String>>[
+                    PopupMenuItem(
+                      value: 'local_terminal',
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.computer,
+                            size: 20,
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                          const SizedBox(width: 12),
+                          const Text('本地终端'),
+                        ],
+                      ),
+                    ),
+                    const PopupMenuDivider(),
+                  ];
+                  if (connections.isEmpty) {
+                    items.add(PopupMenuItem(
+                      value: 'no_connections',
+                      enabled: false,
+                      child: Text(
+                        '暂无保存的连接',
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
+                        ),
+                      ),
+                    ));
+                  } else {
+                    items.addAll(_buildConnectionItems(context, connections));
+                  }
+                  return items;
+                },
+                onSelected: (value) async {
+                  if (value == 'no_connections') {
+                    return;
+                  }
+                  if (value == 'local_terminal') {
+                    try {
+                      await ref.read(terminalProvider.notifier).createLocalTerminal();
+                    } catch (e, stackTrace) {
+                      if (context.mounted) {
+                        showErrorDialog(
+                          context,
+                          title: '创建终端失败',
+                          error: e,
+                          stackTrace: stackTrace,
+                        );
+                      }
+                    }
+                    return;
+                  }
+                  final connection = connections.firstWhere((c) => c.id == value);
+                  final terminalNotifier = ref.read(terminalProvider.notifier);
+                  final currentState = ref.read(terminalProvider);
+                  final existingSession =
+                      currentState.sessions.where((s) => s.id == connection.id).firstOrNull;
 
-    if (existingSession != null) {
-      terminalProvider.switchToSession(connection.id);
-    } else {
-      try {
-        // createSession now auto-connects
-        await terminalProvider.createSession(connection);
-      } catch (e) {
-        if (context.mounted) {
-          _showErrorDialog(context, connection, e.toString());
-        }
-      }
-    }
-  }
-
-  /// 显示错误详情对话框
-  void _showErrorDialog(
-    BuildContext context,
-    SshConnection connection,
-    String errorMessage,
-  ) {
-    showDialog<void>(
-      context: context,
-      builder: (context) => ErrorDetailDialog(
-        connection: connection,
-        errorMessage: errorMessage,
-      ),
+                  if (existingSession != null) {
+                    terminalNotifier.switchToSession(connection.id);
+                  } else {
+                    try {
+                      await terminalNotifier.createSession(connection);
+                    } catch (e) {
+                      if (context.mounted) {
+                        showDialog<void>(
+                          context: context,
+                          builder: (context) => ErrorDetailDialog(
+                            connection: connection,
+                            errorMessage: e.toString(),
+                          ),
+                        );
+                      }
+                    }
+                  }
+                },
+              ),
+            ],
+          ),
+        ),
+        // 终端内容
+        Expanded(
+          child: activeSessionId != null
+              ? TerminalViewWidget(sessionId: activeSessionId)
+              : const SizedBox.shrink(),
+        ),
+        // 状态栏
+        if (activeSessionId != null)
+          Builder(
+            builder: (context) {
+              final session = sessions.firstWhere(
+                (s) => s.id == activeSessionId,
+                orElse: () => sessions.first,
+              );
+              return TerminalStatusBar(
+                session: session,
+                onReconnect: () {
+                  // TODO: 实现重连功能
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Reconnecting...')),
+                  );
+                },
+              );
+            },
+          ),
+      ],
     );
   }
 
@@ -479,200 +628,6 @@ class TerminalTabsView extends StatelessWidget {
         ),
       );
     }).toList();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Selector2<TerminalProvider, ConnectionProvider, ({
-      List<TerminalSession> sessions,
-      String? activeSessionId,
-      List<SshConnection> connections,
-    })>(
-      selector: (context, terminalProvider, connProvider) => (
-        sessions: terminalProvider.sessions,
-        activeSessionId: terminalProvider.activeSessionId,
-        connections: connProvider.connections,
-      ),
-      builder: (context, data, child) {
-        final sessions = data.sessions;
-        final activeSessionId = data.activeSessionId;
-        final connections = data.connections;
-        final theme = Theme.of(context);
-
-        if (sessions.isEmpty) {
-          return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.terminal,
-                  size: 64,
-                  color: LinearColors.textPrimary.withValues(alpha: 0.2),
-                ),
-                const SizedBox(height: LinearSpacing.spacing16),
-                Text(
-                  '点击左侧连接以打开终端',
-                  style: theme.textTheme.titleMedium?.copyWith(
-                    color: LinearColors.textTertiary,
-                  ),
-                ),
-                const SizedBox(height: LinearSpacing.spacing16),
-                Container(
-                  decoration: BoxDecoration(
-                    color: LinearColors.fillSurface,
-                    borderRadius: BorderRadius.circular(LinearRadius.standard),
-                    border: Border.all(color: LinearColors.borderSolid),
-                  ),
-                  child: TextButton.icon(
-                    onPressed: () async {
-                      try {
-                        await context.read<TerminalProvider>().createLocalTerminal();
-                      } catch (e, stackTrace) {
-                        if (context.mounted) {
-                          showErrorDialog(
-                            context,
-                            title: '创建终端失败',
-                            error: e,
-                            stackTrace: stackTrace,
-                          );
-                        }
-                      }
-                    },
-                    icon: const Icon(Icons.add),
-                    label: const Text('创建本地终端'),
-                  ),
-                ),
-              ],
-            ),
-          );
-        }
-
-        return Column(
-          children: [
-            // 标签页栏
-            Container(
-              height: 48,
-              decoration: const BoxDecoration(
-                color: LinearColors.panel,
-              ),
-              child: Row(
-                children: [
-                  // 标签列表
-                  Expanded(
-                    child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: sessions.length,
-                      itemBuilder: (context, index) {
-                        final session = sessions[index];
-                        final isActive = session.id == activeSessionId;
-
-                        return _TerminalTab(
-                          session: session,
-                          isActive: isActive,
-                          onTap: () => context.read<TerminalProvider>().switchToSession(session.id),
-                          onClose: () => context.read<TerminalProvider>().closeSession(session.id),
-                        );
-                      },
-                    ),
-                  ),
-                  // 下拉菜单按钮
-                  PopupMenuButton<String>(
-                    padding: EdgeInsets.zero,
-                    child: Container(
-                      margin: const EdgeInsets.symmetric(
-                        horizontal: LinearSpacing.spacing8,
-                        vertical: LinearSpacing.spacing8,
-                      ),
-                      decoration: BoxDecoration(
-                        color: LinearColors.fillSurface,
-                        borderRadius: BorderRadius.circular(LinearRadius.standard),
-                        border: Border.all(color: LinearColors.borderSolid),
-                      ),
-                      child: const Icon(
-                        Icons.add,
-                        size: 20,
-                        color: LinearColors.accentInteractive,
-                      ),
-                    ),
-                    itemBuilder: (context) {
-                      final items = <PopupMenuEntry<String>>[
-                        PopupMenuItem(
-                          value: 'local_terminal',
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                Icons.computer,
-                                size: 20,
-                                color: Theme.of(context).colorScheme.primary,
-                              ),
-                              const SizedBox(width: 12),
-                              const Text('本地终端'),
-                            ],
-                          ),
-                        ),
-                        const PopupMenuDivider(),
-                      ];
-                      if (connections.isEmpty) {
-                        items.add(PopupMenuItem(
-                          value: 'no_connections',
-                          enabled: false,
-                          child: Text(
-                            '暂无保存的连接',
-                            style: TextStyle(
-                              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
-                            ),
-                          ),
-                        ));
-                      } else {
-                        items.addAll(_buildConnectionItems(context, connections));
-                      }
-                      return items;
-                    },
-                    onSelected: (value) async {
-                      if (value == 'no_connections') {
-                        return;
-                      }
-                      if (value == 'local_terminal') {
-                        await _createLocalTerminal(context);
-                        return;
-                      }
-                      final connection = connections.firstWhere((c) => c.id == value);
-                      await _handleConnectionTap(context, connection);
-                    },
-                  ),
-                ],
-              ),
-            ),
-            // 终端内容
-            Expanded(
-              child: activeSessionId != null
-                  ? TerminalViewWidget(sessionId: activeSessionId)
-                  : const SizedBox.shrink(),
-            ),
-            // 状态栏
-            if (activeSessionId != null)
-              Builder(
-                builder: (context) {
-                  final session = sessions.firstWhere(
-                    (s) => s.id == activeSessionId,
-                    orElse: () => sessions.first,
-                  );
-                  return TerminalStatusBar(
-                    session: session,
-                    onReconnect: () {
-                      // TODO: 实现重连功能
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Reconnecting...')),
-                      );
-                    },
-                  );
-                },
-              ),
-          ],
-        );
-      },
-    );
   }
 }
 

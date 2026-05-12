@@ -1,105 +1,103 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../data/models/ssh_connection.dart';
 import '../../core/theme/app_theme.dart';
-import '../providers/connection_provider.dart';
+import '../providers_riverpod/connection_provider_riverpod.dart';
 import '../screens/connection_form.dart';
 
 /// 紧凑型连接Logo列表组件
-class CompactConnectionList extends StatelessWidget {
+class CompactConnectionList extends ConsumerWidget {
   final void Function(SshConnection)? onConnectionTap;
 
   const CompactConnectionList({super.key, this.onConnectionTap});
 
   @override
-  Widget build(BuildContext context) {
-    return Consumer<ConnectionProvider>(
-      builder: (context, provider, child) {
-        if (provider.isLoading) {
-          return const Center(
-            child: SizedBox(
-              width: 16,
-              height: 16,
-              child: CircularProgressIndicator(strokeWidth: 2),
-            ),
-          );
-        }
+  Widget build(BuildContext context, WidgetRef ref) {
+    final provider = ref.watch(connectionProvider);
 
-        if (provider.error != null) {
-          return Center(
-            child: Icon(
-              Icons.error_outline,
-              color: Theme.of(context).colorScheme.error,
-              size: 24,
-            ),
-          );
-        }
+    if (provider.isLoading) {
+      return const Center(
+        child: SizedBox(
+          width: 16,
+          height: 16,
+          child: CircularProgressIndicator(strokeWidth: 2),
+        ),
+      );
+    }
 
-        final connections = provider.connections;
+    if (provider.error != null) {
+      return Center(
+        child: Icon(
+          Icons.error_outline,
+          color: Theme.of(context).colorScheme.error,
+          size: 24,
+        ),
+      );
+    }
 
-        if (connections.isEmpty) {
-          return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.add_circle_outline,
-                  size: 24,
-                  color: LinearColors.textTertiary.withValues(alpha: 0.3),
-                ),
-                const SizedBox(height: LinearSpacing.spacing4),
-                IconButton(
-                  onPressed: () => _showConnectionForm(context, null),
-                  icon: const Icon(Icons.add),
-                  iconSize: 18,
-                  tooltip: '添加连接',
-                  padding: EdgeInsets.zero,
-                  constraints: const BoxConstraints(
-                    minWidth: 32,
-                    minHeight: 32,
-                  ),
-                  color: LinearColors.accentInteractive,
-                ),
-              ],
-            ),
-          );
-        }
+    final connections = provider.connections;
 
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+    if (connections.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            Icon(
+              Icons.add_circle_outline,
+              size: 24,
+              color: LinearColors.textTertiary.withValues(alpha: 0.3),
+            ),
             const SizedBox(height: LinearSpacing.spacing4),
             IconButton(
               onPressed: () => _showConnectionForm(context, null),
-              icon: const Icon(Icons.add_circle_outline),
-              iconSize: 22,
-              tooltip: '新建连接',
+              icon: const Icon(Icons.add),
+              iconSize: 18,
+              tooltip: '添加连接',
               padding: EdgeInsets.zero,
-              constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
+              constraints: const BoxConstraints(
+                minWidth: 32,
+                minHeight: 32,
+              ),
               color: LinearColors.accentInteractive,
             ),
-            const SizedBox(height: LinearSpacing.spacing4),
-            Expanded(
-              child: ListView.builder(
-                padding: const EdgeInsets.symmetric(vertical: LinearSpacing.spacing1),
-                itemCount: connections.length,
-                itemBuilder: (context, index) {
-                  final connection = connections[index];
-                  return _CompactConnectionItem(
-                    connection: connection,
-                    onTap: () {
-                      onConnectionTap?.call(connection);
-                    },
-                    onEdit: () => _showConnectionForm(context, connection),
-                    onDelete: () =>
-                        _deleteConnection(context, provider, connection),
-                  );
-                },
-              ),
-            ),
           ],
-        );
-      },
+        ),
+      );
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: LinearSpacing.spacing4),
+        IconButton(
+          onPressed: () => _showConnectionForm(context, null),
+          icon: const Icon(Icons.add_circle_outline),
+          iconSize: 22,
+          tooltip: '新建连接',
+          padding: EdgeInsets.zero,
+          constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
+          color: LinearColors.accentInteractive,
+        ),
+        const SizedBox(height: LinearSpacing.spacing4),
+        Expanded(
+          child: ListView.builder(
+            padding: const EdgeInsets.symmetric(vertical: LinearSpacing.spacing1),
+            itemCount: connections.length,
+            itemBuilder: (context, index) {
+              final connection = connections[index];
+              return _CompactConnectionItem(
+                connection: connection,
+                onTap: () {
+                  onConnectionTap?.call(connection);
+                },
+                onEdit: () => _showConnectionForm(context, connection),
+                onDelete: () =>
+                    _deleteConnection(context, ref, connection),
+              );
+            },
+          ),
+        ),
+      ],
     );
   }
 
@@ -113,7 +111,7 @@ class CompactConnectionList extends StatelessWidget {
 
   Future<void> _deleteConnection(
     BuildContext context,
-    ConnectionProvider provider,
+    WidgetRef ref,
     SshConnection connection,
   ) async {
     final confirmed = await showDialog<bool>(
@@ -135,7 +133,7 @@ class CompactConnectionList extends StatelessWidget {
     );
 
     if (confirmed == true) {
-      await provider.deleteConnection(connection.id);
+      await ref.read(connectionProvider.notifier).deleteConnection(connection.id);
       if (context.mounted) {
         ScaffoldMessenger.of(
           context,

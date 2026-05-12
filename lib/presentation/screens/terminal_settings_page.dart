@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/theme/app_theme.dart';
 import '../../data/models/ssh_config.dart';
 import '../../data/models/terminal_config.dart';
-import '../providers/app_config_provider.dart';
+import '../providers_riverpod/app_config_provider_riverpod.dart';
 
-class TerminalSettingsPage extends StatefulWidget {
+class TerminalSettingsPage extends ConsumerStatefulWidget {
   const TerminalSettingsPage({super.key});
 
   @override
-  State<TerminalSettingsPage> createState() => _TerminalSettingsPageState();
+  ConsumerState<TerminalSettingsPage> createState() => _TerminalSettingsPageState();
 }
 
-class _TerminalSettingsPageState extends State<TerminalSettingsPage> {
+class _TerminalSettingsPageState extends ConsumerState<TerminalSettingsPage> {
   late TerminalConfig _config;
   late SshConfig _sshConfig;
   final _fontSizeController = TextEditingController();
@@ -76,9 +76,8 @@ class _TerminalSettingsPageState extends State<TerminalSettingsPage> {
   }
 
   void _loadConfig() {
-    final provider = Provider.of<AppConfigProvider>(context, listen: false);
-    _config = provider.terminalConfig;
-    _sshConfig = provider.sshConfig;
+    _config = ref.read(terminalConfigProvider);
+    _sshConfig = ref.read(sshConfigProvider);
     _fontSizeController.text = _config.fontSize.toInt().toString();
     _fontWeightController.text = _config.fontWeight.toString();
     _letterSpacingController.text = _config.letterSpacing.toString();
@@ -384,11 +383,7 @@ class _TerminalSettingsPageState extends State<TerminalSettingsPage> {
                     if (scaffoldMessenger == null) return;
 
                     try {
-                      final provider = Provider.of<AppConfigProvider>(
-                        context,
-                        listen: false,
-                      );
-                      await provider.saveTerminalConfig(_config);
+                      await ref.read(terminalConfigProvider.notifier).updateConfig(_config);
 
                       scaffoldMessenger.showSnackBar(
                         const SnackBar(content: Text('设置已保存')),
@@ -482,11 +477,7 @@ class _TerminalSettingsPageState extends State<TerminalSettingsPage> {
                     if (scaffoldMessenger == null) return;
 
                     try {
-                      final provider = Provider.of<AppConfigProvider>(
-                        context,
-                        listen: false,
-                      );
-                      await provider.saveSshConfig(_sshConfig);
+                      await ref.read(sshConfigProvider.notifier).updateConfig(_sshConfig);
 
                       scaffoldMessenger.showSnackBar(
                         const SnackBar(content: Text('SSH 设置已保存')),

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../data/models/ssh_connection.dart';
 import '../../core/theme/app_theme.dart';
-import '../providers/connection_provider.dart';
+import '../providers_riverpod/connection_provider_riverpod.dart';
 import '../screens/connection_form.dart';
 
-class ConnectionList extends StatelessWidget {
+class ConnectionList extends ConsumerWidget {
   final void Function(SshConnection)? onConnectionTap;
   final void Function(SshConnection)? onSftpTap;
   final bool isCompact;
@@ -18,97 +18,94 @@ class ConnectionList extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    return Consumer<ConnectionProvider>(
-      builder: (context, provider, child) {
-        if (provider.isLoading) {
-          return const Center(child: CircularProgressIndicator());
-        }
+  Widget build(BuildContext context, WidgetRef ref) {
+    final provider = ref.watch(connectionProvider);
+    if (provider.isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
 
-        if (provider.error != null) {
-          return Center(
-            child: Text(
-              provider.error!,
-              style: TextStyle(color: Theme.of(context).colorScheme.error),
-            ),
-          );
-        }
+    if (provider.error != null) {
+      return Center(
+        child: Text(
+          provider.error!,
+          style: TextStyle(color: Theme.of(context).colorScheme.error),
+        ),
+      );
+    }
 
-        final connections = provider.filteredConnections;
+    final connections = provider.filteredConnections;
 
-        if (connections.isEmpty) {
-          return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.dns_outlined,
-                  size: 56,
-                  color: LinearColors.textPrimary.withValues(alpha: 0.5),
-                ),
-                const SizedBox(height: LinearSpacing.spacing16),
-                Text(
-                  '暂无连接配置',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    color: LinearColors.textTertiary,
-                  ),
-                ),
-                const SizedBox(height: LinearSpacing.spacing16),
-                FilledButton.icon(
-                  onPressed: () => _showConnectionForm(context, null),
-                  icon: const Icon(Icons.add, size: 18),
-                  label: const Text('添加连接'),
-                ),
-              ],
-            ),
-          );
-        }
-
-        final bottomPadding = isCompact ? LinearSpacing.spacing8 : LinearSpacing.spacing24 + LinearSpacing.spacing16;
-        return Stack(
+    if (connections.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            ListView.builder(
-              padding: EdgeInsets.only(top: LinearSpacing.spacing8, bottom: bottomPadding),
-              itemCount: connections.length,
-              itemBuilder: (context, index) {
-                final connection = connections[index];
-                if (isCompact) {
-                  return _CompactConnectionItem(
-                    connection: connection,
-                    onTap: () => onConnectionTap?.call(connection),
-                    onSftpTap: onSftpTap != null ? () => onSftpTap!(connection) : null,
-                  );
-                }
-                return _ConnectionListItem(
-                  connection: connection,
-                  onTap: () => onConnectionTap?.call(connection),
-                  onEdit: () => _showConnectionForm(context, connection),
-                  onDelete: () => _deleteConnection(context, provider, connection),
-                  onSftpTap: onSftpTap != null ? () => onSftpTap!(connection) : null,
-                );
-              },
+            Icon(
+              Icons.dns_outlined,
+              size: 56,
+              color: LinearColors.textPrimary.withValues(alpha: 0.5),
             ),
-              if (!isCompact)
-              Positioned(
-                bottom: LinearSpacing.spacing8,
-                right: LinearSpacing.spacing8,
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: LinearColors.fillSurface,
-                    borderRadius: BorderRadius.circular(LinearRadius.standard),
-                    border: Border.all(color: LinearColors.borderSolid),
-                  ),
-                  child: IconButton(
-                    onPressed: () => _showConnectionForm(context, null),
-                    tooltip: '添加连接',
-                    icon: const Icon(Icons.add),
-                    color: LinearColors.accentInteractive,
-                  ),
-                ),
+            const SizedBox(height: LinearSpacing.spacing16),
+            Text(
+              '暂无连接配置',
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                color: LinearColors.textTertiary,
               ),
+            ),
+            const SizedBox(height: LinearSpacing.spacing16),
+            FilledButton.icon(
+              onPressed: () => _showConnectionForm(context, null),
+              icon: const Icon(Icons.add, size: 18),
+              label: const Text('添加连接'),
+            ),
           ],
-        );
-      },
+        ),
+      );
+    }
+
+    final bottomPadding = isCompact ? LinearSpacing.spacing8 : LinearSpacing.spacing24 + LinearSpacing.spacing16;
+    return Stack(
+      children: [
+        ListView.builder(
+          padding: EdgeInsets.only(top: LinearSpacing.spacing8, bottom: bottomPadding),
+          itemCount: connections.length,
+          itemBuilder: (context, index) {
+            final connection = connections[index];
+            if (isCompact) {
+              return _CompactConnectionItem(
+                connection: connection,
+                onTap: () => onConnectionTap?.call(connection),
+                onSftpTap: onSftpTap != null ? () => onSftpTap!(connection) : null,
+              );
+            }
+            return _ConnectionListItem(
+              connection: connection,
+              onTap: () => onConnectionTap?.call(connection),
+              onEdit: () => _showConnectionForm(context, connection),
+              onDelete: () => _deleteConnection(context, ref, connection),
+              onSftpTap: onSftpTap != null ? () => onSftpTap!(connection) : null,
+            );
+          },
+        ),
+          if (!isCompact)
+          Positioned(
+            bottom: LinearSpacing.spacing8,
+            right: LinearSpacing.spacing8,
+            child: Container(
+              decoration: BoxDecoration(
+                color: LinearColors.fillSurface,
+                borderRadius: BorderRadius.circular(LinearRadius.standard),
+                border: Border.all(color: LinearColors.borderSolid),
+              ),
+              child: IconButton(
+                onPressed: () => _showConnectionForm(context, null),
+                tooltip: '添加连接',
+                icon: const Icon(Icons.add),
+                color: LinearColors.accentInteractive,
+              ),
+            ),
+          ),
+      ],
     );
   }
 
@@ -122,7 +119,7 @@ class ConnectionList extends StatelessWidget {
 
   Future<void> _deleteConnection(
     BuildContext context,
-    ConnectionProvider provider,
+    WidgetRef ref,
     SshConnection connection,
   ) async {
     final confirmed = await showDialog<bool>(
@@ -154,7 +151,7 @@ class ConnectionList extends StatelessWidget {
     );
 
     if (confirmed == true) {
-      await provider.deleteConnection(connection.id);
+      await ref.read(connectionProvider.notifier).deleteConnection(connection.id);
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('连接已删除')),

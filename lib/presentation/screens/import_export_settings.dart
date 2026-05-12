@@ -1,63 +1,55 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../data/models/ssh_connection.dart';
 import '../../../domain/services/import_export_service.dart';
-import '../providers/import_export_provider.dart';
+import '../providers_riverpod/import_export_provider_riverpod.dart';
 
 /// 导入导出设置界面
-class ImportExportSettingsScreen extends StatefulWidget {
+class ImportExportSettingsScreen extends ConsumerStatefulWidget {
   const ImportExportSettingsScreen({super.key});
 
   @override
-  State<ImportExportSettingsScreen> createState() =>
+  ConsumerState<ImportExportSettingsScreen> createState() =>
       _ImportExportSettingsScreenState();
 }
 
 class _ImportExportSettingsScreenState
-    extends State<ImportExportSettingsScreen> {
-  ImportExportProvider? _provider;
+    extends ConsumerState<ImportExportSettingsScreen> {
   List<SshConnection> _importedConnections = [];
   bool _showImportPreview = false;
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    _provider ??= Provider.of<ImportExportProvider>(context);
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return Consumer<ImportExportProvider>(
-        builder: (context, provider, child) {
-          return ListView(
-            padding: const EdgeInsets.all(LinearSpacing.spacing16),
-            children: [
-              if (_showImportPreview)
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: IconButton(
-                    onPressed: () => _clearImportPreview(),
-                    icon: const Icon(Icons.clear),
-                    tooltip: '清除预览',
-                  ),
-                ),
-              _buildStatsCard(),
-              const SizedBox(height: LinearSpacing.spacing24),
-              _buildExportSection(provider),
-              const SizedBox(height: LinearSpacing.spacing24),
-              _buildImportSection(provider),
-              const SizedBox(height: LinearSpacing.spacing24),
-              if (_showImportPreview && _importedConnections.isNotEmpty)
-                _buildImportPreview(),
-            ],
-          );
-        },
-      );
+    final importExport = ref.watch(importExportProvider);
+    final status = importExport.status;
+
+    return ListView(
+      padding: const EdgeInsets.all(LinearSpacing.spacing16),
+      children: [
+        if (_showImportPreview)
+          Align(
+            alignment: Alignment.centerRight,
+            child: IconButton(
+              onPressed: () => _clearImportPreview(),
+              icon: const Icon(Icons.clear),
+              tooltip: '清除预览',
+            ),
+          ),
+        _buildStatsCard(),
+        const SizedBox(height: LinearSpacing.spacing24),
+        _buildExportSection(status),
+        const SizedBox(height: LinearSpacing.spacing24),
+        _buildImportSection(status),
+        const SizedBox(height: LinearSpacing.spacing24),
+        if (_showImportPreview && _importedConnections.isNotEmpty)
+          _buildImportPreview(),
+      ],
+    );
   }
 
   Widget _buildStatsCard() {
-    final stats = _provider!.getExportStats();
+    final stats = ref.read(importExportProvider.notifier).getExportStats();
 
     return Card(
       elevation: 0,
@@ -166,7 +158,9 @@ class _ImportExportSettingsScreenState
     );
   }
 
-  Widget _buildExportSection(ImportExportProvider provider) {
+  Widget _buildExportSection(ImportExportStatus status) {
+    final isExporting = status == ImportExportStatus.exporting;
+
     return Card(
       elevation: 0,
       color: LinearColors.surface,
@@ -201,10 +195,10 @@ class _ImportExportSettingsScreenState
             SizedBox(
               width: double.infinity,
               child: ElevatedButton.icon(
-                onPressed: provider.status == ImportExportStatus.exporting
+                onPressed: isExporting
                     ? null
-                    : () => _exportConfiguration(provider),
-                icon: provider.status == ImportExportStatus.exporting
+                    : () => _exportConfiguration(),
+                icon: isExporting
                     ? const SizedBox(
                         width: 16,
                         height: 16,
@@ -212,9 +206,7 @@ class _ImportExportSettingsScreenState
                       )
                     : const Icon(Icons.file_upload),
                 label: Text(
-                  provider.status == ImportExportStatus.exporting
-                      ? '导出中...'
-                      : '导出配置',
+                  isExporting ? '导出中...' : '导出配置',
                 ),
               ),
             ),
@@ -224,7 +216,9 @@ class _ImportExportSettingsScreenState
     );
   }
 
-  Widget _buildImportSection(ImportExportProvider provider) {
+  Widget _buildImportSection(ImportExportStatus status) {
+    final isImporting = status == ImportExportStatus.importing;
+
     return Card(
       elevation: 0,
       color: LinearColors.surface,
@@ -259,10 +253,10 @@ class _ImportExportSettingsScreenState
             SizedBox(
               width: double.infinity,
               child: ElevatedButton.icon(
-                onPressed: provider.status == ImportExportStatus.importing
+                onPressed: isImporting
                     ? null
-                    : () => _importConfiguration(provider),
-                icon: provider.status == ImportExportStatus.importing
+                    : () => _importConfiguration(),
+                icon: isImporting
                     ? const SizedBox(
                         width: 16,
                         height: 16,
@@ -270,9 +264,7 @@ class _ImportExportSettingsScreenState
                       )
                     : const Icon(Icons.file_download),
                 label: Text(
-                  provider.status == ImportExportStatus.importing
-                      ? '导入中...'
-                      : '导入配置',
+                  isImporting ? '导入中...' : '导入配置',
                 ),
               ),
             ),
@@ -373,11 +365,12 @@ class _ImportExportSettingsScreenState
     }
   }
 
-  Future<void> _exportConfiguration(ImportExportProvider provider) async {
+  Future<void> _exportConfiguration() async {
+    final notifier = ref.read(importExportProvider.notifier);
     try {
-      final file = await provider.exportToLocalFile();
+      final file = await notifier.exportToLocalFile();
       if (file != null && mounted) {
-        final summary = provider.generateExportSummary();
+        final summary = notifier.generateExportSummary();
         showDialog<void>(
           context: context,
           builder: (context) => AlertDialog(
@@ -415,9 +408,9 @@ class _ImportExportSettingsScreenState
     }
   }
 
-  Future<void> _importConfiguration(ImportExportProvider provider) async {
+  Future<void> _importConfiguration() async {
     try {
-      final connections = await provider.importFromLocalFile();
+      final connections = await ref.read(importExportProvider.notifier).importFromLocalFile();
 
       if (connections.isEmpty) {
         if (mounted) {
@@ -468,7 +461,7 @@ class _ImportExportSettingsScreenState
 
   Future<void> _performImport(bool overwrite) async {
     try {
-      await _provider!.importAndSaveConnections(
+      await ref.read(importExportProvider.notifier).importAndSaveConnections(
         _importedConnections,
         overwrite: overwrite,
         addPrefix: !overwrite,
@@ -501,6 +494,6 @@ class _ImportExportSettingsScreenState
       _showImportPreview = false;
       _importedConnections.clear();
     });
-    _provider!.resetStatus();
+    ref.read(importExportProvider.notifier).resetStatus();
   }
 }

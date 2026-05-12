@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../core/theme/app_theme.dart';
 import '../../domain/services/sync_service.dart'
     show SyncStatusEnum, SyncPlatform, SyncConfig;
-import '../providers/sync_provider.dart';
+import '../providers_riverpod/sync_provider_riverpod.dart';
 import '../widgets/error_dialog.dart';
 
 /// 同步设置界面
-class SyncSettingsScreen extends StatefulWidget {
+class SyncSettingsScreen extends ConsumerStatefulWidget {
   const SyncSettingsScreen({super.key});
 
   @override
-  State<SyncSettingsScreen> createState() => _SyncSettingsScreenState();
+  ConsumerState<SyncSettingsScreen> createState() => _SyncSettingsScreenState();
 }
 
-class _SyncSettingsScreenState extends State<SyncSettingsScreen> {
+class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
   final _formKey = GlobalKey<FormState>();
   final _gistIdController = TextEditingController();
   final _gistFileNameController = TextEditingController();
@@ -34,8 +34,8 @@ class _SyncSettingsScreenState extends State<SyncSettingsScreen> {
   }
 
   void _loadConfig() {
-    final provider = Provider.of<SyncProvider>(context, listen: false);
-    final config = provider.config;
+    final state = ref.read(syncProvider);
+    final config = state.config;
 
     if (config != null) {
       _platform = config.platform;
@@ -66,12 +66,12 @@ class _SyncSettingsScreenState extends State<SyncSettingsScreen> {
       return;
     }
 
-    final provider = Provider.of<SyncProvider>(context, listen: false);
+    final notifier = ref.read(syncProvider.notifier);
 
     // 如果 token 是占位符，保持原有 token
     String? accessToken = _tokenController.text;
     if (accessToken == '***' || accessToken == '...') {
-      accessToken = provider.config?.accessToken;
+      accessToken = ref.read(syncProvider).config?.accessToken;
     }
 
     final config = SyncConfig(
@@ -84,7 +84,7 @@ class _SyncSettingsScreenState extends State<SyncSettingsScreen> {
     );
 
     try {
-      await provider.saveConfig(config);
+      await notifier.saveConfig(config);
 
       if (mounted) {
         ScaffoldMessenger.of(
@@ -101,8 +101,9 @@ class _SyncSettingsScreenState extends State<SyncSettingsScreen> {
   }
 
   Future<void> _testConnection() async {
-    final provider = Provider.of<SyncProvider>(context, listen: false);
-    final config = provider.config;
+    final notifier = ref.read(syncProvider.notifier);
+    final state = ref.read(syncProvider);
+    final config = state.config;
 
     if (config == null || config.accessToken == null) {
       if (mounted) {
@@ -115,7 +116,7 @@ class _SyncSettingsScreenState extends State<SyncSettingsScreen> {
 
     try {
       // 尝试下载配置来测试连接
-      await provider.testConnection();
+      await notifier.testConnection();
       if (mounted) {
         ScaffoldMessenger.of(
           context,
@@ -135,6 +136,7 @@ class _SyncSettingsScreenState extends State<SyncSettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final syncState = ref.watch(syncProvider);
     return Form(
         key: _formKey,
         child: ListView(
@@ -369,51 +371,50 @@ class _SyncSettingsScreenState extends State<SyncSettingsScreen> {
             const SizedBox(height: LinearSpacing.spacing16),
 
             // 同步操作
-            Consumer<SyncProvider>(
-              builder: (context, provider, child) {
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    ElevatedButton.icon(
-                      onPressed: provider.status == SyncStatusEnum.syncing
-                          ? null
-                          : () => _uploadConfig(provider),
-                      icon: const Icon(Icons.upload),
-                      label: const Text('上传配置'),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                ElevatedButton.icon(
+                  onPressed: syncState.status == SyncStatusEnum.syncing
+                      ? null
+                      : () => _uploadConfig(),
+                  icon: const Icon(Icons.upload),
+                  label: const Text('上传配置'),
+                ),
+                const SizedBox(height: LinearSpacing.spacing8),
+                ElevatedButton.icon(
+                  onPressed: syncState.status == SyncStatusEnum.syncing
+                      ? null
+                      : () => _downloadConfig(),
+                  icon: const Icon(Icons.download),
+                  label: const Text('下载配置'),
+                ),
+                if (syncState.status == SyncStatusEnum.syncing)
+                  const Padding(
+                    padding: EdgeInsets.all(LinearSpacing.spacing16),
+                    child: Center(child: CircularProgressIndicator()),
+                  ),
+                if (syncState.lastSyncTime != null)
+                  Padding(
+                    padding: const EdgeInsets.all(LinearSpacing.spacing8),
+                    child: Text(
+                      '最后同步时间: ${syncState.lastSyncTime}',
+                      style: Theme.of(context).textTheme.bodySmall,
+                      textAlign: TextAlign.center,
                     ),
-                    const SizedBox(height: LinearSpacing.spacing8),
-                    ElevatedButton.icon(
-                      onPressed: provider.status == SyncStatusEnum.syncing
-                          ? null
-                          : () => _downloadConfig(provider),
-                      icon: const Icon(Icons.download),
-                      label: const Text('下载配置'),
-                    ),
-                    if (provider.status == SyncStatusEnum.syncing)
-                      const Padding(
-                        padding: EdgeInsets.all(LinearSpacing.spacing16),
-                        child: Center(child: CircularProgressIndicator()),
-                      ),
-                    if (provider.lastSyncTime != null)
-                      Padding(
-                        padding: const EdgeInsets.all(LinearSpacing.spacing8),
-                        child: Text(
-                          '最后同步时间: ${provider.lastSyncTime}',
-                          style: Theme.of(context).textTheme.bodySmall,
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                  ],
-                );
-              },
+                  ),
+              ],
             ),
           ],
         ),
       );
   }
 
-  Future<void> _uploadConfig(SyncProvider provider) async {
-    if (provider.config == null) {
+  Future<void> _uploadConfig() async {
+    final notifier = ref.read(syncProvider.notifier);
+    final state = ref.read(syncProvider);
+
+    if (state.config == null) {
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(const SnackBar(content: Text('请先配置同步设置')));
@@ -421,7 +422,7 @@ class _SyncSettingsScreenState extends State<SyncSettingsScreen> {
     }
 
     try {
-      await provider.uploadConfig();
+      await notifier.uploadConfig();
       if (mounted) {
         ScaffoldMessenger.of(
           context,
@@ -439,8 +440,11 @@ class _SyncSettingsScreenState extends State<SyncSettingsScreen> {
     }
   }
 
-  Future<void> _downloadConfig(SyncProvider provider) async {
-    if (provider.config == null) {
+  Future<void> _downloadConfig() async {
+    final notifier = ref.read(syncProvider.notifier);
+    final state = ref.read(syncProvider);
+
+    if (state.config == null) {
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(const SnackBar(content: Text('请先配置同步设置')));
@@ -448,7 +452,7 @@ class _SyncSettingsScreenState extends State<SyncSettingsScreen> {
     }
 
     try {
-      await provider.downloadConfig();
+      await notifier.downloadConfig();
       if (mounted) {
         ScaffoldMessenger.of(
           context,

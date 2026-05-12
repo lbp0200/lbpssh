@@ -1,25 +1,25 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 import '../../core/theme/app_theme.dart';
 import '../../data/models/ssh_connection.dart';
 import '../../domain/services/ssh_config_service.dart';
-import '../providers/connection_provider.dart';
+import '../providers_riverpod/connection_provider_riverpod.dart';
 import '../widgets/error_dialog.dart';
 
 /// 连接配置表单界面
-class ConnectionFormScreen extends StatefulWidget {
+class ConnectionFormScreen extends ConsumerStatefulWidget {
   final SshConnection? connection;
 
   const ConnectionFormScreen({super.key, this.connection});
 
   @override
-  State<ConnectionFormScreen> createState() => _ConnectionFormScreenState();
+  ConsumerState<ConnectionFormScreen> createState() => _ConnectionFormScreenState();
 }
 
-class _ConnectionFormScreenState extends State<ConnectionFormScreen> {
+class _ConnectionFormScreenState extends ConsumerState<ConnectionFormScreen> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _hostController = TextEditingController();
@@ -272,7 +272,7 @@ class _ConnectionFormScreenState extends State<ConnectionFormScreen> {
       return;
     }
 
-    final provider = Provider.of<ConnectionProvider>(context, listen: false);
+    final provider = ref.read(connectionProvider.notifier);
 
     try {
       // 创建跳板机配置

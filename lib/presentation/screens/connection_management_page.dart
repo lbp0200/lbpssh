@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/theme/app_theme.dart';
 import '../../data/models/ssh_connection.dart';
-import '../providers/connection_provider.dart';
+import '../providers_riverpod/connection_provider_riverpod.dart';
 import 'connection_form.dart';
 
-class ConnectionManagementPage extends StatelessWidget {
+class ConnectionManagementPage extends ConsumerWidget {
   const ConnectionManagementPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Container(
       color: LinearColors.background,
       child: Column(
@@ -46,8 +46,9 @@ class ConnectionManagementPage extends StatelessWidget {
         const Divider(),
         // 连接列表
         Expanded(
-          child: Consumer<ConnectionProvider>(
-            builder: (context, provider, child) {
+          child: Consumer(
+            builder: (context, ref, child) {
+              final provider = ref.watch(connectionProvider);
               if (provider.isLoading) {
                 return const Center(child: CircularProgressIndicator());
               }
@@ -118,21 +119,20 @@ class ConnectionManagementPage extends StatelessWidget {
   }
 }
 
-class _ConnectionManagementItem extends StatefulWidget {
+class _ConnectionManagementItem extends ConsumerStatefulWidget {
   final SshConnection connection;
 
   const _ConnectionManagementItem({required this.connection});
 
   @override
-  State<_ConnectionManagementItem> createState() => _ConnectionManagementItemState();
+  ConsumerState<_ConnectionManagementItem> createState() => _ConnectionManagementItemState();
 }
 
-class _ConnectionManagementItemState extends State<_ConnectionManagementItem> {
+class _ConnectionManagementItemState extends ConsumerState<_ConnectionManagementItem> {
   bool _isHovered = false;
 
   @override
   Widget build(BuildContext context) {
-    final provider = Provider.of<ConnectionProvider>(context, listen: false);
     final theme = Theme.of(context);
 
     return Padding(
@@ -261,7 +261,7 @@ class _ConnectionManagementItemState extends State<_ConnectionManagementItem> {
                             ),
                           );
                         } else if (value == 'delete') {
-                          _showDeleteDialog(context, provider);
+                          _showDeleteDialog(context);
                         }
                       },
                     ),
@@ -277,7 +277,6 @@ class _ConnectionManagementItemState extends State<_ConnectionManagementItem> {
 
   Future<void> _showDeleteDialog(
     BuildContext context,
-    ConnectionProvider provider,
   ) async {
     final confirmed = await showDialog<bool>(
       context: context,
@@ -299,7 +298,7 @@ class _ConnectionManagementItemState extends State<_ConnectionManagementItem> {
     );
 
     if (confirmed == true) {
-      await provider.deleteConnection(widget.connection.id);
+      await ref.read(connectionProvider.notifier).deleteConnection(widget.connection.id);
       if (context.mounted) {
         ScaffoldMessenger.of(
           context,

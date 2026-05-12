@@ -2,7 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:window_manager/window_manager.dart';
 import 'core/theme/app_theme.dart';
 import 'data/repositories/connection_repository.dart';
@@ -11,12 +11,7 @@ import 'domain/services/sync_service.dart';
 import 'domain/services/app_config_service.dart';
 import 'domain/services/import_export_service.dart';
 import 'l10n/app_localizations.dart';
-import 'presentation/providers/connection_provider.dart';
-import 'presentation/providers/terminal_provider.dart';
-import 'presentation/providers/sync_provider.dart';
-import 'presentation/providers/app_config_provider.dart';
-import 'presentation/providers/import_export_provider.dart';
-import 'presentation/providers/sftp_provider.dart';
+import 'presentation/providers_riverpod/service_providers.dart';
 import 'presentation/screens/main_screen.dart';
 import 'utils/sentry_service.dart';
 
@@ -58,27 +53,13 @@ void main() async {
   final importExportService = ImportExportService(connectionRepository);
 
   runApp(
-    MultiProvider(
-      providers: [
-        ChangeNotifierProvider(
-          create: (_) =>
-              ConnectionProvider(connectionRepository)..loadConnections(),
-        ),
-        ChangeNotifierProvider(
-          create: (_) => TerminalProvider(terminalService, appConfigService),
-        ),
-        ChangeNotifierProvider(create: (_) => SyncProvider(syncService)),
-        ChangeNotifierProvider(
-          create: (_) => AppConfigProvider(appConfigService),
-        ),
-        ChangeNotifierProvider(
-          create: (_) => ImportExportProvider(importExportService),
-        ),
-        ChangeNotifierProvider(
-          create: (context) => SftpProvider(
-            context.read<TerminalProvider>(),
-          ),
-        ),
+    ProviderScope(
+      overrides: [
+        connectionRepositoryProvider.overrideWithValue(connectionRepository),
+        terminalServiceProvider.overrideWithValue(terminalService),
+        syncServiceProvider.overrideWith((ref) => syncService),
+        appConfigServiceProvider.overrideWithValue(appConfigService),
+        importExportServiceProvider.overrideWith((ref) => importExportService),
       ],
       child: const MyApp(),
     ),

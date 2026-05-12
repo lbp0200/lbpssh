@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lbp_ssh/data/models/ssh_connection.dart';
 import 'package:lbp_ssh/core/theme/app_theme.dart';
-import 'package:lbp_ssh/presentation/providers/connection_provider.dart';
+import '../../presentation/providers_riverpod/connection_provider_riverpod.dart';
 import '../screens/app_settings_screen.dart';
 import 'connection_list.dart';
 
-class CollapsibleSidebar extends StatefulWidget {
+class CollapsibleSidebar extends ConsumerStatefulWidget {
   final void Function(SshConnection)? onConnectionTap;
   final void Function(SshConnection)? onSftpTap;
 
   const CollapsibleSidebar({super.key, this.onConnectionTap, this.onSftpTap});
 
   @override
-  State<CollapsibleSidebar> createState() => _CollapsibleSidebarState();
+  ConsumerState<CollapsibleSidebar> createState() => _CollapsibleSidebarState();
 }
 
-class _CollapsibleSidebarState extends State<CollapsibleSidebar>
+class _CollapsibleSidebarState extends ConsumerState<CollapsibleSidebar>
     with SingleTickerProviderStateMixin {
   bool _isExpanded = true;
   final _searchController = TextEditingController();
@@ -64,7 +64,7 @@ class _CollapsibleSidebarState extends State<CollapsibleSidebar>
   }
 
   void _toggleSearch() {
-    final provider = context.read<ConnectionProvider>();
+    final provider = ref.read(connectionProvider.notifier);
     setState(() {
       if (_isExpanded) {
         _showSearch = !_showSearch;
@@ -196,7 +196,7 @@ class _CollapsibleSidebarState extends State<CollapsibleSidebar>
         fillColor: LinearColors.fillSurface,
       ),
       onChanged: (value) {
-        context.read<ConnectionProvider>().setSearchQuery(value);
+        ref.read(connectionProvider.notifier).setSearchQuery(value);
       },
     );
   }
