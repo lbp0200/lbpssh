@@ -483,11 +483,20 @@ class TerminalTabsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer2<TerminalProvider, ConnectionProvider>(
-      builder: (context, terminalProvider, connProvider, child) {
-        final sessions = terminalProvider.sessions;
-        final activeSessionId = terminalProvider.activeSessionId;
-        final connections = connProvider.connections;
+    return Selector2<TerminalProvider, ConnectionProvider, ({
+      List<TerminalSession> sessions,
+      String? activeSessionId,
+      List<SshConnection> connections,
+    })>(
+      selector: (context, terminalProvider, connProvider) => (
+        sessions: terminalProvider.sessions,
+        activeSessionId: terminalProvider.activeSessionId,
+        connections: connProvider.connections,
+      ),
+      builder: (context, data, child) {
+        final sessions = data.sessions;
+        final activeSessionId = data.activeSessionId;
+        final connections = data.connections;
         final theme = Theme.of(context);
 
         if (sessions.isEmpty) {
@@ -517,7 +526,7 @@ class TerminalTabsView extends StatelessWidget {
                   child: TextButton.icon(
                     onPressed: () async {
                       try {
-                        await terminalProvider.createLocalTerminal();
+                        await context.read<TerminalProvider>().createLocalTerminal();
                       } catch (e, stackTrace) {
                         if (context.mounted) {
                           showErrorDialog(
@@ -560,8 +569,8 @@ class TerminalTabsView extends StatelessWidget {
                         return _TerminalTab(
                           session: session,
                           isActive: isActive,
-                          onTap: () => terminalProvider.switchToSession(session.id),
-                          onClose: () => terminalProvider.closeSession(session.id),
+                          onTap: () => context.read<TerminalProvider>().switchToSession(session.id),
+                          onClose: () => context.read<TerminalProvider>().closeSession(session.id),
                         );
                       },
                     ),

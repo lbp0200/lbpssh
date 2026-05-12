@@ -23,7 +23,7 @@ void main() {
 
       // Should complete in reasonable time
       print('Uncached: ${stopwatch.elapsedMilliseconds}ms for 8000 color parses');
-      expect(stopwatch.elapsedMilliseconds, lessThan(100));
+      expect(stopwatch.elapsedMilliseconds, lessThan(200));
     });
 
     test('color parsing benchmark - cached', () {

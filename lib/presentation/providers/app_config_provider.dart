@@ -3,6 +3,7 @@ import '../../data/models/terminal_config.dart';
 import '../../data/models/default_terminal_config.dart';
 import '../../data/models/ssh_config.dart';
 import '../../domain/services/app_config_service.dart';
+import '../../utils/color_utils.dart';
 
 class AppConfigProvider extends ChangeNotifier {
   final AppConfigService _configService;
@@ -16,6 +17,7 @@ class AppConfigProvider extends ChangeNotifier {
 
   Future<void> saveTerminalConfig(TerminalConfig config) async {
     await _configService.saveTerminalConfig(config);
+    ColorUtils.clearCache();
     notifyListeners();
   }
 
@@ -37,6 +39,7 @@ class AppConfigProvider extends ChangeNotifier {
 
   Future<void> resetToDefaults() async {
     await _configService.resetToDefaults();
+    ColorUtils.clearCache();
     notifyListeners();
   }
 
@@ -46,6 +49,7 @@ class AppConfigProvider extends ChangeNotifier {
 
   Future<void> importConfig(String jsonString) async {
     await _configService.importConfig(jsonString);
+    ColorUtils.clearCache();
     notifyListeners();
   }
 }
