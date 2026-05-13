@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
-import 'package:provider/provider.dart';
 import 'package:lbp_ssh/main.dart';
 import 'package:lbp_ssh/presentation/providers/connection_provider.dart';
 import 'package:lbp_ssh/presentation/providers/terminal_provider.dart';
@@ -14,6 +13,7 @@ import 'package:lbp_ssh/domain/services/sync_service.dart';
 import 'package:lbp_ssh/domain/services/app_config_service.dart';
 import 'package:lbp_ssh/domain/services/import_export_service.dart';
 import 'package:lbp_ssh/data/repositories/connection_repository.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
@@ -29,29 +29,32 @@ void main() {
 
       // 启动应用
       await tester.pumpWidget(
-        MultiProvider(
-          providers: [
-            ChangeNotifierProvider(
-              create: (_) => ConnectionProvider(connectionRepository),
-            ),
-            ChangeNotifierProvider(
-              create: (_) => TerminalProvider(terminalService, appConfigService),
-            ),
-            ChangeNotifierProvider(create: (_) => SyncProvider(syncService)),
-            ChangeNotifierProvider(
-              create: (_) => AppConfigProvider(appConfigService),
-            ),
-            ChangeNotifierProvider(
-              create: (_) => ImportExportProvider(importExportService),
-            ),
-            ChangeNotifierProvider(
-              create: (context) => SftpProvider(
-                context.read<TerminalProvider>(),
-              ),
-            ),
-          ],
-          child: const MyApp(),
+        ConsumerProvider(
+          create: (_) => ConnectionProvider(connectionRepository),
         ),
+        child:
+        ConsumerProvider(
+          create: (_) => TerminalProvider(terminalService, appConfigService),
+        ),
+        child:
+        ConsumerProvider(
+          create: (_) => SyncProvider(syncService),
+        ),
+        child:
+        ConsumerProvider(
+          create: (_) => AppConfigProvider(appConfigService),
+        ),
+        child:
+        ConsumerProvider(
+          create: (_) => ImportExportProvider(importExportService),
+        ),
+        child:
+        ConsumerProvider(
+          create: (context) => SftpProvider(
+            context.read<TerminalProvider>(),
+          ),
+        ),
+        child: const MyApp(),
       );
       await tester.pumpAndSettle();
 
@@ -71,29 +74,32 @@ void main() {
       final importExportService = ImportExportService(connectionRepository);
 
       await tester.pumpWidget(
-        MultiProvider(
-          providers: [
-            ChangeNotifierProvider(
-              create: (_) => ConnectionProvider(connectionRepository),
-            ),
-            ChangeNotifierProvider(
-              create: (_) => TerminalProvider(terminalService, appConfigService),
-            ),
-            ChangeNotifierProvider(create: (_) => SyncProvider(syncService)),
-            ChangeNotifierProvider(
-              create: (_) => AppConfigProvider(appConfigService),
-            ),
-            ChangeNotifierProvider(
-              create: (_) => ImportExportProvider(importExportService),
-            ),
-            ChangeNotifierProvider(
-              create: (context) => SftpProvider(
-                context.read<TerminalProvider>(),
-              ),
-            ),
-          ],
-          child: const MyApp(),
+        ConsumerProvider(
+          create: (_) => ConnectionProvider(connectionRepository),
         ),
+        child:
+        ConsumerProvider(
+          create: (_) => TerminalProvider(terminalService, appConfigService),
+        ),
+        child:
+        ConsumerProvider(
+          create: (_) => SyncProvider(syncService),
+        ),
+        child:
+        ConsumerProvider(
+          create: (_) => AppConfigProvider(appConfigService),
+        ),
+        child:
+        ConsumerProvider(
+          create: (_) => ImportExportProvider(importExportService),
+        ),
+        child:
+        ConsumerProvider(
+          create: (context) => SftpProvider(
+            context.read<TerminalProvider>(),
+          ),
+        ),
+        child: const MyApp(),
       );
       await tester.pumpAndSettle();
 
