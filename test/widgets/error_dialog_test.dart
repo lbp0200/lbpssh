@@ -22,7 +22,7 @@ void main() {
           home: Scaffold(
             body: Builder(
               builder: (context) => ElevatedButton(
-                onPressed: () => showDialog(
+                onPressed: () => showDialog<Widget>(
                   context: context,
                   builder: (_) => const ErrorDialog(
                     title: 'Test Error',
@@ -60,7 +60,7 @@ void main() {
           home: Scaffold(
             body: Builder(
               builder: (context) => ElevatedButton(
-                onPressed: () => showDialog(
+                onPressed: () => showDialog<Widget>(
                   context: context,
                   builder: (_) => ErrorDialog(
                     title: 'Stack Error',
@@ -94,7 +94,7 @@ void main() {
           home: Scaffold(
             body: Builder(
               builder: (context) => ElevatedButton(
-                onPressed: () => showDialog(
+                onPressed: () => showDialog<Widget>(
                   context: context,
                   builder: (_) => const ErrorDialog(
                     title: 'Context Error',
@@ -135,7 +135,7 @@ void main() {
           home: Scaffold(
             body: Builder(
               builder: (context) => ElevatedButton(
-                onPressed: () => showDialog(
+                onPressed: () => showDialog<Widget>(
                   context: context,
                   builder: (_) => const ErrorDialog(
                     title: 'Copy Test',
@@ -171,7 +171,7 @@ void main() {
           home: Scaffold(
             body: Builder(
               builder: (context) => ElevatedButton(
-                onPressed: () => showDialog(
+                onPressed: () => showDialog<Widget>(
                   context: context,
                   builder: (_) => const ErrorDialog(
                     title: 'Close Test',
@@ -205,7 +205,7 @@ void main() {
           home: Scaffold(
             body: Builder(
               builder: (context) => ElevatedButton(
-                onPressed: () => showDialog(
+                onPressed: () => showDialog<Widget>(
                   context: context,
                   builder: (_) => const ErrorDialog(
                     title: 'No Stack',
@@ -234,7 +234,7 @@ void main() {
           home: Scaffold(
             body: Builder(
               builder: (context) => ElevatedButton(
-                onPressed: () => showDialog(
+                onPressed: () => showDialog<Widget>(
                   context: context,
                   builder: (_) => const ErrorDialog(
                     title: 'No Context',
