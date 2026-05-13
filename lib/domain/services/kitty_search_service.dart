@@ -246,15 +246,16 @@ class KittySearchService {
     try {
       // 解析搜索结果响应
       // 格式取决于终端实现
-      if (response.contains('found')) {
-        onSearchResult?.call(SearchResult(
-          text: _lastSearchText,
-          found: true,
-        ));
-      } else if (response.contains('not found') || response.contains('no match')) {
+      // 先检查否定响应，避免 "not found" 被 "found" 匹配
+      if (response.contains('not found') || response.contains('no match')) {
         onSearchResult?.call(SearchResult(
           text: _lastSearchText,
           found: false,
+        ));
+      } else if (response.contains('found')) {
+        onSearchResult?.call(SearchResult(
+          text: _lastSearchText,
+          found: true,
         ));
       }
     } catch (e) {

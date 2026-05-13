@@ -206,7 +206,7 @@ class KittyMultipleCursorsService {
     try {
       // 解析 OSC 6 > 响应
       if (response.startsWith('6>cursor;')) {
-        final parts = response.substring(10).split(';');
+        final parts = response.substring(9).split(';');
         String? id;
         int? x;
         int? y;

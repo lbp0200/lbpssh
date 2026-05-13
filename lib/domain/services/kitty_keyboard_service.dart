@@ -108,18 +108,54 @@ class KittyKeyboardService {
     }
 
     String key;
-    if (functionNumber <= 4) {
-      // F1-F4: OP, OQ, OR, OS
-      key = String.fromCharCode(0x4F + functionNumber - 1);
-    } else if (functionNumber <= 8) {
-      // F5-F8: [15~ - [18~
-      key = '[1${functionNumber + 10}~';
-    } else {
-      // F9-F12: [20~ - [24~
-      key = '[2${functionNumber - 8}~';
+    switch (functionNumber) {
+      case 1:
+        key = 'Q'; // F1: \eOQ
+        break;
+      case 2:
+        key = 'R'; // F2: \eOR
+        break;
+      case 3:
+        key = 'S'; // F3: \eOS
+        break;
+      case 4:
+        key = 'P'; // F4: \eOP
+        break;
+      case 5:
+        key = '[15~'; // F5
+        break;
+      case 6:
+        key = '[16~'; // F6
+        break;
+      case 7:
+        key = '[17~'; // F7
+        break;
+      case 8:
+        key = '[18~'; // F8
+        break;
+      case 9:
+        key = '[20~'; // F9
+        break;
+      case 10:
+        key = '[21~'; // F10
+        break;
+      case 11:
+        key = '[22~'; // F11
+        break;
+      case 12:
+        key = '[24~'; // F12
+        break;
+      default:
+        throw Exception('功能键编号必须在 1-12 之间');
     }
 
-    await sendKey('\x1bO$key');
+    if (functionNumber <= 4) {
+      // F1-F4: SS3 (\x1bO) + letter
+      await sendKey('\x1bO$key');
+    } else {
+      // F5-F12: CSI (\x1b[) + sequence (key already includes '[', e.g. '[15~')
+      await sendKey('\x1b$key');
+    }
   }
 
   /// 发送光标键
@@ -239,7 +275,7 @@ class KittyKeyboardService {
       state = state.substring(0, state.length - 1);
     }
 
-    final cmd = '\x1b]200;$state\x1b\\\\';
+    final cmd = '\x1b]200;$state\x1b\\';
     _session.writeRaw(cmd);
   }
 
@@ -250,7 +286,7 @@ class KittyKeyboardService {
     }
 
     // OSC 200 ; ?
-    final cmd = '\x1b]200;?\x1b\\\\';
+    final cmd = '\x1b]200;?\x1b\\';
     _session.writeRaw(cmd);
   }
 
