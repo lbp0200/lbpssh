@@ -2,17 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:lbp_ssh/main.dart';
-import 'package:lbp_ssh/presentation/providers/connection_provider.dart';
-import 'package:lbp_ssh/presentation/providers/terminal_provider.dart';
-import 'package:lbp_ssh/presentation/providers/sync_provider.dart';
-import 'package:lbp_ssh/presentation/providers/app_config_provider.dart';
-import 'package:lbp_ssh/presentation/providers/import_export_provider.dart';
-import 'package:lbp_ssh/presentation/providers/sftp_provider.dart';
+import 'package:lbp_ssh/data/repositories/connection_repository.dart';
 import 'package:lbp_ssh/domain/services/terminal_service.dart';
 import 'package:lbp_ssh/domain/services/sync_service.dart';
 import 'package:lbp_ssh/domain/services/app_config_service.dart';
 import 'package:lbp_ssh/domain/services/import_export_service.dart';
-import 'package:lbp_ssh/data/repositories/connection_repository.dart';
+import 'package:lbp_ssh/presentation/providers_riverpod/service_providers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 void main() {
@@ -29,32 +24,16 @@ void main() {
 
       // 启动应用
       await tester.pumpWidget(
-        ConsumerProvider(
-          create: (_) => ConnectionProvider(connectionRepository),
+        ProviderScope(
+          overrides: [
+            connectionRepositoryProvider.overrideWithValue(connectionRepository),
+            terminalServiceProvider.overrideWithValue(terminalService),
+            syncServiceProvider.overrideWith((ref) => syncService),
+            appConfigServiceProvider.overrideWithValue(appConfigService),
+            importExportServiceProvider.overrideWith((ref) => importExportService),
+          ],
+          child: const MyApp(),
         ),
-        child:
-        ConsumerProvider(
-          create: (_) => TerminalProvider(terminalService, appConfigService),
-        ),
-        child:
-        ConsumerProvider(
-          create: (_) => SyncProvider(syncService),
-        ),
-        child:
-        ConsumerProvider(
-          create: (_) => AppConfigProvider(appConfigService),
-        ),
-        child:
-        ConsumerProvider(
-          create: (_) => ImportExportProvider(importExportService),
-        ),
-        child:
-        ConsumerProvider(
-          create: (context) => SftpProvider(
-            context.read<TerminalProvider>(),
-          ),
-        ),
-        child: const MyApp(),
       );
       await tester.pumpAndSettle();
 
@@ -74,32 +53,16 @@ void main() {
       final importExportService = ImportExportService(connectionRepository);
 
       await tester.pumpWidget(
-        ConsumerProvider(
-          create: (_) => ConnectionProvider(connectionRepository),
+        ProviderScope(
+          overrides: [
+            connectionRepositoryProvider.overrideWithValue(connectionRepository),
+            terminalServiceProvider.overrideWithValue(terminalService),
+            syncServiceProvider.overrideWith((ref) => syncService),
+            appConfigServiceProvider.overrideWithValue(appConfigService),
+            importExportServiceProvider.overrideWith((ref) => importExportService),
+          ],
+          child: const MyApp(),
         ),
-        child:
-        ConsumerProvider(
-          create: (_) => TerminalProvider(terminalService, appConfigService),
-        ),
-        child:
-        ConsumerProvider(
-          create: (_) => SyncProvider(syncService),
-        ),
-        child:
-        ConsumerProvider(
-          create: (_) => AppConfigProvider(appConfigService),
-        ),
-        child:
-        ConsumerProvider(
-          create: (_) => ImportExportProvider(importExportService),
-        ),
-        child:
-        ConsumerProvider(
-          create: (context) => SftpProvider(
-            context.read<TerminalProvider>(),
-          ),
-        ),
-        child: const MyApp(),
       );
       await tester.pumpAndSettle();
 
