@@ -65,9 +65,8 @@ class ConnectionState {
 class ConnectionNotifier extends Notifier<ConnectionState> {
   @override
   ConnectionState build() {
-    // 在 build 中通过 ref 获取 repository 并加载数据
-    final repo = ref.watch(connectionRepositoryProvider);
-    _load(repo);
+    // 延迟加载，避免在 build() 完成前访问未初始化的 state
+    Future.microtask(() => _load(ref.read(connectionRepositoryProvider)));
     return const ConnectionState(isLoading: true);
   }
 

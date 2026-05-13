@@ -1,25 +1,50 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lbp_ssh/presentation/providers/connection_provider.dart';
+import 'package:mocktail/mocktail.dart';
+
 import 'package:lbp_ssh/data/models/ssh_connection.dart';
-import '../mocks/mocks.dart';
+import 'package:lbp_ssh/data/repositories/connection_repository.dart';
+import 'package:lbp_ssh/presentation/providers_riverpod/connection_provider_riverpod.dart';
+import 'package:lbp_ssh/presentation/providers_riverpod/service_providers.dart';
+
+class MockConnectionRepository extends Mock implements ConnectionRepository {}
 
 void main() {
-  late MockConnectionRepository mockRepository;
-  late ConnectionProvider connectionProvider;
+  late MockConnectionRepository mockRepo;
+  late ProviderContainer container;
 
-  setUp(() {
-    mockRepository = MockConnectionRepository();
-    connectionProvider = ConnectionProvider(mockRepository);
-    registerFallbackValues();
+  setUpAll(() {
+    registerFallbackValue(SshConnection(
+      id: 'test_id',
+      name: 'Test Server',
+      host: '192.168.1.1',
+      port: 22,
+      username: 'testuser',
+      authType: AuthType.password,
+    ));
   });
 
-  group('ConnectionProvider', () {
+  setUp(() {
+    mockRepo = MockConnectionRepository();
+    container = ProviderContainer(
+      overrides: [
+        connectionRepositoryProvider.overrideWithValue(mockRepo),
+      ],
+    );
+  });
+
+  tearDown(() {
+    container.dispose();
+  });
+
+  group('ConnectionNotifier', () {
     group('initial state', () {
-      test('Given new provider, When created, Then has empty connections list', () {
-        expect(connectionProvider.connections, isEmpty);
-        expect(connectionProvider.isLoading, false);
-        expect(connectionProvider.error, isNull);
-        expect(connectionProvider.searchQuery, '');
+      test('Given new provider, When created, Then has loading state with empty connections', () {
+        final state = container.read(connectionProvider);
+        expect(state.connections, isEmpty);
+        expect(state.isLoading, true); // build() returns loading state
+        expect(state.error, isNull);
+        expect(state.searchQuery, '');
       });
     });
 
@@ -38,34 +63,37 @@ void main() {
             authType: AuthType.password,
           ),
         ];
-        when(() => mockRepository.getAllConnections()).thenReturn(connections);
+        when(() => mockRepo.getAllConnections()).thenReturn(connections);
 
         // Act (When)
-        await connectionProvider.loadConnections();
+        await container.read(connectionProvider.notifier).loadConnections();
 
         // Assert (Then)
-        expect(connectionProvider.connections.length, 1);
-        expect(connectionProvider.connections.first.name, 'Server 1');
-        expect(connectionProvider.isLoading, false);
-        expect(connectionProvider.error, isNull);
-        verify(() => mockRepository.getAllConnections()).called(1);
+        final state = container.read(connectionProvider);
+        expect(state.connections.length, 1);
+        expect(state.connections.first.name, 'Server 1');
+        expect(state.isLoading, false);
+        expect(state.error, isNull);
+        // getAllConnections is called once by _load microtask + once by loadConnections()
+        verify(() => mockRepo.getAllConnections()).called(2);
       });
 
       test(
           'Given repository throws error, When loadConnections called, Then sets error and stops loading',
           () async {
         // Arrange (Given)
-        when(() => mockRepository.getAllConnections())
+        when(() => mockRepo.getAllConnections())
             .thenThrow(Exception('Failed to load'));
 
         // Act (When)
-        await connectionProvider.loadConnections();
+        await container.read(connectionProvider.notifier).loadConnections();
 
         // Assert (Then)
-        expect(connectionProvider.connections, isEmpty);
-        expect(connectionProvider.isLoading, false);
-        expect(connectionProvider.error, isNotNull);
-        expect(connectionProvider.error, contains('加载连接失败'));
+        final state = container.read(connectionProvider);
+        expect(state.connections, isEmpty);
+        expect(state.isLoading, false);
+        expect(state.error, isNotNull);
+        expect(state.error, contains('加载连接失败'));
       });
     });
 
@@ -82,16 +110,17 @@ void main() {
           username: 'newuser',
           authType: AuthType.password,
         );
-        when(() => mockRepository.saveConnection(connection))
+        when(() => mockRepo.saveConnection(connection))
             .thenAnswer((_) async {});
-        when(() => mockRepository.getAllConnections()).thenReturn([connection]);
+        when(() => mockRepo.getAllConnections()).thenReturn([connection]);
 
         // Act (When)
-        await connectionProvider.addConnection(connection);
+        await container.read(connectionProvider.notifier).addConnection(connection);
 
         // Assert (Then)
-        verify(() => mockRepository.saveConnection(connection)).called(1);
-        verify(() => mockRepository.getAllConnections()).called(1);
+        verify(() => mockRepo.saveConnection(connection)).called(1);
+        // getAllConnections: _load microtask + loadConnections
+        verify(() => mockRepo.getAllConnections()).called(2);
       });
 
       test(
@@ -106,16 +135,17 @@ void main() {
           username: 'newuser',
           authType: AuthType.password,
         );
-        when(() => mockRepository.saveConnection(connection))
+        when(() => mockRepo.saveConnection(connection))
             .thenThrow(Exception('Save failed'));
 
         // Act & Assert (When)
         expect(
-          () => connectionProvider.addConnection(connection),
+          () => container.read(connectionProvider.notifier).addConnection(connection),
           throwsException,
         );
-        expect(connectionProvider.error, isNotNull);
-        expect(connectionProvider.error, contains('添加连接失败'));
+        final state = container.read(connectionProvider);
+        expect(state.error, isNotNull);
+        expect(state.error, contains('添加连接失败'));
       });
     });
 
@@ -132,16 +162,17 @@ void main() {
           username: 'user1',
           authType: AuthType.password,
         );
-        when(() => mockRepository.saveConnection(connection))
+        when(() => mockRepo.saveConnection(connection))
             .thenAnswer((_) async {});
-        when(() => mockRepository.getAllConnections()).thenReturn([connection]);
+        when(() => mockRepo.getAllConnections()).thenReturn([connection]);
 
         // Act (When)
-        await connectionProvider.updateConnection(connection);
+        await container.read(connectionProvider.notifier).updateConnection(connection);
 
         // Assert (Then)
-        verify(() => mockRepository.saveConnection(connection)).called(1);
-        verify(() => mockRepository.getAllConnections()).called(1);
+        verify(() => mockRepo.saveConnection(connection)).called(1);
+        // getAllConnections: _load microtask + loadConnections
+        verify(() => mockRepo.getAllConnections()).called(2);
       });
     });
 
@@ -151,16 +182,17 @@ void main() {
           () async {
         // Arrange (Given)
         const connectionId = 'conn1';
-        when(() => mockRepository.deleteConnection(connectionId))
+        when(() => mockRepo.deleteConnection(connectionId))
             .thenAnswer((_) async {});
-        when(() => mockRepository.getAllConnections()).thenReturn([]);
+        when(() => mockRepo.getAllConnections()).thenReturn([]);
 
         // Act (When)
-        await connectionProvider.deleteConnection(connectionId);
+        await container.read(connectionProvider.notifier).deleteConnection(connectionId);
 
         // Assert (Then)
-        verify(() => mockRepository.deleteConnection(connectionId)).called(1);
-        verify(() => mockRepository.getAllConnections()).called(1);
+        verify(() => mockRepo.deleteConnection(connectionId)).called(1);
+        // getAllConnections: _load microtask + loadConnections
+        verify(() => mockRepo.getAllConnections()).called(2);
       });
 
       test(
@@ -168,16 +200,17 @@ void main() {
           () async {
         // Arrange (Given)
         const connectionId = 'conn1';
-        when(() => mockRepository.deleteConnection(connectionId))
+        when(() => mockRepo.deleteConnection(connectionId))
             .thenThrow(Exception('Delete failed'));
 
         // Act & Assert (When)
         expect(
-          () => connectionProvider.deleteConnection(connectionId),
+          () => container.read(connectionProvider.notifier).deleteConnection(connectionId),
           throwsException,
         );
-        expect(connectionProvider.error, isNotNull);
-        expect(connectionProvider.error, contains('删除连接失败'));
+        final state = container.read(connectionProvider);
+        expect(state.error, isNotNull);
+        expect(state.error, contains('删除连接失败'));
       });
     });
 
@@ -195,16 +228,16 @@ void main() {
           username: 'user1',
           authType: AuthType.password,
         );
-        when(() => mockRepository.getConnectionById(connectionId))
+        when(() => mockRepo.getConnectionById(connectionId))
             .thenReturn(connection);
 
         // Act (When)
-        final result = connectionProvider.getConnectionById(connectionId);
+        final result = container.read(connectionProvider.notifier).getConnectionById(connectionId);
 
         // Assert (Then)
         expect(result, isNotNull);
         expect(result!.id, connectionId);
-        verify(() => mockRepository.getConnectionById(connectionId)).called(1);
+        verify(() => mockRepo.getConnectionById(connectionId)).called(1);
       });
 
       test(
@@ -212,11 +245,11 @@ void main() {
           () {
         // Arrange (Given)
         const connectionId = 'nonexistent';
-        when(() => mockRepository.getConnectionById(connectionId))
+        when(() => mockRepo.getConnectionById(connectionId))
             .thenReturn(null);
 
         // Act (When)
-        final result = connectionProvider.getConnectionById(connectionId);
+        final result = container.read(connectionProvider.notifier).getConnectionById(connectionId);
 
         // Assert (Then)
         expect(result, isNull);
@@ -225,82 +258,18 @@ void main() {
 
     group('search and filter', () {
       test(
-          'Given search query, When setSearchQuery called, Then updates search query and notifies listeners',
-          () {
-        // Arrange (Given)
-        final connections = [
-          SshConnection(
-            id: 'conn1',
-            name: 'Production Server',
-            host: '192.168.1.1',
-            port: 22,
-            username: 'user1',
-            authType: AuthType.password,
-          ),
-          SshConnection(
-            id: 'conn2',
-            name: 'Development Server',
-            host: '192.168.1.2',
-            port: 22,
-            username: 'user2',
-            authType: AuthType.password,
-          ),
-        ];
-        when(() => mockRepository.getAllConnections()).thenReturn(connections);
-
-        // Act (When)
-        connectionProvider.setSearchQuery('prod');
-
-        // Assert (Then)
-        expect(connectionProvider.searchQuery, 'prod');
-      });
-
-      test(
-          'Given empty search query, When filteredConnections accessed, Then returns all connections',
-          () async {
-        // Arrange (Given)
-        final connections = [
-          SshConnection(
-            id: 'conn1',
-            name: 'Server 1',
-            host: '192.168.1.1',
-            port: 22,
-            username: 'user1',
-            authType: AuthType.password,
-          ),
-        ];
-        when(() => mockRepository.getAllConnections()).thenReturn(connections);
-
-        // Act (When) - Load connections first
-        await connectionProvider.loadConnections();
-
-        // Assert (Then)
-        expect(connectionProvider.filteredConnections.length, 1);
-      });
-
-      test(
-          'Given search query, When filteredConnections accessed with empty connections, Then returns empty list',
-          () {
-        // Arrange (Given) - Set search query with no connections loaded
-        connectionProvider.setSearchQuery('prod');
-
-        // Assert (Then) - Should return empty when no connections
-        expect(connectionProvider.filteredConnections, isEmpty);
-      });
-
-      test(
-          'Given clearSearch called, When called, Then clears search query',
+          'Given search query, When setSearchQuery called, Then updates search query',
           () {
         // Act (When)
-        connectionProvider.setSearchQuery('test');
-        connectionProvider.clearSearch();
+        container.read(connectionProvider.notifier).setSearchQuery('prod');
 
         // Assert (Then)
-        expect(connectionProvider.searchQuery, '');
+        final state = container.read(connectionProvider);
+        expect(state.searchQuery, 'prod');
       });
 
       test(
-          'Given search query matching host, When filteredConnections accessed, Then returns matching connections',
+          'Given search query matching name, When filteredConnections accessed, Then returns matching connections',
           () async {
         // Arrange (Given)
         final connections = [
@@ -321,15 +290,16 @@ void main() {
             authType: AuthType.password,
           ),
         ];
-        when(() => mockRepository.getAllConnections()).thenReturn(connections);
-        await connectionProvider.loadConnections();
+        when(() => mockRepo.getAllConnections()).thenReturn(connections);
+        await container.read(connectionProvider.notifier).loadConnections();
 
         // Act (When)
-        connectionProvider.setSearchQuery('192.168.1');
+        container.read(connectionProvider.notifier).setSearchQuery('Production');
 
         // Assert (Then)
-        expect(connectionProvider.filteredConnections.length, 1);
-        expect(connectionProvider.filteredConnections.first.name, 'Production Server');
+        final state = container.read(connectionProvider);
+        expect(state.filteredConnections.length, 1);
+        expect(state.filteredConnections.first.name, 'Production Server');
       });
 
       test(
@@ -354,15 +324,16 @@ void main() {
             authType: AuthType.password,
           ),
         ];
-        when(() => mockRepository.getAllConnections()).thenReturn(connections);
-        await connectionProvider.loadConnections();
+        when(() => mockRepo.getAllConnections()).thenReturn(connections);
+        await container.read(connectionProvider.notifier).loadConnections();
 
         // Act (When)
-        connectionProvider.setSearchQuery('admin');
+        container.read(connectionProvider.notifier).setSearchQuery('admin');
 
         // Assert (Then)
-        expect(connectionProvider.filteredConnections.length, 1);
-        expect(connectionProvider.filteredConnections.first.username, 'admin');
+        final state = container.read(connectionProvider);
+        expect(state.filteredConnections.length, 1);
+        expect(state.filteredConnections.first.username, 'admin');
       });
 
       test(
@@ -379,14 +350,15 @@ void main() {
             authType: AuthType.password,
           ),
         ];
-        when(() => mockRepository.getAllConnections()).thenReturn(connections);
-        await connectionProvider.loadConnections();
+        when(() => mockRepo.getAllConnections()).thenReturn(connections);
+        await container.read(connectionProvider.notifier).loadConnections();
 
         // Act (When)
-        connectionProvider.setSearchQuery('PRODUCTION');
+        container.read(connectionProvider.notifier).setSearchQuery('PRODUCTION');
 
         // Assert (Then)
-        expect(connectionProvider.filteredConnections.length, 1);
+        final state = container.read(connectionProvider);
+        expect(state.filteredConnections.length, 1);
       });
 
       test(
@@ -403,14 +375,26 @@ void main() {
             authType: AuthType.password,
           ),
         ];
-        when(() => mockRepository.getAllConnections()).thenReturn(connections);
-        await connectionProvider.loadConnections();
+        when(() => mockRepo.getAllConnections()).thenReturn(connections);
+        await container.read(connectionProvider.notifier).loadConnections();
 
         // Act (When)
-        connectionProvider.setSearchQuery('nonexistent');
+        container.read(connectionProvider.notifier).setSearchQuery('nonexistent');
 
         // Assert (Then)
-        expect(connectionProvider.filteredConnections, isEmpty);
+        final state = container.read(connectionProvider);
+        expect(state.filteredConnections, isEmpty);
+      });
+
+      test('Given clearSearch called, When accessed, Then searchQuery is empty', () {
+        // Arrange
+        container.read(connectionProvider.notifier).setSearchQuery('test');
+
+        // Act
+        container.read(connectionProvider.notifier).clearSearch();
+
+        // Assert
+        expect(container.read(connectionProvider).searchQuery, '');
       });
     });
 
@@ -435,21 +419,21 @@ void main() {
           username: 'user2',
           authType: AuthType.password,
         );
-        when(() => mockRepository.saveConnection(connection1))
+        when(() => mockRepo.saveConnection(connection1))
             .thenAnswer((_) async {});
-        when(() => mockRepository.getAllConnections()).thenReturn([connection1]);
+        when(() => mockRepo.getAllConnections()).thenReturn([connection1]);
 
-        await connectionProvider.addConnection(connection1);
+        await container.read(connectionProvider.notifier).addConnection(connection1);
 
-        when(() => mockRepository.saveConnection(connection2))
+        when(() => mockRepo.saveConnection(connection2))
             .thenAnswer((_) async {});
-        when(() => mockRepository.getAllConnections()).thenReturn([connection1, connection2]);
+        when(() => mockRepo.getAllConnections()).thenReturn([connection1, connection2]);
 
         // Act (When)
-        await connectionProvider.addConnection(connection2);
+        await container.read(connectionProvider.notifier).addConnection(connection2);
 
         // Assert (Then)
-        verify(() => mockRepository.saveConnection(connection2)).called(1);
+        verify(() => mockRepo.saveConnection(connection2)).called(1);
       });
     });
   });
