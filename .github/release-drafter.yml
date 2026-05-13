@@ -5,6 +5,8 @@ categories:
     label: 'feature'
   - title: 'Bug Fixes'
     label: 'bug'
+  - title: 'Maintenance'
+    label: 'chore'
 template: |
   ## Changes
   $CHANGES

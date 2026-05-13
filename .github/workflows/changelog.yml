@@ -1,21 +1,27 @@
-name: Changelog
+name: Generate CHANGELOG
+
 on:
   push:
     branches:
       - main
+
 jobs:
   changelog:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: Generate CHANGELOG
         run: |
-          git log --pretty=format:"- %s (%h)" HEAD~20..HEAD > CHANGELOG.md
+          git log --pretty=format:"- %s (%h)" --since="2025-01-01" > CHANGELOG.md
       - name: Commit CHANGELOG
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           git add CHANGELOG.md
           git commit -m "docs: update CHANGELOG" || echo "No changes"
+      - name: Push changes
+        run: git push
