@@ -590,15 +590,17 @@ class TerminalTabsView extends ConsumerWidget {
               return TerminalStatusBar(
                 session: session,
                 onReconnect: () async {
-                  final snackBar = SnackBar(
+                  if (!context.mounted) return;
+                  final snackBar = const SnackBar(
                     content: Text('正在重连...'),
-                    duration: const Duration(seconds: 2),
+                    duration: Duration(seconds: 2),
                   );
                   ScaffoldMessenger.of(context).showSnackBar(snackBar);
 
                   try {
                     await ref.read(terminalProvider.notifier).reconnectSession(session.id);
                   } catch (e) {
+                    if (!context.mounted) return;
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(content: Text('重连失败: $e')),
                     );

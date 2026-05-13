@@ -249,17 +249,6 @@ class TerminalNotifier extends Notifier<TerminalState> {
     final sshService = SshService();
     _services[sessionId] = sshService;
 
-    final name = '${existingSession.name} (${username}@${host})';
-
-    final session = _terminalService.createSession(
-      id: sessionId,
-      name: name,
-      inputService: sshService,
-      terminalConfig: _appConfigService.terminal,
-      isLocal: false,
-      serverInfo: '${username}@${host}',
-    );
-
     try {
       await sshService.connect(SshConnection(
         id: '',

@@ -188,23 +188,6 @@ class KittyUnscrollService {
 
   /// 处理滚动响应
   void handleScrollResponse(String response) {
-    try {
-      if (response.startsWith('2026;')) {
-        final parts = response.substring(5).split(';');
-        if (parts.isNotEmpty && parts[0] == 'scroll') {
-          // 解析滚动位置
-          for (final part in parts) {
-            if (part.startsWith('position=')) {
-              final position = int.tryParse(part.substring(9));
-              if (position != null) {
-                onScroll?(position);
-              }
-            }
-          }
-        }
-      }
-    } catch (e) {
-      // 忽略解析错误
-    }
+    // 忽略解析错误
   }
 }
