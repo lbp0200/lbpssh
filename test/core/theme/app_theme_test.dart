@@ -5,11 +5,11 @@ import 'package:lbp_ssh/core/theme/app_theme.dart';
 void main() {
   group('LinearColors', () {
     test('has expected color values', () {
-      expect(LinearColors.background.value, 0xFF08090a);
-      expect(LinearColors.textPrimary.value, 0xFFf7f8f8);
-      expect(LinearColors.accent.value, 0xFF5e6ad2);
-      expect(LinearColors.success.value, 0xFF27a644);
-      expect(LinearColors.error.value, 0xFFf85149);
+      expect(LinearColors.background.toARGB32(), 0xFF08090a);
+      expect(LinearColors.textPrimary.toARGB32(), 0xFFf7f8f8);
+      expect(LinearColors.accent.toARGB32(), 0xFF5e6ad2);
+      expect(LinearColors.success.toARGB32(), 0xFF27a644);
+      expect(LinearColors.error.toARGB32(), 0xFFf85149);
     });
 
     test('has all colors defined', () {
