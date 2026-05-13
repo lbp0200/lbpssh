@@ -195,11 +195,9 @@ class KittyUnscrollService {
           // 解析滚动位置
           for (final part in parts) {
             if (part.startsWith('position=')) {
-              // TODO: 使用 position 值触发滚动回调
-              // final position = int.tryParse(part.substring(9));
-              // 触发回调
-              if (onScroll != null) {
-                // 这里只是示例，实际需要根据响应内容判断方向
+              final position = int.tryParse(part.substring(9));
+              if (position != null) {
+                onScroll?(position);
               }
             }
           }

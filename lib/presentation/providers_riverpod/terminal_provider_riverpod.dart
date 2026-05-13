@@ -226,6 +226,63 @@ class TerminalNotifier extends Notifier<TerminalState> {
     return _terminalService.getSession(sessionId);
   }
 
+  /// 重连指定会话（关闭旧会话，创建新会话）
+  Future<void> reconnectSession(String sessionId) async {
+    final oldSession = _terminalService.getSession(sessionId);
+    if (oldSession != null) {
+      _services[sessionId]?.dispose();
+      _services.remove(sessionId);
+    }
+
+    final existingSession = state.sessions.firstWhere(
+      (s) => s.id == sessionId,
+      orElse: () => null,
+    );
+
+    if (existingSession == null) return;
+
+    // 从 serverInfo 解析连接信息: "username@host"
+    final serverInfo = existingSession.serverInfo ?? '';
+    final parts = serverInfo.split('@');
+    if (parts.length < 2) return;
+
+    final username = parts[0];
+    final host = parts[1];
+
+    final sshService = SshService();
+    _services[sessionId] = sshService;
+
+    final name = '${existingSession.name} (${username}@${host})';
+
+    final session = _terminalService.createSession(
+      id: sessionId,
+      name: name,
+      inputService: sshService,
+      terminalConfig: _appConfigService.terminal,
+      isLocal: false,
+      serverInfo: '${username}@${host}',
+    );
+
+    try {
+      await sshService.connect(SshConnection(
+        id: '',
+        name: existingSession.name,
+        host: host,
+        port: 22,
+        username: username,
+        authType: AuthType.password,
+        password: '',
+      ));
+    } catch (e) {
+      _services.remove(sessionId);
+      throw Exception('重连失败: $e');
+    }
+
+    state = TerminalState(
+      sessions: _snapshotSessions(_terminalService),
+      activeSessionId: sessionId,
+    );
+
   void disposeServices() {
     for (final service in _services.values) {
       service.dispose();
@@ -234,6 +291,7 @@ class TerminalNotifier extends Notifier<TerminalState> {
 }
 
 final terminalProvider =
-    NotifierProvider<TerminalNotifier, TerminalState>(
-      TerminalNotifier.new,
-    );
+     NotifierProvider<TerminalNotifier, TerminalState>(
+       TerminalNotifier.new,
+     );
+}
