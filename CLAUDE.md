@@ -45,18 +45,18 @@ The project follows clean architecture with clear separation:
 
 ```
 lib/
-├── main.dart           # App entry point, DI setup via MultiProvider
+├── main.dart           # App entry point, DI setup via ProviderScope
 ├── core/               # Constants, theme configuration
 ├── data/               # Models (JSON-serializable), repositories
 ├── domain/             # Services, use cases
-├── presentation/       # Screens, widgets, ChangeNotifier providers
+├── presentation/       # Screens, widgets, Riverpod providers
 └── utils/              # Utilities (encryption, etc.)
 ```
 
 **Key dependencies:**
 - `dartssh2` - SSH client
-- `xterm` - Terminal emulator
-- `provider` - State management
+- `kterm` - Terminal emulator
+- `flutter_riverpod` - State management
 - `go_router` - Routing
 - `dio` - HTTP client for sync
 - `encrypt` - Encryption
@@ -80,10 +80,13 @@ Models use `@JsonSerializable()` with `part '*.g.dart'` and include:
 - `copyWith()` method
 - `fromJson()` and `toJson()` factories
 
-### State Management
-Providers use `ChangeNotifier` via `MultiProvider` in `main.dart`. Follow the pattern:
-- Check `mounted`/`context.mounted` in async callbacks
-- Use `if (context.mounted)` before context operations after await
+### State Management (Riverpod)
+Providers use `flutter_riverpod` with `riverpod_annotation`. Follow the pattern:
+- Use `@riverpod` annotation for providers
+- Use `StateNotifierProvider` / `NotifierProvider` for complex state
+- Use `ref.watch()` / `ref.read()` for dependency access
+- Wrap widget tree with `ProviderScope` in `main.dart`
+- Use `ConsumerWidget` or `Consumer` to access providers in widgets
 
 ### Widget Guidelines
 - Use `const` constructors when possible

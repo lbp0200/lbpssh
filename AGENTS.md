@@ -51,11 +51,11 @@ flutter run -d windows
 ## Project Structure
 ```
 lib/
-├── main.dart              # App entry point, DI setup via MultiProvider
+├── main.dart              # App entry point, DI setup via ProviderScope
 ├── core/                  # Constants, theme configuration
 ├── data/                  # Models (JSON-serializable), repositories
 ├── domain/                # Services, use cases
-├── presentation/          # Screens, widgets, ChangeNotifier providers
+├── presentation/          # Screens, widgets, Riverpod providers
 └── utils/                 # Utilities (encryption, etc.)
 test/                      # Test files
 ```
@@ -72,7 +72,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dio/dio.dart';
 
 import '../../data/models/ssh_connection.dart';
@@ -110,9 +110,11 @@ Models use `@JsonSerializable()` with `part '*.g.dart'` and include:
 - Log errors appropriately (avoid sensitive data)
 
 ## State Management
-Providers use `ChangeNotifier` via `MultiProvider` in `main.dart`:
-- Check `mounted` before context operations after await
-- Use `if (context.mounted)` guard pattern
+State is managed with `flutter_riverpod`:
+- Wrap widget tree with `ProviderScope` in `main.dart`
+- Use `ConsumerWidget` or `Consumer` to access providers
+- Use `ref.watch()` for reactive access, `ref.read()` for one-shot
+- Use `@riverpod` annotation with `riverpod_annotation` package
 
 ## Testing Guidelines
 - Unit tests: `test/models/`, `test/utils/`, `test/repositories/`
@@ -146,7 +148,7 @@ void main() {
 ## Dependencies
 - **SSH**: dartssh2
 - **Terminal**: kterm, flutter_pty
-- **State**: provider
+- **State**: flutter_riverpod
 - **Routing**: go_router
 - **Networking**: dio
 - **Encryption**: encrypt
