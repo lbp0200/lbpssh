@@ -11,6 +11,14 @@ class _MockConnectionNotifier extends ConnectionNotifier {
 
   @override
   ConnectionState build() => _state;
+
+  @override
+  Future<void> deleteConnection(String id) async {
+    // Override to avoid null _repo
+    state = state.copyWith(
+      connections: state.connections.where((c) => c.id != id).toList(),
+    );
+  }
 }
 
 void main() {
@@ -226,6 +234,73 @@ void main() {
 
         // Find the PopupMenuButton and long press to trigger menu
         expect(find.byType(PopupMenuButton<String>), findsWidgets);
+      });
+
+      testWidgets('Given connection popup menu, When connect is tapped, Then calls onTap callback',
+          (WidgetTester tester) async {
+        tester.view.physicalSize = const Size(1000, 1000);
+        tester.view.devicePixelRatio = 1.0;
+        addTearDown(() {
+          tester.view.resetPhysicalSize();
+          tester.view.resetDevicePixelRatio();
+        });
+
+        String? tappedId;
+        final connections = [
+          SshConnection(
+            id: '1',
+            name: 'Test Server',
+            host: '192.168.1.1',
+            username: 'user',
+            authType: AuthType.password,
+          ),
+        ];
+
+        await tester.pumpWidget(MaterialApp(
+          home: Scaffold(
+            body: ProviderScope(
+              overrides: [
+                connectionProvider.overrideWith(
+                  () => _MockConnectionNotifier(ConnectionState(connections: connections)),
+                ),
+              ],
+              child: CompactConnectionList(
+                onConnectionTap: (conn) => tappedId = conn.id,
+              ),
+            ),
+          ),
+        ));
+
+        // Tap the connection directly (GestureDetector onTap)
+        await tester.tap(find.byIcon(Icons.computer));
+        await tester.pump();
+
+        expect(tappedId, '1');
+      });
+
+      testWidgets('Given connection, When rendered, Then shows tooltip with connection details',
+          (WidgetTester tester) async {
+        tester.view.physicalSize = const Size(1000, 1000);
+        tester.view.devicePixelRatio = 1.0;
+        addTearDown(() {
+          tester.view.resetPhysicalSize();
+          tester.view.resetDevicePixelRatio();
+        });
+
+        final connections = [
+          SshConnection(
+            id: '1',
+            name: 'MyServer',
+            host: '10.0.0.1',
+            username: 'admin',
+            port: 2222,
+            authType: AuthType.password,
+          ),
+        ];
+
+        await tester.pumpWidget(createTestWidget(connections: connections));
+
+        expect(find.byTooltip('MyServer\nadmin@10.0.0.1:2222'), findsOneWidget);
       });
     });
   });

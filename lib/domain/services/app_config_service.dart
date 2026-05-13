@@ -49,6 +49,13 @@ class AppConfigService with ChangeNotifier {
 
   AppConfigService._internal();
 
+  /// 测试专用：重置服务单例状态
+  @visibleForTesting
+  static void resetForTesting() {
+    _instance = null;
+    _initialized = false;
+  }
+
   factory AppConfigService.getInstance() {
     _instance ??= AppConfigService._internal();
     return _instance!;
@@ -56,6 +63,7 @@ class AppConfigService with ChangeNotifier {
 
   static Future<void> ensureInitialized() async {
     if (!_initialized) {
+      _instance ??= AppConfigService._internal();
       await _loadFromPrefs();
       _initialized = true;
     }

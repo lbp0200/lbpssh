@@ -114,5 +114,53 @@ void main() {
     test('close succeeds without throwing', () async {
       await repo.close();
     });
+
+    test('saveConnection increments version and updates updatedAt', () async {
+      final connection = createTestConnection(id: 'v1', name: 'Version Test');
+
+      await repo.saveConnection(connection);
+      final afterFirstSave = repo.getConnectionById('v1')!;
+      expect(afterFirstSave.version, connection.version + 1);
+
+      await repo.saveConnection(afterFirstSave);
+      final afterSecondSave = repo.getConnectionById('v1')!;
+      expect(afterSecondSave.version, connection.version + 2);
+      expect(afterSecondSave.updatedAt.isAfter(afterFirstSave.updatedAt), isTrue);
+    });
+
+    test('init with existing file loads connections from file', () async {
+      final tempDir = await Directory.systemTemp.createTemp('lbp_ssh_repo_test_');
+      addTearDown(() => tempDir.delete(recursive: true));
+      final jsonFile = File('${tempDir.path}/existing.json');
+
+      // Populate file with a connection first using a repo
+      final setupRepo = ConnectionRepository(configFile: jsonFile);
+      await setupRepo.init();
+      await setupRepo.saveConnection(createTestConnection(id: 'loaded-1', name: 'Loaded'));
+      await setupRepo.close();
+
+      // Create new repo with same file — should load from file
+      final newRepo = ConnectionRepository(configFile: jsonFile);
+      await newRepo.init();
+      addTearDown(() => newRepo.close());
+
+      final result = newRepo.getAllConnections();
+      expect(result.length, 1);
+      expect(result.first.id, 'loaded-1');
+    });
+
+    test('init with corrupted file resets to empty', () async {
+      final tempDir = await Directory.systemTemp.createTemp('lbp_ssh_repo_test_');
+      addTearDown(() => tempDir.delete(recursive: true));
+      final jsonFile = File('${tempDir.path}/bad.json');
+      await jsonFile.writeAsString('not valid json at all');
+
+      final repo2 = ConnectionRepository(configFile: jsonFile);
+      await repo2.init();
+      addTearDown(() => repo2.close());
+
+      final result = repo2.getAllConnections();
+      expect(result, isEmpty);
+    });
   });
 }

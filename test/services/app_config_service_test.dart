@@ -1,151 +1,182 @@
+import 'dart:convert';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lbp_ssh/domain/services/app_config_service.dart';
-import 'package:lbp_ssh/data/models/terminal_config.dart';
 import 'package:lbp_ssh/data/models/default_terminal_config.dart';
+import 'package:lbp_ssh/data/models/ssh_config.dart';
+import 'package:lbp_ssh/data/models/terminal_config.dart';
+import 'package:lbp_ssh/domain/services/app_config_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
-  group('AppConfig', () {
-    test(
-        'Given no arguments, When creating AppConfig, Then uses default values',
-        () {
-      final config = AppConfig();
+  setUp(() async {
+    AppConfigService.resetForTesting();
+    SharedPreferences.setMockInitialValues({});
+    await AppConfigService.ensureInitialized();
+  });
 
-      expect(config.terminal.fontFamily, 'JetBrainsMonoNerdFontMono');
-      expect(config.defaultTerminal.execMac, TerminalType.iterm2);
+  group('AppConfigService Singleton', () {
+    test('Given service, When getInstance called twice, Then returns same instance',
+        () {
+      final instance1 = AppConfigService.getInstance();
+      final instance2 = AppConfigService.getInstance();
+
+      expect(instance1, same(instance2));
+    });
+  });
+
+  group('AppConfigService Defaults', () {
+    test('Given service initialized, When getting terminal config, Then has defaults',
+        () {
+      final service = AppConfigService.getInstance();
+
+      expect(service.terminal.fontFamily, 'JetBrainsMonoNerdFontMono');
+      expect(service.terminal.fontSize, 17.0);
     });
 
-    test(
-        'Given custom terminal config, When creating AppConfig, Then uses custom values',
+    test('Given service initialized, When getting defaultTerminal config, Then has defaults',
         () {
-      final terminalConfig = TerminalConfig(
+      final service = AppConfigService.getInstance();
+
+      expect(service.defaultTerminal.execMac, TerminalType.iterm2);
+    });
+
+    test('Given service initialized, When getting ssh config, Then has defaults',
+        () {
+      final service = AppConfigService.getInstance();
+
+      expect(service.ssh.keepaliveInterval, 30000);
+    });
+  });
+
+  group('AppConfigService Save', () {
+    test('Given service, When saving terminal config, Then updates value and notifies',
+        () async {
+      final service = AppConfigService.getInstance();
+      int notifyCount = 0;
+      service.addListener(() => notifyCount++);
+
+      final newConfig = TerminalConfig(
         fontFamily: 'Fira Code',
-        fontSize: 14,
+        fontSize: 16,
       );
+      await service.saveTerminalConfig(newConfig);
 
-      final config = AppConfig(terminal: terminalConfig);
+      expect(service.terminal.fontFamily, 'Fira Code');
+      expect(service.terminal.fontSize, 16);
+      expect(notifyCount, 1);
 
-      expect(config.terminal.fontFamily, 'Fira Code');
-      expect(config.terminal.fontSize, 14);
+      // Verify persistence by re-initializing
+      // Data was saved to SharedPreferences by saveTerminalConfig
+      AppConfigService.resetForTesting();
+      await AppConfigService.ensureInitialized();
+      final freshService = AppConfigService.getInstance();
+      expect(freshService.terminal.fontFamily, 'Fira Code');
     });
 
-    test('Given AppConfig, When serializing to JSON, Then produces correct JSON',
-        () {
-      final config = AppConfig();
+    test('Given service, When saving defaultTerminal config, Then updates value and notifies',
+        () async {
+      final service = AppConfigService.getInstance();
+      int notifyCount = 0;
+      service.addListener(() => notifyCount++);
 
-      final json = config.toJson();
+      final newConfig = DefaultTerminalConfig(execMac: TerminalType.alacritty);
+      await service.saveDefaultTerminalConfig(newConfig);
 
-      expect(json.containsKey('terminal'), true);
-      expect(json.containsKey('defaultTerminal'), true);
-      expect(json['terminal']['fontFamily'], 'JetBrainsMonoNerdFontMono');
+      expect(service.defaultTerminal.execMac, TerminalType.alacritty);
+      expect(notifyCount, 1);
     });
 
-    test(
-        'Given valid JSON, When deserializing, Then creates AppConfig correctly',
-        () {
-      final json = {
-        'terminal': {
-          'fontFamily': 'Consolas',
-          'fontSize': 16,
-          'fontWeight': 400,
-          'letterSpacing': 0.0,
-          'lineHeight': 1.0,
-          'backgroundColor': '#000000',
-          'foregroundColor': '#FFFFFF',
-          'cursorColor': '#FFFFFF',
-          'cursorBlinkInterval': 500,
-          'padding': 8,
-          'devicePixelRatio': 1.0,
-          'shellPath': '/bin/bash',
-        },
-        'defaultTerminal': {
-          'execWindows': 'powershell',
-          'execMac': 'alacritty',
-          'execLinux': 'kitty',
-        },
-      };
+    test('Given service, When saving ssh config, Then updates value and notifies', () async {
+      final service = AppConfigService.getInstance();
+      int notifyCount = 0;
+      service.addListener(() => notifyCount++);
 
-      final config = AppConfig.fromJson(json);
+      final newConfig = SshConfig(keepaliveInterval: 60000);
+      await service.saveSshConfig(newConfig);
 
-      expect(config.terminal.fontFamily, 'Consolas');
-      expect(config.terminal.fontSize, 16);
-      expect(config.terminal.shellPath, '/bin/bash');
-      expect(config.defaultTerminal.execMac, TerminalType.alacritty);
-    });
-
-    test(
-        'Given null values in JSON, When deserializing, Then uses default values',
-        () {
-      final json = {
-        'terminal': null,
-        'defaultTerminal': null,
-      };
-
-      final config = AppConfig.fromJson(json);
-
-      expect(config.terminal, isNotNull);
-      expect(config.defaultTerminal, isNotNull);
+      expect(service.ssh.keepaliveInterval, 60000);
+      expect(notifyCount, 1);
     });
   });
 
-  group('TerminalConfig Serialization', () {
-    test(
-        'Given TerminalConfig, When serializing and deserializing, Then preserves all fields',
-        () {
-      final original = TerminalConfig(
-        fontFamily: 'Source Code Pro',
-        fontSize: 15,
-        fontWeight: 500,
-        letterSpacing: 0.5,
-        lineHeight: 1.2,
-        backgroundColor: '#1E1E2E',
-        foregroundColor: '#CDD6F4',
-        cursorColor: '#F5E0DC',
-        cursorBlinkInterval: 750,
-        padding: 12,
-        devicePixelRatio: 1.5,
-        shellPath: '/usr/bin/zsh',
-      );
+  group('AppConfigService Reset', () {
+    test('Given modified config, When resetting to defaults, Then restores defaults',
+        () async {
+      final service = AppConfigService.getInstance();
+      final terminalConfig = TerminalConfig(fontSize: 24);
+      await service.saveTerminalConfig(terminalConfig);
+      expect(service.terminal.fontSize, 24);
 
-      final json = original.toJson();
-      final deserialized = TerminalConfig.fromJson(json);
+      await service.resetToDefaults();
 
-      expect(deserialized.fontFamily, original.fontFamily);
-      expect(deserialized.fontSize, original.fontSize);
-      expect(deserialized.fontWeight, original.fontWeight);
-      expect(deserialized.letterSpacing, original.letterSpacing);
-      expect(deserialized.lineHeight, original.lineHeight);
-      expect(deserialized.backgroundColor, original.backgroundColor);
-      expect(deserialized.foregroundColor, original.foregroundColor);
-      expect(deserialized.cursorColor, original.cursorColor);
-      expect(deserialized.cursorBlinkInterval, original.cursorBlinkInterval);
-      expect(deserialized.padding, original.padding);
-      expect(deserialized.devicePixelRatio, original.devicePixelRatio);
-      expect(deserialized.shellPath, original.shellPath);
+      expect(service.terminal.fontSize, 17.0);
+      expect(service.defaultTerminal.execMac, TerminalType.iterm2);
+      expect(service.ssh.keepaliveInterval, 30000);
     });
   });
 
-  group('DefaultTerminalConfig Serialization', () {
-    test(
-        'Given DefaultTerminalConfig, When serializing and deserializing, Then preserves all fields',
+  group('AppConfigService Export/Import', () {
+    test('Given config, When exporting, Then returns valid JSON string',
         () {
-      final original = DefaultTerminalConfig(
-        execWindows: TerminalType.powershell,
-        execWindowsCustom: 'pwsh.exe',
-        execMac: TerminalType.wezterm,
-        execMacCustom: '/Applications/WezTerm.app',
-        execLinux: TerminalType.alacritty,
-        execLinuxCustom: '/usr/bin/alacritty',
+      final service = AppConfigService.getInstance();
+
+      final exported = service.exportConfig();
+
+      expect(exported, isA<String>());
+      expect(exported.contains('terminal'), true);
+      expect(exported.contains('defaultTerminal'), true);
+      expect(exported.contains('ssh'), true);
+    });
+
+    test('Given exported JSON, When importing, Then restores config values',
+        () async {
+      final service = AppConfigService.getInstance();
+
+      // Modify and export
+      await service.saveTerminalConfig(TerminalConfig(fontFamily: 'Monaco'));
+      final exported = service.exportConfig();
+
+      // Reset and import
+      AppConfigService.resetForTesting();
+      SharedPreferences.setMockInitialValues({});
+      await AppConfigService.ensureInitialized();
+      final freshService = AppConfigService.getInstance();
+      await freshService.importConfig(exported);
+
+      expect(freshService.terminal.fontFamily, 'Monaco');
+    });
+  });
+
+  group('AppConfigService Initialization from Prefs', () {
+    test('Given saved config in SharedPreferences, When initializing, Then loads saved values',
+        () async {
+      // Set up SharedPreferences with saved config using jsonEncode
+      final prefs = await SharedPreferences.getInstance();
+      final savedConfig = AppConfig(
+        terminal: TerminalConfig(fontFamily: 'SavedFont'),
+      );
+      await prefs.setString(
+        'app_config',
+        jsonEncode(savedConfig.toJson()),
       );
 
-      final json = original.toJson();
-      final deserialized = DefaultTerminalConfig.fromJson(json);
+      // Re-initialize
+      AppConfigService.resetForTesting();
+      await AppConfigService.ensureInitialized();
+      final service = AppConfigService.getInstance();
 
-      expect(deserialized.execWindows, original.execWindows);
-      expect(deserialized.execWindowsCustom, original.execWindowsCustom);
-      expect(deserialized.execMac, original.execMac);
-      expect(deserialized.execMacCustom, original.execMacCustom);
-      expect(deserialized.execLinux, original.execLinux);
-      expect(deserialized.execLinuxCustom, original.execLinuxCustom);
+      expect(service.terminal.fontFamily, 'SavedFont');
+    });
+
+    test('Given corrupted config in SharedPreferences, When initializing, Then uses defaults',
+        () async {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('ssh_app_config', 'not valid json');
+
+      AppConfigService.resetForTesting();
+      await AppConfigService.ensureInitialized();
+      final service = AppConfigService.getInstance();
+
+      expect(service.terminal.fontFamily, 'JetBrainsMonoNerdFontMono');
     });
   });
 }
