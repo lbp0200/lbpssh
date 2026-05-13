@@ -34,7 +34,7 @@ class TerminalState {
     return TerminalState(
       sessions: sessions ?? this.sessions,
       activeSessionId: clearActive ? null : (activeSessionId ?? this.activeSessionId),
-    ) as dynamic;
+    );
   }
 
   @override
@@ -48,7 +48,7 @@ class TerminalState {
   int get hashCode => Object.hash(
         activeSessionId,
         Object.hashAll(sessions),
-      ) as dynamic;
+      );
 }
 
 /// 映射 [TerminalService.getAllSessions] 到 immutable 列表
@@ -104,7 +104,7 @@ class TerminalNotifier extends Notifier<TerminalState> {
       inputService: localService,
       terminalConfig: terminalConfig,
       isLocal: true,
-    ) as dynamic;
+    );
 
     session.setWorkingDirectoryAndUpdateName(initialDir);
     localService.initWorkingDirectory(initialDir);
@@ -136,7 +136,7 @@ class TerminalNotifier extends Notifier<TerminalState> {
     state = TerminalState(
       sessions: _snapshotSessions(_terminalService),
       activeSessionId: sessionId,
-    ) as dynamic;
+    );
 
     return session;
   }
@@ -158,12 +158,12 @@ class TerminalNotifier extends Notifier<TerminalState> {
       terminalConfig: terminalConfig,
       isLocal: false,
       serverInfo: '${connection.username}@${connection.host}',
-    ) as dynamic;
+    );
 
     state = TerminalState(
       sessions: _snapshotSessions(_terminalService),
       activeSessionId: sessionId,
-    ) as dynamic;
+    );
 
     try {
       await sshService.connect(connection);
@@ -212,7 +212,7 @@ class TerminalNotifier extends Notifier<TerminalState> {
     state = TerminalState(
       sessions: _snapshotSessions(_terminalService),
       activeSessionId: nextActive,
-    ) as dynamic;
+    );
   }
 
   /// 获取 SSH 服务
@@ -234,10 +234,7 @@ class TerminalNotifier extends Notifier<TerminalState> {
       _services.remove(sessionId);
     }
 
-    final existingSession = state.sessions.firstWhere(
-      (s) => s.id == sessionId,
-      orElse: () => null,
-    ) as dynamic;
+    final existingSession = state.sessions.where((TerminalSession s) => s.id == sessionId).firstOrNull;
 
     if (existingSession == null) return;
 
@@ -261,7 +258,7 @@ class TerminalNotifier extends Notifier<TerminalState> {
       terminalConfig: _appConfigService.terminal,
       isLocal: false,
       serverInfo: '${username}@${host}',
-    ) as dynamic;
+    );
 
     try {
       await sshService.connect(SshConnection(
@@ -281,7 +278,7 @@ class TerminalNotifier extends Notifier<TerminalState> {
     state = TerminalState(
       sessions: _snapshotSessions(_terminalService),
       activeSessionId: sessionId,
-    ) as dynamic;
+    );
   }
 
   void disposeServices() {
