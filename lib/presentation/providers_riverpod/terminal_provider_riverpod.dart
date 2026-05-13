@@ -282,6 +282,7 @@ class TerminalNotifier extends Notifier<TerminalState> {
       sessions: _snapshotSessions(_terminalService),
       activeSessionId: sessionId,
     ) as dynamic;
+  }
 
   void disposeServices() {
     for (final service in _services.values) {
@@ -291,7 +292,6 @@ class TerminalNotifier extends Notifier<TerminalState> {
 }
 
 final terminalProvider =
-     NotifierProvider<TerminalNotifier, TerminalState>(
-       TerminalNotifier.new,
-     ) as dynamic;
-}
+    NotifierProvider<TerminalNotifier, TerminalState>(
+      TerminalNotifier.new,
+    );
