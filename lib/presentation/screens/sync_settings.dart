@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../../core/constants/app_constants.dart';
 import '../../core/theme/app_theme.dart';
 import '../../domain/services/sync_service.dart'
     show SyncStatusEnum, SyncPlatform, SyncConfig;
@@ -17,12 +18,13 @@ class SyncSettingsScreen extends ConsumerStatefulWidget {
 
 class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _gistIdController = TextEditingController();
-  final _gistFileNameController = TextEditingController();
+  final _repoOwnerController = TextEditingController();
+  final _repoNameController = TextEditingController();
+  final _filePathController = TextEditingController();
+  final _branchController = TextEditingController();
   final _tokenController = TextEditingController();
   final _syncIntervalController = TextEditingController();
 
-  SyncPlatform _platform = SyncPlatform.gist;
   bool _autoSync = false;
   int _syncInterval = 5;
   bool _obscureToken = true;
@@ -38,24 +40,28 @@ class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
     final config = state.config;
 
     if (config != null) {
-      _platform = config.platform;
-      _gistIdController.text = config.gistId ?? '';
-      _gistFileNameController.text =
-          config.gistFileName ?? 'ssh_connections.json';
+      _repoOwnerController.text = config.repoOwner ?? '';
+      _repoNameController.text = config.repoName ?? '';
+      _filePathController.text =
+          config.filePath ?? AppConstants.defaultConfigFilePath;
+      _branchController.text = config.branch ?? AppConstants.defaultBranch;
       _autoSync = config.autoSync;
       _syncInterval = config.syncIntervalMinutes;
       // 不显示 token，只显示占位符
       _tokenController.text = config.accessToken != null ? '***' : '';
     } else {
-      _gistFileNameController.text = 'ssh_connections.json';
+      _filePathController.text = AppConstants.defaultConfigFilePath;
+      _branchController.text = AppConstants.defaultBranch;
     }
     _syncIntervalController.text = _syncInterval.toString();
   }
 
   @override
   void dispose() {
-    _gistIdController.dispose();
-    _gistFileNameController.dispose();
+    _repoOwnerController.dispose();
+    _repoNameController.dispose();
+    _filePathController.dispose();
+    _branchController.dispose();
     _tokenController.dispose();
     _syncIntervalController.dispose();
     super.dispose();
@@ -75,10 +81,12 @@ class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
     }
 
     final config = SyncConfig(
-      platform: _platform,
+      platform: SyncPlatform.githubRepo,
       accessToken: accessToken,
-      gistId: _gistIdController.text,
-      gistFileName: _gistFileNameController.text,
+      repoOwner: _repoOwnerController.text,
+      repoName: _repoNameController.text,
+      filePath: _filePathController.text,
+      branch: _branchController.text,
       autoSync: _autoSync,
       syncIntervalMinutes: _syncInterval,
     );
@@ -138,276 +146,264 @@ class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
   Widget build(BuildContext context) {
     final syncState = ref.watch(syncProvider);
     return Form(
-        key: _formKey,
-        child: ListView(
-          padding: const EdgeInsets.all(LinearSpacing.spacing16),
-          children: [
-            // 平台选择
-            DropdownButtonFormField<SyncPlatform>(
-              initialValue: _platform,
-              decoration: InputDecoration(
-                labelText: '同步平台',
-                filled: true,
-                fillColor: LinearColors.fillSurface,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(LinearRadius.standard),
-                  borderSide: const BorderSide(color: LinearColors.borderStandard),
-                ),
-              ),
-              items: const [
-                DropdownMenuItem(
-                  value: SyncPlatform.gist,
-                  child: Text('GitHub Gist'),
-                ),
-                DropdownMenuItem(
-                  value: SyncPlatform.giteeGist,
-                  child: Text('Gitee Gist'),
-                ),
-              ],
-              onChanged: (value) {
-                setState(() {
-                  _platform = value!;
-                });
-              },
+      key: _formKey,
+      child: ListView(
+        padding: const EdgeInsets.all(LinearSpacing.spacing16),
+        children: [
+          // Token 认证
+          Card(
+            elevation: 0,
+            color: LinearColors.surface,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(LinearRadius.card),
+              side: const BorderSide(color: LinearColors.borderStandard),
             ),
-            const SizedBox(height: LinearSpacing.spacing16),
-
-            // Token 认证
-            Card(
-              elevation: 0,
-              color: LinearColors.surface,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(LinearRadius.card),
-                side: const BorderSide(color: LinearColors.borderStandard),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(LinearSpacing.spacing16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      _platform == SyncPlatform.giteeGist
-                          ? 'Gitee Token'
-                          : 'GitHub Token',
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: LinearColors.textPrimary,
-                        fontWeight: FontWeight.w600,
-                      ),
+            child: Padding(
+              padding: const EdgeInsets.all(LinearSpacing.spacing16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'GitHub Token',
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      color: LinearColors.textPrimary,
+                      fontWeight: FontWeight.w600,
                     ),
-                    const SizedBox(height: LinearSpacing.spacing8),
-                    Text(
-                      _platform == SyncPlatform.giteeGist
-                          ? '请输入 Gitee Personal Access Token，'
-                                '需要在 Gitee 设置 → 安全设置 → 个人访问令牌 中创建。'
-                          : '请输入 GitHub Personal Access Token，'
-                                '需要在 GitHub Settings → Developer settings → Personal access tokens 中创建，'
-                                '并勾选 gist 权限。',
-                      style: const TextStyle(fontSize: 12),
-                    ),
-                    const SizedBox(height: LinearSpacing.spacing16),
-                    TextFormField(
-                      controller: _tokenController,
-                      decoration: InputDecoration(
-                        labelText: _platform == SyncPlatform.giteeGist
-                            ? 'Gitee Token'
-                            : 'GitHub Token',
-                        hintText: _platform == SyncPlatform.giteeGist
-                            ? 'xxxxxxxxxxxxxxxxxxxx'
-                            : 'ghp_xxxxxxxxxxxxxxxxxxxx',
-                        filled: true,
-                        fillColor: LinearColors.fillSurface,
-                        suffixIcon: IconButton(
-                          icon: Icon(
-                            _obscureToken
-                                ? Icons.visibility
-                                : Icons.visibility_off,
-                          ),
-                          onPressed: () {
-                            setState(() {
-                              _obscureToken = !_obscureToken;
-                            });
-                          },
+                  ),
+                  const SizedBox(height: LinearSpacing.spacing8),
+                  const Text(
+                    '请输入 GitHub Personal Access Token，'
+                    '需要在 GitHub Settings → Developer settings → Personal access tokens 中创建，'
+                    '并勾选 repo 权限。',
+                    style: TextStyle(fontSize: 12),
+                  ),
+                  const SizedBox(height: LinearSpacing.spacing16),
+                  TextFormField(
+                    controller: _tokenController,
+                    decoration: InputDecoration(
+                      labelText: 'GitHub Token',
+                      hintText: 'ghp_xxxxxxxxxxxxxxxxxxxx',
+                      filled: true,
+                      fillColor: LinearColors.fillSurface,
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          _obscureToken
+                              ? Icons.visibility
+                              : Icons.visibility_off,
                         ),
+                        onPressed: () {
+                          setState(() {
+                            _obscureToken = !_obscureToken;
+                          });
+                        },
                       ),
-                      obscureText: _obscureToken,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return '请输入 Token';
-                        }
-                        // *** 表示保留原 token，不验证
-                        if (value == '***' || value == '...') {
-                          return null;
-                        }
+                    ),
+                    obscureText: _obscureToken,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return '请输入 Token';
+                      }
+                      // *** 表示保留原 token，不验证
+                      if (value == '***' || value == '...') {
                         return null;
-                      },
-                    ),
-                    const SizedBox(height: LinearSpacing.spacing8),
-                    TextButton.icon(
-                      onPressed: () async {
-                        final url = _platform == SyncPlatform.giteeGist
-                            ? Uri.parse(
-                                'https://gitee.com/profile/personal_access_tokens',
-                              )
-                            : Uri.parse(
-                                'https://github.com/settings/tokens/new?scopes=gist',
-                              );
-                        if (await canLaunchUrl(url)) {
-                          await launchUrl(url);
-                        }
-                      },
-                      icon: const Icon(Icons.open_in_new),
-                      label: const Text('创建 Token'),
-                    ),
-                  ],
-                ),
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: LinearSpacing.spacing8),
+                  TextButton.icon(
+                    onPressed: () async {
+                      final url = Uri.parse(
+                        'https://github.com/settings/tokens/new?scopes=repo',
+                      );
+                      if (await canLaunchUrl(url)) {
+                        await launchUrl(url);
+                      }
+                    },
+                    icon: const Icon(Icons.open_in_new),
+                    label: const Text('创建 Token'),
+                  ),
+                ],
               ),
             ),
-            const SizedBox(height: LinearSpacing.spacing16),
+          ),
+          const SizedBox(height: LinearSpacing.spacing16),
 
-            // Gist 配置
-            TextFormField(
-              controller: _gistIdController,
-              decoration: InputDecoration(
-                labelText: _platform == SyncPlatform.giteeGist
-                    ? 'Gitee Gist ID 或 URL'
-                    : 'GitHub Gist ID 或 URL',
-                hintText: _platform == SyncPlatform.giteeGist
-                    ? '例如：mluri6dyosvgzthfb43jw39'
-                    : '例如：abc123def456',
-                helperText: '留空点击上传将创建新 Gist，有值则同步现有 Gist。',
-                filled: true,
-                fillColor: LinearColors.fillSurface,
-              ),
-              onChanged: (value) {
-                // 如果输入的是 URL，提取 Gist ID
-                if (value.contains('gist.github.com')) {
-                  final uri = Uri.tryParse(value);
-                  if (uri != null) {
-                    final segments = uri.pathSegments;
-                    if (segments.isNotEmpty) {
-                      final gistId = segments.last;
-                      _gistIdController.text = gistId;
-                    }
-                  }
-                } else if (value.contains('gitee.com/gist')) {
-                  final uri = Uri.tryParse(value);
-                  if (uri != null) {
-                    final segments = uri.pathSegments;
-                    if (segments.isNotEmpty) {
-                      final gistId = segments.last;
-                      _gistIdController.text = gistId;
-                    }
-                  }
-                }
-              },
+          // 仓库配置
+          Card(
+            elevation: 0,
+            color: LinearColors.surface,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(LinearRadius.card),
+              side: const BorderSide(color: LinearColors.borderStandard),
             ),
+            child: Padding(
+              padding: const EdgeInsets.all(LinearSpacing.spacing16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'GitHub 仓库',
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      color: LinearColors.textPrimary,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(height: LinearSpacing.spacing16),
+                  TextFormField(
+                    controller: _repoOwnerController,
+                    decoration: const InputDecoration(
+                      labelText: '仓库所有者（owner）',
+                      hintText: '例如：your-username',
+                      filled: true,
+                      fillColor: LinearColors.fillSurface,
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return '请输入仓库所有者';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: LinearSpacing.spacing16),
+                  TextFormField(
+                    controller: _repoNameController,
+                    decoration: const InputDecoration(
+                      labelText: '仓库名（repo）',
+                      hintText: '例如：my-configs',
+                      filled: true,
+                      fillColor: LinearColors.fillSurface,
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return '请输入仓库名';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: LinearSpacing.spacing16),
+                  TextFormField(
+                    controller: _filePathController,
+                    decoration: const InputDecoration(
+                      labelText: '配置文件路径',
+                      hintText: 'lbpSSH/ssh_connections.json',
+                      helperText: '仓库中存储配置文件的路径。',
+                      filled: true,
+                      fillColor: LinearColors.fillSurface,
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return '请输入文件路径';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: LinearSpacing.spacing16),
+                  TextFormField(
+                    controller: _branchController,
+                    decoration: const InputDecoration(
+                      labelText: '分支',
+                      hintText: 'main',
+                      helperText: '留空默认使用 main 分支。',
+                      filled: true,
+                      fillColor: LinearColors.fillSurface,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: LinearSpacing.spacing24),
+
+          // 自动同步
+          SwitchListTile(
+            title: const Text('自动同步'),
+            subtitle: const Text('定期自动同步配置'),
+            value: _autoSync,
+            onChanged: (value) {
+              setState(() {
+                _autoSync = value;
+              });
+            },
+          ),
+
+          if (_autoSync) ...[
             const SizedBox(height: LinearSpacing.spacing16),
             TextFormField(
-              controller: _gistFileNameController,
+              controller: _syncIntervalController,
               decoration: const InputDecoration(
-                labelText: 'Gist 文件名',
-                hintText: 'ssh_connections.json',
+                labelText: '同步间隔（分钟）',
                 filled: true,
                 fillColor: LinearColors.fillSurface,
               ),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return '请输入文件名';
-                }
-                return null;
-              },
-            ),
-            const SizedBox(height: LinearSpacing.spacing24),
-
-            // 自动同步
-            SwitchListTile(
-              title: const Text('自动同步'),
-              subtitle: const Text('定期自动同步配置'),
-              value: _autoSync,
+              keyboardType: TextInputType.number,
               onChanged: (value) {
-                setState(() {
-                  _autoSync = value;
-                });
+                _syncInterval = int.tryParse(value) ?? 5;
               },
-            ),
-
-            if (_autoSync) ...[
-              const SizedBox(height: LinearSpacing.spacing16),
-              TextFormField(
-                controller: _syncIntervalController,
-                decoration: const InputDecoration(
-                  labelText: '同步间隔（分钟）',
-                  filled: true,
-                  fillColor: LinearColors.fillSurface,
-                ),
-                keyboardType: TextInputType.number,
-                onChanged: (value) {
-                  _syncInterval = int.tryParse(value) ?? 5;
-                },
-              ),
-            ],
-
-            const SizedBox(height: LinearSpacing.spacing32),
-
-            // 操作按钮
-            Row(
-              children: [
-                Expanded(
-                  child: OutlinedButton(
-                    onPressed: _testConnection,
-                    child: const Text('测试连接'),
-                  ),
-                ),
-                const SizedBox(width: LinearSpacing.spacing16),
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: _saveConfig,
-                    child: const Text('保存配置'),
-                  ),
-                ),
-              ],
-            ),
-
-            const SizedBox(height: LinearSpacing.spacing16),
-
-            // 同步操作
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                ElevatedButton.icon(
-                  onPressed: syncState.status == SyncStatusEnum.syncing
-                      ? null
-                      : () => _uploadConfig(),
-                  icon: const Icon(Icons.upload),
-                  label: const Text('上传配置'),
-                ),
-                const SizedBox(height: LinearSpacing.spacing8),
-                ElevatedButton.icon(
-                  onPressed: syncState.status == SyncStatusEnum.syncing
-                      ? null
-                      : () => _downloadConfig(),
-                  icon: const Icon(Icons.download),
-                  label: const Text('下载配置'),
-                ),
-                if (syncState.status == SyncStatusEnum.syncing)
-                  const Padding(
-                    padding: EdgeInsets.all(LinearSpacing.spacing16),
-                    child: Center(child: CircularProgressIndicator()),
-                  ),
-                if (syncState.lastSyncTime != null)
-                  Padding(
-                    padding: const EdgeInsets.all(LinearSpacing.spacing8),
-                    child: Text(
-                      '最后同步时间: ${syncState.lastSyncTime}',
-                      style: Theme.of(context).textTheme.bodySmall,
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-              ],
             ),
           ],
-        ),
-      );
+
+          const SizedBox(height: LinearSpacing.spacing32),
+
+          // 操作按钮
+          Row(
+            children: [
+              Expanded(
+                child: OutlinedButton(
+                  onPressed: _testConnection,
+                  child: const Text('测试连接'),
+                ),
+              ),
+              const SizedBox(width: LinearSpacing.spacing16),
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: _saveConfig,
+                  child: const Text('保存配置'),
+                ),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: LinearSpacing.spacing16),
+
+          // 同步操作
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              ElevatedButton.icon(
+                onPressed: syncState.status == SyncStatusEnum.syncing
+                    ? null
+                    : () => _uploadConfig(),
+                icon: const Icon(Icons.upload),
+                label: const Text('上传配置'),
+              ),
+              const SizedBox(height: LinearSpacing.spacing8),
+              ElevatedButton.icon(
+                onPressed: syncState.status == SyncStatusEnum.syncing
+                    ? null
+                    : () => _downloadConfig(),
+                icon: const Icon(Icons.download),
+                label: const Text('下载配置'),
+              ),
+              if (syncState.status == SyncStatusEnum.syncing)
+                const Padding(
+                  padding: EdgeInsets.all(LinearSpacing.spacing16),
+                  child: Center(child: CircularProgressIndicator()),
+                ),
+              if (syncState.lastSyncTime != null)
+                Padding(
+                  padding: const EdgeInsets.all(LinearSpacing.spacing8),
+                  child: Text(
+                    '最后同步时间: ${syncState.lastSyncTime}',
+                    style: Theme.of(context).textTheme.bodySmall,
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+            ],
+          ),
+        ],
+      ),
+    );
   }
 
   Future<void> _uploadConfig() async {

@@ -85,6 +85,7 @@ class ProtocolSupportResult {
 
 /// Kitty 协议文件传输编码器
 class KittyFileTransferEncoder {
+  const KittyFileTransferEncoder();
   /// 编码文件名为 base64
   String encodeFileName(String name) {
     return base64Encode(utf8.encode(name));
@@ -278,13 +279,12 @@ class KittyFileTransferEncoder {
 ///
 /// 通过 SSH 终端发送 OSC 5113 控制序列实现文件传输
 class KittyFileTransferService {
-  final KittyFileTransferEncoder _encoder = KittyFileTransferEncoder();
+  final KittyFileTransferEncoder _encoder = const KittyFileTransferEncoder();
   final TerminalSession? _session;
   String _currentPath;
   SftpClient? _sftpClient;
   IOSink? _activeDownloadSink;
 
-  // ignore: prefer_const_constructors
   KittyFileTransferService({TerminalSession? session, String initialPath = '/'})
     : _session = session,
       _currentPath = initialPath;
@@ -975,13 +975,6 @@ class KittyFileTransferService {
     }
 
     _session.writeRaw(_encoder.createCancelSession(transferId));
-  }
-
-  /// 从终端接收文件（接收模式）- 已废弃，使用 downloadFile
-  @Deprecated('请使用 downloadFile 方法')
-  Future<void> receiveFile(String sessionId, String remotePath) async {
-    // 已由 downloadFile 实现
-    throw UnimplementedError('请使用 downloadFile 方法');
   }
 
   /// 清理资源（关闭活动文件流）

@@ -26,11 +26,7 @@ void main() {
 
     testWidgets('search should support text input', (tester) async {
       await tester.pumpWidget(
-        const MaterialApp(
-          home: Scaffold(
-            body: TextField(),
-          ),
-        ),
+        const MaterialApp(home: Scaffold(body: TextField())),
       );
 
       await tester.enterText(find.byType(TextField), 'test query');
@@ -42,11 +38,7 @@ void main() {
 
       await tester.pumpWidget(
         MaterialApp(
-          home: Scaffold(
-            body: TextField(
-              controller: controller,
-            ),
-          ),
+          home: Scaffold(body: TextField(controller: controller)),
         ),
       );
 

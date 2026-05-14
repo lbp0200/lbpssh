@@ -43,7 +43,12 @@ void main() {
       });
 
       test('omits p= when progress is null', () {
-        service.showNotification(id: 'n1', title: 'T', body: 'B', progress: null);
+        service.showNotification(
+          id: 'n1',
+          title: 'T',
+          body: 'B',
+          progress: null,
+        );
         verify(() => mockSession.writeRaw(any())).called(1);
       });
 
@@ -149,7 +154,7 @@ void main() {
         var called = false;
         service.onClick = (_) => called = true;
         service.onClose = (_) => called = true;
-        service.onProgress = (_, __) => called = true;
+        service.onProgress = (_, _) => called = true;
         service.handleNotificationResponse('i=n1;p=unknown');
         expect(called, isFalse);
       });
@@ -162,10 +167,7 @@ void main() {
       });
 
       test('does not throw for empty response', () {
-        expect(
-          () => service.handleNotificationResponse(''),
-          returnsNormally,
-        );
+        expect(() => service.handleNotificationResponse(''), returnsNormally);
       });
 
       test('parses progress 0', () {

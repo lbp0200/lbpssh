@@ -49,9 +49,7 @@ class ImportExportNotifier extends Notifier<ImportExportStatusData> {
       state = const ImportExportStatusData(status: ImportExportStatus.success);
       return file;
     } catch (e) {
-      state = const ImportExportStatusData(
-        status: ImportExportStatus.error,
-      );
+      state = const ImportExportStatusData(status: ImportExportStatus.error);
       rethrow;
     }
   }
@@ -63,9 +61,7 @@ class ImportExportNotifier extends Notifier<ImportExportStatusData> {
       state = const ImportExportStatusData(status: ImportExportStatus.success);
       return connections;
     } catch (e) {
-      state = const ImportExportStatusData(
-        status: ImportExportStatus.error,
-      );
+      state = const ImportExportStatusData(status: ImportExportStatus.error);
       rethrow;
     }
   }
@@ -84,9 +80,7 @@ class ImportExportNotifier extends Notifier<ImportExportStatusData> {
       );
       state = const ImportExportStatusData(status: ImportExportStatus.success);
     } catch (e) {
-      state = const ImportExportStatusData(
-        status: ImportExportStatus.error,
-      );
+      state = const ImportExportStatusData(status: ImportExportStatus.error);
       rethrow;
     }
   }

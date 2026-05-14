@@ -5,9 +5,9 @@ import 'terminal_service.dart';
 
 /// 图像位置
 enum ImagePlacement {
-  any,      // 由终端决定
-  cursor,    // 光标位置
-  absolute,  // 绝对位置
+  any, // 由终端决定
+  cursor, // 光标位置
+  absolute, // 绝对位置
 }
 
 /// 图像数据
@@ -45,7 +45,8 @@ class GraphicsTransferProgress {
 }
 
 /// 图像回调
-typedef GraphicsProgressCallback = void Function(GraphicsTransferProgress progress);
+typedef GraphicsProgressCallback =
+    void Function(GraphicsTransferProgress progress);
 
 /// Graphics Protocol 服务
 ///
@@ -220,7 +221,8 @@ class KittyGraphicsService {
 
   /// Base64 编码
   String _base64Encode(Uint8List data) {
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+    const chars =
+        'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
     final buffer = StringBuffer();
 
     for (var i = 0; i < data.length; i += 3) {
@@ -230,7 +232,9 @@ class KittyGraphicsService {
 
       buffer.write(chars[(b1 >> 2) & 0x3F]);
       buffer.write(chars[((b1 << 4) | (b2 >> 4)) & 0x3F]);
-      buffer.write(i + 1 < data.length ? chars[((b2 << 2) | (b3 >> 6)) & 0x3F] : '=');
+      buffer.write(
+        i + 1 < data.length ? chars[((b2 << 2) | (b3 >> 6)) & 0x3F] : '=',
+      );
       buffer.write(i + 2 < data.length ? chars[b3 & 0x3F] : '=');
     }
 

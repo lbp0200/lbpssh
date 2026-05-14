@@ -247,7 +247,9 @@ class LocalTerminalService implements TerminalInputService {
     _cacheInput(input);
 
     // 检测 cd 命令（当输入换行时触发）
-    final isNewLine = input.isNotEmpty && (input.codeUnitAt(0) == 10 || input.codeUnitAt(0) == 13);
+    final isNewLine =
+        input.isNotEmpty &&
+        (input.codeUnitAt(0) == 10 || input.codeUnitAt(0) == 13);
     if (isNewLine && onDirectoryChange != null) {
       _checkCdCommand();
     }
@@ -327,7 +329,13 @@ class LocalTerminalService implements TerminalInputService {
       // flutter_pty 的 pty.start 返回的 Process 对象有 pid
       final pid = _pty!.pid;
 
-      final result = await Process.run('lsof', ['-a', '-p', '$pid', '-d', 'cwd']);
+      final result = await Process.run('lsof', [
+        '-a',
+        '-p',
+        '$pid',
+        '-d',
+        'cwd',
+      ]);
 
       if (result.exitCode == 0) {
         // lsof 输出格式: COMMAND PID USER FD TYPE DEVICE SIZE/OFF NODE NAME

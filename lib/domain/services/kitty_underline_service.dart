@@ -4,23 +4,23 @@ import 'terminal_service.dart';
 
 /// 下划线样式
 enum UnderlineStyle {
-  none,         // 无下划线
-  single,       // 单线下划线
-  double,       // 双线下划线
-  curly,        // 波浪线下划线
-  dotted,       // 点线下划线
-  dashed,       // 虚线下划线
-  underline,    // 粗单线下划线
+  none, // 无下划线
+  single, // 单线下划线
+  double, // 双线下划线
+  curly, // 波浪线下划线
+  dotted, // 点线下划线
+  dashed, // 虚线下划线
+  underline, // 粗单线下划线
 }
 
 /// 下划线颜色类型
 enum UnderlineColor {
-  default_,     // 默认颜色
-  curl,         // 使用 curl 颜色
-  strike,       // 使用删除线颜色
-  hyperlink,   // 使用超链接颜色
-  foreground,   // 使用前景色
-  background,   // 使用背景色
+  default_, // 默认颜色
+  curl, // 使用 curl 颜色
+  strike, // 使用删除线颜色
+  hyperlink, // 使用超链接颜色
+  foreground, // 使用前景色
+  background, // 使用背景色
 }
 
 /// 下划线配置
@@ -154,7 +154,8 @@ class KittyUnderlineService {
       // #rrggbb -> rgb:rr/gg/bb
       final hex = colorSpec.substring(1);
       if (hex.length == 6) {
-        converted = 'rgb:${hex.substring(0, 2)}/${hex.substring(2, 4)}/${hex.substring(4, 6)}';
+        converted =
+            'rgb:${hex.substring(0, 2)}/${hex.substring(2, 4)}/${hex.substring(4, 6)}';
       } else {
         converted = colorSpec;
       }

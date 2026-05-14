@@ -4,11 +4,11 @@ import 'terminal_service.dart';
 
 /// 启动类型
 enum LaunchType {
-  tab,         // 在新标签页中启动
-  window,      // 在新窗口中启动
-  overlay,     // 在覆盖层中启动
-  background,  // 在后台启动
-  os,          // 使用系统默认应用
+  tab, // 在新标签页中启动
+  window, // 在新窗口中启动
+  overlay, // 在覆盖层中启动
+  background, // 在后台启动
+  os, // 使用系统默认应用
 }
 
 /// 启动参数
@@ -160,7 +160,7 @@ class KittyLaunchService {
   /// 使用系统默认应用打开
   Future<void> openWithSystemDefault(String path) async {
     await launch(
-      '',  // 空程序表示使用系统默认
+      '', // 空程序表示使用系统默认
       type: LaunchType.os,
       cwd: path,
     );

@@ -4,11 +4,11 @@ import 'terminal_service.dart';
 
 /// 窗口布局类型
 enum LayoutType {
-  grid,       // 网格布局
-  stack,      // 堆叠布局
+  grid, // 网格布局
+  stack, // 堆叠布局
   horizontal, // 水平布局
-  vertical,   // 垂直布局
-  split,      // 分屏布局
+  vertical, // 垂直布局
+  split, // 分屏布局
 }
 
 /// 窗口信息

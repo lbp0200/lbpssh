@@ -30,7 +30,9 @@ void main() {
 
     setUp(() async {
       // Create a fresh temp file per test.
-      final tempDir = await Directory.systemTemp.createTemp('lbp_ssh_repo_test_');
+      final tempDir = await Directory.systemTemp.createTemp(
+        'lbp_ssh_repo_test_',
+      );
       configFile = File('${tempDir.path}/ssh_connections.json');
       await configFile.writeAsString('[]');
 
@@ -49,8 +51,7 @@ void main() {
     });
 
     test('getAllConnections returns cached connections', () async {
-      final connection =
-          createTestConnection(id: 'conn-1', name: 'Server 1');
+      final connection = createTestConnection(id: 'conn-1', name: 'Server 1');
       await repo.saveConnection(connection);
 
       final result = repo.getAllConnections();
@@ -61,8 +62,7 @@ void main() {
     });
 
     test('getConnectionById returns correct connection', () async {
-      final connection =
-          createTestConnection(id: 'conn-2', name: 'Server 2');
+      final connection = createTestConnection(id: 'conn-2', name: 'Server 2');
       await repo.saveConnection(connection);
 
       final result = repo.getConnectionById('conn-2');
@@ -78,8 +78,7 @@ void main() {
     });
 
     test('deleteConnection removes from cache', () async {
-      final connection =
-          createTestConnection(id: 'conn-3', name: 'Server 3');
+      final connection = createTestConnection(id: 'conn-3', name: 'Server 3');
       await repo.saveConnection(connection);
       expect(repo.getConnectionById('conn-3'), isNotNull);
 
@@ -125,18 +124,25 @@ void main() {
       await repo.saveConnection(afterFirstSave);
       final afterSecondSave = repo.getConnectionById('v1')!;
       expect(afterSecondSave.version, connection.version + 2);
-      expect(afterSecondSave.updatedAt.isAfter(afterFirstSave.updatedAt), isTrue);
+      expect(
+        afterSecondSave.updatedAt.isAfter(afterFirstSave.updatedAt),
+        isTrue,
+      );
     });
 
     test('init with existing file loads connections from file', () async {
-      final tempDir = await Directory.systemTemp.createTemp('lbp_ssh_repo_test_');
+      final tempDir = await Directory.systemTemp.createTemp(
+        'lbp_ssh_repo_test_',
+      );
       addTearDown(() => tempDir.delete(recursive: true));
       final jsonFile = File('${tempDir.path}/existing.json');
 
       // Populate file with a connection first using a repo
       final setupRepo = ConnectionRepository(configFile: jsonFile);
       await setupRepo.init();
-      await setupRepo.saveConnection(createTestConnection(id: 'loaded-1', name: 'Loaded'));
+      await setupRepo.saveConnection(
+        createTestConnection(id: 'loaded-1', name: 'Loaded'),
+      );
       await setupRepo.close();
 
       // Create new repo with same file — should load from file
@@ -150,7 +156,9 @@ void main() {
     });
 
     test('init with corrupted file resets to empty', () async {
-      final tempDir = await Directory.systemTemp.createTemp('lbp_ssh_repo_test_');
+      final tempDir = await Directory.systemTemp.createTemp(
+        'lbp_ssh_repo_test_',
+      );
       addTearDown(() => tempDir.delete(recursive: true));
       final jsonFile = File('${tempDir.path}/bad.json');
       await jsonFile.writeAsString('not valid json at all');

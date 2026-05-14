@@ -6,7 +6,10 @@ import '../../data/models/ssh_connection.dart';
 class SshConfigService {
   /// 获取默认 SSH config 文件路径
   static String getDefaultConfigPath() {
-    final home = Platform.environment['HOME'] ?? Platform.environment['USERPROFILE'] ?? '';
+    final home =
+        Platform.environment['HOME'] ??
+        Platform.environment['USERPROFILE'] ??
+        '';
     return path.join(home, '.ssh', 'config');
   }
 
@@ -52,9 +55,7 @@ class SshConfigService {
 
   /// 将 glob 模式转换为正则表达式
   static RegExp _globToRegex(String pattern) {
-    final regexPattern = pattern
-        .replaceAll('*', '.*')
-        .replaceAll('?', '.');
+    final regexPattern = pattern.replaceAll('*', '.*').replaceAll('?', '.');
     return RegExp('^$regexPattern\$');
   }
 

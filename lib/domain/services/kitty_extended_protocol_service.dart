@@ -143,7 +143,10 @@ class KittyColorStackService {
   ///
   /// [colorSpec] - 颜色规格
   /// [isForeground] - true 为前景色，false 为背景色
-  Future<void> setDefaultColor(String colorSpec, {bool isForeground = true}) async {
+  Future<void> setDefaultColor(
+    String colorSpec, {
+    bool isForeground = true,
+  }) async {
     if (_session == null) {
       throw Exception('未连接到终端');
     }

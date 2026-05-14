@@ -13,11 +13,14 @@ void main() {
   late ProviderContainer container;
 
   setUpAll(() {
-    registerFallbackValue(SyncConfig(
-      platform: SyncPlatform.gist,
-      accessToken: 'test_token',
-      gistId: 'test_gist_id',
-    ));
+    registerFallbackValue(
+      SyncConfig(
+        platform: SyncPlatform.githubRepo,
+        accessToken: 'test_token',
+        repoOwner: 'test_owner',
+        repoName: 'test_repo',
+      ),
+    );
   });
 
   setUp(() {
@@ -27,9 +30,7 @@ void main() {
     when(() => mockSyncService.lastSyncTime).thenReturn(null);
 
     container = ProviderContainer(
-      overrides: [
-        syncServiceProvider.overrideWithValue(mockSyncService),
-      ],
+      overrides: [syncServiceProvider.overrideWithValue(mockSyncService)],
     );
   });
 
@@ -40,170 +41,185 @@ void main() {
   group('SyncNotifier', () {
     group('config', () {
       test(
-          'Given SyncService with config, When accessing config, Then returns sync config',
-          () {
-        // Arrange (Given)
-        final config = SyncConfig(
-          platform: SyncPlatform.gist,
-          accessToken: 'test_token',
-          gistId: 'test_gist_id',
-        );
-        when(() => mockSyncService.getConfig()).thenReturn(config);
+        'Given SyncService with config, When accessing config, Then returns sync config',
+        () {
+          // Arrange (Given)
+          final config = SyncConfig(
+            platform: SyncPlatform.githubRepo,
+            accessToken: 'test_token',
+            repoOwner: 'test_owner',
+            repoName: 'test_repo',
+          );
+          when(() => mockSyncService.getConfig()).thenReturn(config);
 
-        // Act (When)
-        final result = container.read(syncProvider).config;
+          // Act (When)
+          final result = container.read(syncProvider).config;
 
-        // Assert (Then)
-        expect(result, isNotNull);
-        expect(result!.platform, SyncPlatform.gist);
-        verify(() => mockSyncService.getConfig()).called(1);
-      });
+          // Assert (Then)
+          expect(result, isNotNull);
+          expect(result!.platform, SyncPlatform.githubRepo);
+          verify(() => mockSyncService.getConfig()).called(1);
+        },
+      );
 
       test(
-          'Given SyncService without config, When accessing config, Then returns null',
-          () {
-        // Arrange (Given)
-        when(() => mockSyncService.getConfig()).thenReturn(null);
+        'Given SyncService without config, When accessing config, Then returns null',
+        () {
+          // Arrange (Given)
+          when(() => mockSyncService.getConfig()).thenReturn(null);
 
-        // Act (When)
-        final result = container.read(syncProvider).config;
+          // Act (When)
+          final result = container.read(syncProvider).config;
 
-        // Assert (Then)
-        expect(result, isNull);
-      });
+          // Assert (Then)
+          expect(result, isNull);
+        },
+      );
     });
 
     group('status', () {
       test(
-          'Given SyncService reports syncing, When accessing status, Then returns syncing status',
-          () {
-        // Arrange (Given)
-        final status = container.read(syncProvider);
+        'Given SyncService reports syncing, When accessing status, Then returns syncing status',
+        () {
+          // Arrange (Given)
+          final status = container.read(syncProvider);
 
-        // Assert (Then) — default is idle
-        expect(status.status, SyncStatusEnum.idle);
-      });
+          // Assert (Then) — default is idle
+          expect(status.status, SyncStatusEnum.idle);
+        },
+      );
     });
 
     group('saveConfig', () {
       test(
-          'Given valid config, When saveConfig called, Then saves config and updates state',
-          () async {
-        // Arrange (Given)
-        final config = SyncConfig(
-          platform: SyncPlatform.gist,
-          accessToken: 'new_token',
-          gistId: 'new_gist_id',
-        );
-        when(() => mockSyncService.saveConfig(config))
-            .thenAnswer((_) async {});
-        when(() => mockSyncService.getConfig()).thenReturn(config);
+        'Given valid config, When saveConfig called, Then saves config and updates state',
+        () async {
+          // Arrange (Given)
+          final config = SyncConfig(
+            platform: SyncPlatform.githubRepo,
+            accessToken: 'new_token',
+          );
+          when(
+            () => mockSyncService.saveConfig(config),
+          ).thenAnswer((_) async {});
+          when(() => mockSyncService.getConfig()).thenReturn(config);
 
-        // Act (When)
-        await container.read(syncProvider.notifier).saveConfig(config);
+          // Act (When)
+          await container.read(syncProvider.notifier).saveConfig(config);
 
-        // Assert (Then)
-        verify(() => mockSyncService.saveConfig(config)).called(1);
-        final state = container.read(syncProvider);
-        expect(state.config?.accessToken, 'new_token');
-      });
+          // Assert (Then)
+          verify(() => mockSyncService.saveConfig(config)).called(1);
+          final state = container.read(syncProvider);
+          expect(state.config?.accessToken, 'new_token');
+        },
+      );
     });
 
     group('uploadConfig', () {
       test(
-          'Given successful upload, When uploadConfig called, Then updates status to idle',
-          () async {
-        // Arrange (Given)
-        when(() => mockSyncService.uploadConfig()).thenAnswer((_) async {});
+        'Given successful upload, When uploadConfig called, Then updates status to idle',
+        () async {
+          // Arrange (Given)
+          when(() => mockSyncService.uploadConfig()).thenAnswer((_) async {});
 
-        // Act (When)
-        await container.read(syncProvider.notifier).uploadConfig();
+          // Act (When)
+          await container.read(syncProvider.notifier).uploadConfig();
 
-        // Assert (Then)
-        final state = container.read(syncProvider);
-        expect(state.status, SyncStatusEnum.idle);
-      });
+          // Assert (Then)
+          final state = container.read(syncProvider);
+          expect(state.status, SyncStatusEnum.idle);
+        },
+      );
 
       test(
-          'Given upload failure, When uploadConfig called, Then sets error status',
-          () async {
-        // Arrange (Given)
-        when(() => mockSyncService.uploadConfig())
-            .thenThrow(Exception('Upload failed'));
+        'Given upload failure, When uploadConfig called, Then sets error status',
+        () async {
+          // Arrange (Given)
+          when(
+            () => mockSyncService.uploadConfig(),
+          ).thenThrow(Exception('Upload failed'));
 
-        // Act & Assert (When)
-        expect(
-          () => container.read(syncProvider.notifier).uploadConfig(),
-          throwsException,
-        );
-        final state = container.read(syncProvider);
-        expect(state.status, SyncStatusEnum.error);
-      });
+          // Act & Assert (When)
+          expect(
+            () => container.read(syncProvider.notifier).uploadConfig(),
+            throwsException,
+          );
+          final state = container.read(syncProvider);
+          expect(state.status, SyncStatusEnum.error);
+        },
+      );
     });
 
     group('downloadConfig', () {
       test(
-          'Given successful download, When downloadConfig called, Then updates status to idle',
-          () async {
-        // Arrange (Given)
-        when(() => mockSyncService.downloadConfig()).thenAnswer((_) async {});
+        'Given successful download, When downloadConfig called, Then updates status to idle',
+        () async {
+          // Arrange (Given)
+          when(() => mockSyncService.downloadConfig()).thenAnswer((_) async {});
 
-        // Act (When)
-        await container.read(syncProvider.notifier).downloadConfig();
+          // Act (When)
+          await container.read(syncProvider.notifier).downloadConfig();
 
-        // Assert (Then)
-        final state = container.read(syncProvider);
-        expect(state.status, SyncStatusEnum.idle);
-      });
+          // Assert (Then)
+          final state = container.read(syncProvider);
+          expect(state.status, SyncStatusEnum.idle);
+        },
+      );
 
       test(
-          'Given download failure, When downloadConfig called, Then sets error status',
-          () async {
-        // Arrange (Given)
-        when(() => mockSyncService.downloadConfig())
-            .thenThrow(Exception('Download failed'));
+        'Given download failure, When downloadConfig called, Then sets error status',
+        () async {
+          // Arrange (Given)
+          when(
+            () => mockSyncService.downloadConfig(),
+          ).thenThrow(Exception('Download failed'));
 
-        // Act & Assert (When)
-        expect(
-          () => container.read(syncProvider.notifier).downloadConfig(),
-          throwsException,
-        );
-        final state = container.read(syncProvider);
-        expect(state.status, SyncStatusEnum.error);
-      });
+          // Act & Assert (When)
+          expect(
+            () => container.read(syncProvider.notifier).downloadConfig(),
+            throwsException,
+          );
+          final state = container.read(syncProvider);
+          expect(state.status, SyncStatusEnum.error);
+        },
+      );
     });
 
     group('testConnection', () {
       test(
-          'Given successful connection test, When testConnection called, Then returns to idle',
-          () async {
-        // Arrange (Given)
-        when(() => mockSyncService.downloadConfig(skipConflictCheck: true))
-            .thenAnswer((_) async {});
+        'Given successful connection test, When testConnection called, Then returns to idle',
+        () async {
+          // Arrange (Given)
+          when(
+            () => mockSyncService.downloadConfig(skipConflictCheck: true),
+          ).thenAnswer((_) async {});
 
-        // Act (When)
-        await container.read(syncProvider.notifier).testConnection();
+          // Act (When)
+          await container.read(syncProvider.notifier).testConnection();
 
-        // Assert (Then)
-        final state = container.read(syncProvider);
-        expect(state.status, SyncStatusEnum.idle);
-      });
+          // Assert (Then)
+          final state = container.read(syncProvider);
+          expect(state.status, SyncStatusEnum.idle);
+        },
+      );
 
       test(
-          'Given connection test failure, When testConnection called, Then throws exception and sets error status',
-          () async {
-        // Arrange (Given)
-        when(() => mockSyncService.downloadConfig(skipConflictCheck: true))
-            .thenThrow(Exception('Connection failed'));
+        'Given connection test failure, When testConnection called, Then throws exception and sets error status',
+        () async {
+          // Arrange (Given)
+          when(
+            () => mockSyncService.downloadConfig(skipConflictCheck: true),
+          ).thenThrow(Exception('Connection failed'));
 
-        // Act & Assert (When)
-        expect(
-          () => container.read(syncProvider.notifier).testConnection(),
-          throwsException,
-        );
-        final state = container.read(syncProvider);
-        expect(state.status, SyncStatusEnum.error);
-      });
+          // Act & Assert (When)
+          expect(
+            () => container.read(syncProvider.notifier).testConnection(),
+            throwsException,
+          );
+          final state = container.read(syncProvider);
+          expect(state.status, SyncStatusEnum.error);
+        },
+      );
     });
   });
 }

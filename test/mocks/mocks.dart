@@ -31,19 +31,24 @@ class MockAppConfigService extends Mock implements AppConfigService {}
 
 // Register fallback values for mocktail
 void registerFallbackValues() {
-  registerFallbackValue(SyncConfig(
-    platform: SyncPlatform.gist,
-    accessToken: 'test_token',
-    gistId: 'test_gist_id',
-  ));
-  registerFallbackValue(SshConnection(
-    id: 'test_id',
-    name: 'Test Server',
-    host: '192.168.1.1',
-    port: 22,
-    username: 'testuser',
-    authType: AuthType.password,
-  ));
+  registerFallbackValue(
+    SyncConfig(
+      platform: SyncPlatform.githubRepo,
+      accessToken: 'test_token',
+      repoOwner: 'test_owner',
+      repoName: 'test_repo',
+    ),
+  );
+  registerFallbackValue(
+    SshConnection(
+      id: 'test_id',
+      name: 'Test Server',
+      host: '192.168.1.1',
+      port: 22,
+      username: 'testuser',
+      authType: AuthType.password,
+    ),
+  );
   registerFallbackValue(TerminalConfig.defaultConfig);
   registerFallbackValue(DefaultTerminalConfig.defaultConfig);
 }

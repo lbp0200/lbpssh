@@ -40,7 +40,9 @@ class _TerminalViewWidgetState extends ConsumerState<TerminalViewWidget> {
     if (_subscribedSessionId == session.id) return;
     _notificationSubscription?.cancel();
     _subscribedSessionId = session.id;
-    _notificationSubscription = session.notificationStream.listen((notification) {
+    _notificationSubscription = session.notificationStream.listen((
+      notification,
+    ) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -61,9 +63,9 @@ class _TerminalViewWidgetState extends ConsumerState<TerminalViewWidget> {
 
     if (session == null) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('请先连接到服务器')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('请先连接到服务器')));
       }
       return;
     }
@@ -82,15 +84,15 @@ class _TerminalViewWidgetState extends ConsumerState<TerminalViewWidget> {
           },
         );
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('${file.name} 上传成功')),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text('${file.name} 上传成功')));
         }
       } catch (e) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('${file.name} 上传失败: $e')),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text('${file.name} 上传失败: $e')));
         }
       }
     }
@@ -142,10 +144,7 @@ class _TerminalDropTarget extends StatefulWidget {
   final Widget child;
   final void Function(List<XFile> files) onDrop;
 
-  const _TerminalDropTarget({
-    required this.child,
-    required this.onDrop,
-  });
+  const _TerminalDropTarget({required this.child, required this.onDrop});
 
   @override
   State<_TerminalDropTarget> createState() => _TerminalDropTargetState();
@@ -178,7 +177,9 @@ class _TerminalDropTargetState extends State<_TerminalDropTarget> {
             Positioned.fill(
               key: _overlayKey,
               child: Container(
-                color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
+                color: Theme.of(
+                  context,
+                ).colorScheme.primary.withValues(alpha: 0.3),
                 child: Center(
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
@@ -220,17 +221,19 @@ class _TerminalViewWithSelection extends StatefulWidget {
   });
 
   @override
-  State<_TerminalViewWithSelection> createState() => _TerminalViewWithSelectionState();
+  State<_TerminalViewWithSelection> createState() =>
+      _TerminalViewWithSelectionState();
 }
 
-class _TerminalViewWithSelectionState extends State<_TerminalViewWithSelection> {
+class _TerminalViewWithSelectionState
+    extends State<_TerminalViewWithSelection> {
   String? _lastSelection;
 
   // 字体度量缓存 - 避免每帧重建 Paragraph
   String? _cachedFontFamily;
   double? _cachedFontSize;
   double? _cachedLineHeight;
-  double _cachedCellWidth = 10;  // fallback 默认值
+  double _cachedCellWidth = 10; // fallback 默认值
   double _cachedCellHeight = 18;
 
   @override
@@ -266,7 +269,9 @@ class _TerminalViewWithSelectionState extends State<_TerminalViewWithSelection> 
 
     // 使用与 kterm TerminalPainter._measureCharSize() 完全相同的计算方式
     // 这样 GraphicsOverlayWidget 中的图片位置与终端字符单元格精确对齐
-    final fontFamily = widget.config.fontFamily.isEmpty ? 'Menlo' : widget.config.fontFamily;
+    final fontFamily = widget.config.fontFamily.isEmpty
+        ? 'Menlo'
+        : widget.config.fontFamily;
 
     // 缓存字体度量，避免每帧重建 ui.Paragraph
     if (_cachedFontFamily != fontFamily ||
@@ -316,8 +321,12 @@ class _TerminalViewWithSelectionState extends State<_TerminalViewWithSelection> 
                 height: widget.config.lineHeight,
               ),
               theme: TerminalTheme(
-                foreground: ColorUtils.parseColorCached(widget.config.foregroundColor),
-                background: ColorUtils.parseColorCached(widget.config.backgroundColor),
+                foreground: ColorUtils.parseColorCached(
+                  widget.config.foregroundColor,
+                ),
+                background: ColorUtils.parseColorCached(
+                  widget.config.backgroundColor,
+                ),
                 cursor: ColorUtils.parseColorCached(widget.config.cursorColor),
                 selection: ColorUtils.parseColorCached(
                   widget.config.foregroundColor,
@@ -338,8 +347,12 @@ class _TerminalViewWithSelectionState extends State<_TerminalViewWithSelection> 
                 brightMagenta: ColorUtils.parseColorCached('#D670D6'),
                 brightCyan: ColorUtils.parseColorCached('#29B8DB'),
                 brightWhite: ColorUtils.parseColorCached('#E5E5E5'),
-                searchHitBackground: ColorUtils.parseColorCached('#FFFF00').withValues(alpha: 0.3),
-                searchHitBackgroundCurrent: ColorUtils.parseColorCached('#FFFF00').withValues(alpha: 0.5),
+                searchHitBackground: ColorUtils.parseColorCached(
+                  '#FFFF00',
+                ).withValues(alpha: 0.3),
+                searchHitBackgroundCurrent: ColorUtils.parseColorCached(
+                  '#FFFF00',
+                ).withValues(alpha: 0.5),
                 searchHitForeground: ColorUtils.parseColorCached('#000000'),
               ),
             ),
@@ -373,10 +386,10 @@ class _TerminalViewWithSelectionState extends State<_TerminalViewWithSelection> 
   }
 
   ui.Paragraph _buildParagraph(TextStyle style, String text) {
-    final builder = ui.ParagraphBuilder(
-      style.getParagraphStyle(),
+    final builder = ui.ParagraphBuilder(style.getParagraphStyle());
+    builder.pushStyle(
+      style.getTextStyle(textScaler: const TextScaler.linear(1.0)),
     );
-    builder.pushStyle(style.getTextStyle(textScaler: const TextScaler.linear(1.0)));
     builder.addText(text);
     final paragraph = builder.build();
     paragraph.layout(const ui.ParagraphConstraints(width: double.infinity));
@@ -423,7 +436,9 @@ class TerminalTabsView extends ConsumerWidget {
               child: TextButton.icon(
                 onPressed: () async {
                   try {
-                    await ref.read(terminalProvider.notifier).createLocalTerminal();
+                    await ref
+                        .read(terminalProvider.notifier)
+                        .createLocalTerminal();
                   } catch (e, stackTrace) {
                     if (context.mounted) {
                       showErrorDialog(
@@ -449,9 +464,7 @@ class TerminalTabsView extends ConsumerWidget {
         // 标签页栏
         Container(
           height: 48,
-          decoration: const BoxDecoration(
-            color: LinearColors.panel,
-          ),
+          decoration: const BoxDecoration(color: LinearColors.panel),
           child: Row(
             children: [
               // 标签列表
@@ -466,8 +479,12 @@ class TerminalTabsView extends ConsumerWidget {
                     return _TerminalTab(
                       session: session,
                       isActive: isActive,
-                      onTap: () => ref.read(terminalProvider.notifier).switchToSession(session.id),
-                      onClose: () => ref.read(terminalProvider.notifier).closeSession(session.id),
+                      onTap: () => ref
+                          .read(terminalProvider.notifier)
+                          .switchToSession(session.id),
+                      onClose: () => ref
+                          .read(terminalProvider.notifier)
+                          .closeSession(session.id),
                     );
                   },
                 ),
@@ -511,16 +528,20 @@ class TerminalTabsView extends ConsumerWidget {
                     const PopupMenuDivider(),
                   ];
                   if (connections.isEmpty) {
-                    items.add(PopupMenuItem(
-                      value: 'no_connections',
-                      enabled: false,
-                      child: Text(
-                        '暂无保存的连接',
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
+                    items.add(
+                      PopupMenuItem(
+                        value: 'no_connections',
+                        enabled: false,
+                        child: Text(
+                          '暂无保存的连接',
+                          style: TextStyle(
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurface.withValues(alpha: 0.5),
+                          ),
                         ),
                       ),
-                    ));
+                    );
                   } else {
                     items.addAll(_buildConnectionItems(context, connections));
                   }
@@ -532,7 +553,9 @@ class TerminalTabsView extends ConsumerWidget {
                   }
                   if (value == 'local_terminal') {
                     try {
-                      await ref.read(terminalProvider.notifier).createLocalTerminal();
+                      await ref
+                          .read(terminalProvider.notifier)
+                          .createLocalTerminal();
                     } catch (e, stackTrace) {
                       if (context.mounted) {
                         showErrorDialog(
@@ -545,11 +568,14 @@ class TerminalTabsView extends ConsumerWidget {
                     }
                     return;
                   }
-                  final connection = connections.firstWhere((c) => c.id == value);
+                  final connection = connections.firstWhere(
+                    (c) => c.id == value,
+                  );
                   final terminalNotifier = ref.read(terminalProvider.notifier);
                   final currentState = ref.read(terminalProvider);
-                  final existingSession =
-                      currentState.sessions.where((s) => s.id == connection.id).firstOrNull;
+                  final existingSession = currentState.sessions
+                      .where((s) => s.id == connection.id)
+                      .firstOrNull;
 
                   if (existingSession != null) {
                     terminalNotifier.switchToSession(connection.id);
@@ -598,12 +624,14 @@ class TerminalTabsView extends ConsumerWidget {
                   ScaffoldMessenger.of(context).showSnackBar(snackBar);
 
                   try {
-                    await ref.read(terminalProvider.notifier).reconnectSession(session.id);
+                    await ref
+                        .read(terminalProvider.notifier)
+                        .reconnectSession(session.id);
                   } catch (e) {
                     if (!context.mounted) return;
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('重连失败: $e')),
-                    );
+                    ScaffoldMessenger.of(
+                      context,
+                    ).showSnackBar(SnackBar(content: Text('重连失败: $e')));
                   }
                 },
               );
@@ -630,10 +658,7 @@ class TerminalTabsView extends ConsumerWidget {
             ),
             const SizedBox(width: 12),
             Expanded(
-              child: Text(
-                connection.name,
-                overflow: TextOverflow.ellipsis,
-              ),
+              child: Text(connection.name, overflow: TextOverflow.ellipsis),
             ),
           ],
         ),
@@ -683,12 +708,15 @@ class _TerminalTabState extends State<_TerminalTab> {
           decoration: BoxDecoration(
             color: widget.isActive
                 ? LinearColors.surface
-                : (_isHovered
-                    ? LinearColors.fillSurface
-                    : Colors.transparent),
+                : (_isHovered ? LinearColors.fillSurface : Colors.transparent),
             borderRadius: BorderRadius.circular(LinearRadius.card),
             border: widget.isActive
-                ? const Border(bottom: BorderSide(color: LinearColors.accentInteractive, width: 2))
+                ? const Border(
+                    bottom: BorderSide(
+                      color: LinearColors.accentInteractive,
+                      width: 2,
+                    ),
+                  )
                 : null,
           ),
           child: Row(
@@ -702,7 +730,9 @@ class _TerminalTabState extends State<_TerminalTab> {
                     color: widget.isActive
                         ? LinearColors.textPrimary
                         : LinearColors.textTertiary,
-                    fontWeight: widget.isActive ? const FontWeight(510) : FontWeight.w400,
+                    fontWeight: widget.isActive
+                        ? const FontWeight(510)
+                        : FontWeight.w400,
                   ),
                   overflow: TextOverflow.ellipsis,
                   maxLines: 1,
@@ -756,7 +786,8 @@ class _ErrorDetailDialogState extends State<ErrorDetailDialog> {
     final error = widget.errorMessage;
 
     // 构建错误报告内容
-    final report = '''## 错误报告
+    final report =
+        '''## 错误报告
 
 **连接名称**: ${connection.name}
 **主机**: ${connection.host}:${connection.port}
@@ -805,13 +836,11 @@ $error
   }
 
   Future<void> _copyErrorOnly() async {
-    await Clipboard.setData(
-      ClipboardData(text: widget.errorMessage),
-    );
+    await Clipboard.setData(ClipboardData(text: widget.errorMessage));
     if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('错误信息已复制到剪贴板')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('错误信息已复制到剪贴板')));
     }
   }
 
@@ -843,17 +872,29 @@ $error
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _buildInfoRow('连接名称', widget.connection.name, theme),
-                  _buildInfoRow('主机地址',
-                      '${widget.connection.host}:${widget.connection.port}', theme),
+                  _buildInfoRow(
+                    '主机地址',
+                    '${widget.connection.host}:${widget.connection.port}',
+                    theme,
+                  ),
                   _buildInfoRow('用户名', widget.connection.username, theme),
-                  _buildInfoRow('认证方式',
-                      _getAuthTypeName(widget.connection.authType), theme),
+                  _buildInfoRow(
+                    '认证方式',
+                    _getAuthTypeName(widget.connection.authType),
+                    theme,
+                  ),
                   if (widget.connection.jumpHost != null)
-                    _buildInfoRow('跳板机',
-                        '${widget.connection.jumpHost!.host}:${widget.connection.jumpHost!.port}', theme),
+                    _buildInfoRow(
+                      '跳板机',
+                      '${widget.connection.jumpHost!.host}:${widget.connection.jumpHost!.port}',
+                      theme,
+                    ),
                   if (widget.connection.socks5Proxy != null)
-                    _buildInfoRow('SOCKS5 代理',
-                        '${widget.connection.socks5Proxy!.host}:${widget.connection.socks5Proxy!.port}', theme),
+                    _buildInfoRow(
+                      'SOCKS5 代理',
+                      '${widget.connection.socks5Proxy!.host}:${widget.connection.socks5Proxy!.port}',
+                      theme,
+                    ),
                 ],
               ),
             ),
@@ -871,7 +912,9 @@ $error
               padding: const EdgeInsets.all(LinearSpacing.spacing12),
               decoration: BoxDecoration(
                 color: theme.colorScheme.errorContainer.withValues(alpha: 0.3),
-                border: Border.all(color: theme.colorScheme.error.withValues(alpha: 0.5)),
+                border: Border.all(
+                  color: theme.colorScheme.error.withValues(alpha: 0.5),
+                ),
                 borderRadius: BorderRadius.circular(LinearRadius.standard),
               ),
               child: SelectableText(
@@ -922,17 +965,12 @@ $error
         children: [
           SizedBox(
             width: 80,
-            child: Text(
-              label,
-              style: theme.textTheme.bodySmall,
-            ),
+            child: Text(label, style: theme.textTheme.bodySmall),
           ),
           Expanded(
             child: Text(
               value,
-              style: const TextStyle(
-                fontWeight: FontWeight.w500,
-              ),
+              style: const TextStyle(fontWeight: FontWeight.w500),
             ),
           ),
         ],
@@ -942,7 +980,8 @@ $error
 
   Widget _buildSolutionHint(String errorMessage, ThemeData theme) {
     final hint = _getSolutionHint(errorMessage);
-    final isPtyError = errorMessage.toLowerCase().contains('pty') ||
+    final isPtyError =
+        errorMessage.toLowerCase().contains('pty') ||
         errorMessage.toLowerCase().contains('tty');
 
     return Column(
@@ -974,14 +1013,19 @@ $error
           width: double.infinity,
           padding: const EdgeInsets.all(LinearSpacing.spacing12),
           decoration: BoxDecoration(
-            color: (isPtyError
-                    ? theme.colorScheme.errorContainer.withValues(alpha: 0.1)
-                    : theme.colorScheme.primaryContainer.withValues(alpha: 0.3))
-                .withValues(alpha: 0.5),
+            color:
+                (isPtyError
+                        ? theme.colorScheme.errorContainer.withValues(
+                            alpha: 0.1,
+                          )
+                        : theme.colorScheme.primaryContainer.withValues(
+                            alpha: 0.3,
+                          ))
+                    .withValues(alpha: 0.5),
             border: Border.all(
               color: (isPtyError
-                      ? theme.colorScheme.error.withValues(alpha: 0.3)
-                      : theme.colorScheme.primary.withValues(alpha: 0.3)),
+                  ? theme.colorScheme.error.withValues(alpha: 0.3)
+                  : theme.colorScheme.primary.withValues(alpha: 0.3)),
             ),
             borderRadius: BorderRadius.circular(LinearRadius.standard),
           ),

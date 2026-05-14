@@ -4,9 +4,9 @@ import 'terminal_service.dart';
 
 /// Shell 提示符类型
 enum PromptType {
-  command,    // 命令行提示符 (A)
+  command, // 命令行提示符 (A)
   continuation, // 续行提示符 (B)
-  selection,  // 选择提示符 (C)
+  selection, // 选择提示符 (C)
   vimPrompt, // Vim 命令提示符 (D)
 }
 
@@ -53,7 +53,8 @@ class KittyShellIntegrationService {
     }
 
     // 格式: OSC 133 ; C ; command=command_line ; status=exit_status
-    final cmd = '\x1b]133;C;command=${_encode(commandLine)};status=$exitStatus\x1b\\\\';
+    final cmd =
+        '\x1b]133;C;command=${_encode(commandLine)};status=$exitStatus\x1b\\\\';
     _session.writeRaw(cmd);
   }
 

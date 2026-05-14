@@ -65,13 +65,18 @@ class _GraphicsOverlayWidgetState extends State<GraphicsOverlayWidget> {
 
     for (final entry in placements.entries) {
       final placement = entry.value as Map<String, Object>;
-      final image = widget.graphicsManager.getImage(placement['imageId'] as String);
+      final image = widget.graphicsManager.getImage(
+        placement['imageId'] as String,
+      );
       if (image == null) continue;
 
       final x = (placement['x'] as num).toDouble() * widget.cellWidth;
-      final y = ((placement['y'] as num).toDouble() - widget.scrollOffset) * widget.cellHeight;
+      final y =
+          ((placement['y'] as num).toDouble() - widget.scrollOffset) *
+          widget.cellHeight;
       final width = (placement['width'] as num).toDouble() * widget.cellWidth;
-      final height = (placement['height'] as num).toDouble() * widget.cellHeight;
+      final height =
+          (placement['height'] as num).toDouble() * widget.cellHeight;
 
       // 跳过不可见的图片
       if (x + width < 0 || y + height < 0) continue;
@@ -83,10 +88,7 @@ class _GraphicsOverlayWidgetState extends State<GraphicsOverlayWidget> {
           child: SizedBox(
             width: width,
             height: height,
-            child: RawImage(
-              image: image as ui.Image?,
-              fit: BoxFit.contain,
-            ),
+            child: RawImage(image: image as ui.Image?, fit: BoxFit.contain),
           ),
         ),
       );

@@ -4,11 +4,11 @@ import 'terminal_service.dart';
 
 /// 光标操作类型
 enum CursorOperation {
-  insert,      // 插入光标
-  select,      // 选择光标
-  move,        // 移动光标
-  delete,      // 删除光标
-  clear,       // 清除所有光标
+  insert, // 插入光标
+  select, // 选择光标
+  move, // 移动光标
+  delete, // 删除光标
+  clear, // 清除所有光标
 }
 
 /// 虚拟光标
@@ -34,6 +34,7 @@ class KittyMultipleCursorsService {
 
   // 当前光标列表
   final List<VirtualCursor> _cursors = [];
+  int _cursorCounter = 0;
 
   KittyMultipleCursorsService({TerminalSession? session}) : _session = session;
 
@@ -53,7 +54,7 @@ class KittyMultipleCursorsService {
       throw Exception('未连接到终端');
     }
 
-    final cursorId = 'c${DateTime.now().millisecondsSinceEpoch}';
+    final cursorId = 'c${++_cursorCounter}';
 
     // OSC 6 > ; cursor ; id=xxx ; x=x ; y=y ; s=select
     String cmd = '\x1b[6>cursor;id=$cursorId;x=$x;y=$y';
@@ -61,12 +62,7 @@ class KittyMultipleCursorsService {
     cmd += '\x1b\\\\';
     _session.writeRaw(cmd);
 
-    _cursors.add(VirtualCursor(
-      id: cursorId,
-      x: x,
-      y: y,
-      selected: select,
-    ));
+    _cursors.add(VirtualCursor(id: cursorId, x: x, y: y, selected: select));
 
     return cursorId;
   }
@@ -242,12 +238,9 @@ class KittyMultipleCursorsService {
               selected: selected ?? _cursors[index].selected,
             );
           } else {
-            _cursors.add(VirtualCursor(
-              id: id,
-              x: x,
-              y: y,
-              selected: selected ?? false,
-            ));
+            _cursors.add(
+              VirtualCursor(id: id, x: x, y: y, selected: selected ?? false),
+            );
           }
         }
       }

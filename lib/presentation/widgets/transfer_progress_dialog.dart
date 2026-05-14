@@ -77,7 +77,10 @@ class _TransferProgressDialogState extends State<TransferProgressDialog> {
         children: [
           Text(
             '文件: ${widget.fileName}',
-            style: const TextStyle(color: LinearColors.textSecondary, fontSize: 13),
+            style: const TextStyle(
+              color: LinearColors.textSecondary,
+              fontSize: 13,
+            ),
           ),
           const SizedBox(height: LinearSpacing.spacing16),
           ClipRRect(
@@ -85,7 +88,9 @@ class _TransferProgressDialogState extends State<TransferProgressDialog> {
             child: LinearProgressIndicator(
               value: _percent / 100,
               backgroundColor: LinearColors.borderSolid,
-              valueColor: const AlwaysStoppedAnimation<Color>(LinearColors.accentInteractive),
+              valueColor: const AlwaysStoppedAnimation<Color>(
+                LinearColors.accentInteractive,
+              ),
               minHeight: 6,
             ),
           ),
@@ -103,7 +108,10 @@ class _TransferProgressDialogState extends State<TransferProgressDialog> {
               ),
               Text(
                 '${_formatSize(_transferred)} / ${_formatSize(widget.totalBytes)}',
-                style: const TextStyle(color: LinearColors.textTertiary, fontSize: 12),
+                style: const TextStyle(
+                  color: LinearColors.textTertiary,
+                  fontSize: 12,
+                ),
               ),
             ],
           ),
@@ -111,7 +119,10 @@ class _TransferProgressDialogState extends State<TransferProgressDialog> {
             const SizedBox(height: LinearSpacing.spacing4),
             Text(
               '速度: ${_formatSize(_bytesPerSecond)}/s',
-              style: const TextStyle(color: LinearColors.textQuaternary, fontSize: 12),
+              style: const TextStyle(
+                color: LinearColors.textQuaternary,
+                fontSize: 12,
+              ),
             ),
           ],
         ],

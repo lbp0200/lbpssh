@@ -92,7 +92,7 @@ void main() {
     late KittyFileTransferEncoder encoder;
 
     setUp(() {
-      encoder = KittyFileTransferEncoder();
+      encoder = const KittyFileTransferEncoder();
     });
 
     // -------------------------------------------------------------------------

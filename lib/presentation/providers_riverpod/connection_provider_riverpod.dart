@@ -21,11 +21,14 @@ class ConnectionState {
   List<SshConnection> get filteredConnections {
     if (searchQuery.isEmpty) return connections;
     final query = searchQuery.toLowerCase();
-    return connections.where((c) =>
-      c.name.toLowerCase().contains(query) ||
-      c.host.toLowerCase().contains(query) ||
-      c.username.toLowerCase().contains(query)
-    ).toList();
+    return connections
+        .where(
+          (c) =>
+              c.name.toLowerCase().contains(query) ||
+              c.host.toLowerCase().contains(query) ||
+              c.username.toLowerCase().contains(query),
+        )
+        .toList();
   }
 
   ConnectionState copyWith({
@@ -53,12 +56,8 @@ class ConnectionState {
           listEquals(connections, other.connections);
 
   @override
-  int get hashCode => Object.hash(
-        isLoading,
-        error,
-        searchQuery,
-        Object.hashAll(connections),
-      );
+  int get hashCode =>
+      Object.hash(isLoading, error, searchQuery, Object.hashAll(connections));
 }
 
 /// 连接列表通知器

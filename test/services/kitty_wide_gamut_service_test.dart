@@ -85,7 +85,8 @@ void main() {
         test('sends correct OSC for ${entry.space.name}', () async {
           await service.setColorSpace(entry.space);
           verify(
-            () => mockSession.writeRaw('\x1b]10;colorspace=${entry.str}\x1b\\\\'),
+            () =>
+                mockSession.writeRaw('\x1b]10;colorspace=${entry.str}\x1b\\\\'),
           ).called(1);
         });
 
@@ -147,8 +148,7 @@ void main() {
           const ColorProfile(space: ColorSpace.sRGB),
         );
         verify(
-          () => mockSession
-              .writeRaw('\x1b]10;profile=custom\x1b\\\\'),
+          () => mockSession.writeRaw('\x1b]10;profile=custom\x1b\\\\'),
         ).called(1);
       });
 
@@ -157,39 +157,25 @@ void main() {
           const ColorProfile(space: ColorSpace.sRGB, redX: 0.64, redY: 0.33),
         );
         verify(
-          () => mockSession.writeRaw(
-            any(that: contains(';r=0.64,0.33')),
-          ),
+          () => mockSession.writeRaw(any(that: contains(';r=0.64,0.33'))),
         ).called(1);
       });
 
       test('includes green chromaticity', () async {
         await service.setCustomProfile(
-          const ColorProfile(
-            space: ColorSpace.sRGB,
-            greenX: 0.3,
-            greenY: 0.6,
-          ),
+          const ColorProfile(space: ColorSpace.sRGB, greenX: 0.3, greenY: 0.6),
         );
         verify(
-          () => mockSession.writeRaw(
-            any(that: contains(';g=0.3,0.6')),
-          ),
+          () => mockSession.writeRaw(any(that: contains(';g=0.3,0.6'))),
         ).called(1);
       });
 
       test('includes blue chromaticity', () async {
         await service.setCustomProfile(
-          const ColorProfile(
-            space: ColorSpace.sRGB,
-            blueX: 0.15,
-            blueY: 0.06,
-          ),
+          const ColorProfile(space: ColorSpace.sRGB, blueX: 0.15, blueY: 0.06),
         );
         verify(
-          () => mockSession.writeRaw(
-            any(that: contains(';b=0.15,0.06')),
-          ),
+          () => mockSession.writeRaw(any(that: contains(';b=0.15,0.06'))),
         ).called(1);
       });
 
@@ -202,9 +188,7 @@ void main() {
           ),
         );
         verify(
-          () => mockSession.writeRaw(
-            any(that: contains(';w=0.3127,0.329')),
-          ),
+          () => mockSession.writeRaw(any(that: contains(';w=0.3127,0.329'))),
         ).called(1);
       });
 
@@ -213,9 +197,7 @@ void main() {
           const ColorProfile(space: ColorSpace.sRGB, gamma: 2.2),
         );
         verify(
-          () => mockSession.writeRaw(
-            any(that: contains(';gamma=2.2')),
-          ),
+          () => mockSession.writeRaw(any(that: contains(';gamma=2.2'))),
         ).called(1);
       });
 
@@ -249,9 +231,7 @@ void main() {
 
       test('handles 0.0 values', () async {
         await service.setForegroundColor(0.0, 0.0, 0.0);
-        verify(
-          () => mockSession.writeRaw('\x1b[38:2:0:0:0m'),
-        ).called(1);
+        verify(() => mockSession.writeRaw('\x1b[38:2:0:0:0m')).called(1);
       });
 
       test('handles 1.0 values', () async {
@@ -304,9 +284,7 @@ void main() {
       test('handles zero values', () async {
         await service.setCursorColor(0.0, 0.0, 0.0);
         verify(
-          () => mockSession.writeRaw(
-            '\x1b]12;color=rgb:0/0/0/0/0/0\x1b\\\\',
-          ),
+          () => mockSession.writeRaw('\x1b]12;color=rgb:0/0/0/0/0/0\x1b\\\\'),
         ).called(1);
       });
 
@@ -326,7 +304,7 @@ void main() {
         // 19661 ~/ 256 = 76, 19661 % 256 = 205
         // 0.6 * 65535 = 39321 → 39321 ~/ 256 = 153, 39321 % 256 = 153
         // 0.1 * 65535 = 6553.5 ≈ 6554 → 6554 ~/ 256 = 25, 6554 % 256 = 154
-        
+
         // Let me recalculate:
         // (0.3 * 65535).round() = 19661
         // 19661 ~/ 256 = 76
@@ -388,10 +366,7 @@ void main() {
 
       test('throws when session is null', () async {
         final nullService = KittyWideGamutService();
-        expect(
-          () => nullService.resetColors(),
-          throwsA(isA<Exception>()),
-        );
+        expect(() => nullService.resetColors(), throwsA(isA<Exception>()));
       });
     });
 
@@ -403,10 +378,7 @@ void main() {
 
       test('throws when session is null', () async {
         final nullService = KittyWideGamutService();
-        expect(
-          () => nullService.queryColorSpace(),
-          throwsA(isA<Exception>()),
-        );
+        expect(() => nullService.queryColorSpace(), throwsA(isA<Exception>()));
       });
     });
   });

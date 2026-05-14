@@ -330,7 +330,10 @@ class SshConfigEntry {
     return entries;
   }
 
-  static SshConfigEntry _createEntry(String host, Map<String, List<String>> config) {
+  static SshConfigEntry _createEntry(
+    String host,
+    Map<String, List<String>> config,
+  ) {
     return SshConfigEntry(
       hostName: host,
       actualHost: config['hostname']?.firstOrNull,

@@ -51,16 +51,27 @@ class SyncStatus extends ConsumerWidget {
             height: 16,
             child: CircularProgressIndicator(
               strokeWidth: 2,
-              valueColor: AlwaysStoppedAnimation<Color>(LinearColors.accentInteractive),
+              valueColor: AlwaysStoppedAnimation<Color>(
+                LinearColors.accentInteractive,
+              ),
             ),
           )
         else
-          Icon(icon, key: const Key('sync_status_icon'), size: 16, color: color),
+          Icon(
+            icon,
+            key: const Key('sync_status_icon'),
+            size: 16,
+            color: color,
+          ),
         const SizedBox(width: LinearSpacing.spacing4),
         Text(
           text,
           key: const Key('sync_status_text'),
-          style: TextStyle(fontSize: 12, color: color, fontWeight: FontWeight.w500),
+          style: TextStyle(
+            fontSize: 12,
+            color: color,
+            fontWeight: FontWeight.w500,
+          ),
         ),
         if (lastSyncTime != null) ...[
           const SizedBox(width: LinearSpacing.spacing8),

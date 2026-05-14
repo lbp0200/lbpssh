@@ -9,9 +9,7 @@ void main() {
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
-            body: RepaintBoundary(
-              child: SizedBox(width: 800, height: 600),
-            ),
+            body: RepaintBoundary(child: SizedBox(width: 800, height: 600)),
           ),
         ),
       );
@@ -31,9 +29,7 @@ void main() {
               listenable: ChangeNotifier(),
               builder: (context, child) {
                 rebuildCount++;
-                return RepaintBoundary(
-                  child: Container(color: Colors.red),
-                );
+                return RepaintBoundary(child: Container(color: Colors.red));
               },
             ),
           ),

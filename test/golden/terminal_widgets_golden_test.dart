@@ -40,17 +40,11 @@ void main() {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(
-                    Icons.terminal,
-                    size: 64,
-                    color: Colors.grey.shade400,
-                  ),
+                  Icon(Icons.terminal, size: 64, color: Colors.grey.shade400),
                   const SizedBox(height: 16),
                   Text(
                     '点击左侧连接以打开终端',
-                    style: TextStyle(
-                      color: Colors.grey.shade600,
-                    ),
+                    style: TextStyle(color: Colors.grey.shade600),
                   ),
                 ],
               ),

@@ -65,7 +65,10 @@ class _ImportExportSettingsScreenState
           children: [
             Row(
               children: [
-                const Icon(Icons.info_outline, color: LinearColors.textSecondary),
+                const Icon(
+                  Icons.info_outline,
+                  color: LinearColors.textSecondary,
+                ),
                 const SizedBox(width: LinearSpacing.spacing8),
                 Text(
                   '当前SSH连接统计',
@@ -119,7 +122,10 @@ class _ImportExportSettingsScreenState
                         children: [
                           const Text(
                             '最后更新',
-                            style: TextStyle(fontSize: 12, color: LinearColors.textSecondary),
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: LinearColors.textSecondary,
+                            ),
                           ),
                           Text(
                             '${stats['lastUpdated']}',
@@ -153,7 +159,13 @@ class _ImportExportSettingsScreenState
           value,
           style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
-        Text(label, style: const TextStyle(fontSize: 12, color: LinearColors.textQuaternary)),
+        Text(
+          label,
+          style: const TextStyle(
+            fontSize: 12,
+            color: LinearColors.textQuaternary,
+          ),
+        ),
       ],
     );
   }
@@ -175,7 +187,10 @@ class _ImportExportSettingsScreenState
           children: [
             Row(
               children: [
-                const Icon(Icons.file_upload, color: LinearColors.textSecondary),
+                const Icon(
+                  Icons.file_upload,
+                  color: LinearColors.textSecondary,
+                ),
                 const SizedBox(width: LinearSpacing.spacing8),
                 Text(
                   '导出配置',
@@ -195,9 +210,7 @@ class _ImportExportSettingsScreenState
             SizedBox(
               width: double.infinity,
               child: ElevatedButton.icon(
-                onPressed: isExporting
-                    ? null
-                    : () => _exportConfiguration(),
+                onPressed: isExporting ? null : () => _exportConfiguration(),
                 icon: isExporting
                     ? const SizedBox(
                         width: 16,
@@ -205,9 +218,7 @@ class _ImportExportSettingsScreenState
                         child: CircularProgressIndicator(strokeWidth: 2),
                       )
                     : const Icon(Icons.file_upload),
-                label: Text(
-                  isExporting ? '导出中...' : '导出配置',
-                ),
+                label: Text(isExporting ? '导出中...' : '导出配置'),
               ),
             ),
           ],
@@ -233,7 +244,10 @@ class _ImportExportSettingsScreenState
           children: [
             Row(
               children: [
-                const Icon(Icons.file_download, color: LinearColors.textSecondary),
+                const Icon(
+                  Icons.file_download,
+                  color: LinearColors.textSecondary,
+                ),
                 const SizedBox(width: LinearSpacing.spacing8),
                 Text(
                   '导入配置',
@@ -253,9 +267,7 @@ class _ImportExportSettingsScreenState
             SizedBox(
               width: double.infinity,
               child: ElevatedButton.icon(
-                onPressed: isImporting
-                    ? null
-                    : () => _importConfiguration(),
+                onPressed: isImporting ? null : () => _importConfiguration(),
                 icon: isImporting
                     ? const SizedBox(
                         width: 16,
@@ -263,9 +275,7 @@ class _ImportExportSettingsScreenState
                         child: CircularProgressIndicator(strokeWidth: 2),
                       )
                     : const Icon(Icons.file_download),
-                label: Text(
-                  isImporting ? '导入中...' : '导入配置',
-                ),
+                label: Text(isImporting ? '导入中...' : '导入配置'),
               ),
             ),
           ],
@@ -323,7 +333,11 @@ class _ImportExportSettingsScreenState
                     '${connection.username}@${connection.host}:${connection.port}',
                   ),
                   trailing: connection.jumpHost != null
-                      ? const Icon(Icons.router, size: 16, color: LinearColors.warning)
+                      ? const Icon(
+                          Icons.router,
+                          size: 16,
+                          color: LinearColors.warning,
+                        )
                       : null,
                 );
               },
@@ -402,7 +416,10 @@ class _ImportExportSettingsScreenState
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('导出失败: $e'), backgroundColor: LinearColors.error),
+          SnackBar(
+            content: Text('导出失败: $e'),
+            backgroundColor: LinearColors.error,
+          ),
         );
       }
     }
@@ -410,7 +427,9 @@ class _ImportExportSettingsScreenState
 
   Future<void> _importConfiguration() async {
     try {
-      final connections = await ref.read(importExportProvider.notifier).importFromLocalFile();
+      final connections = await ref
+          .read(importExportProvider.notifier)
+          .importFromLocalFile();
 
       if (connections.isEmpty) {
         if (mounted) {
@@ -428,7 +447,10 @@ class _ImportExportSettingsScreenState
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('导入失败: $e'), backgroundColor: LinearColors.error),
+          SnackBar(
+            content: Text('导入失败: $e'),
+            backgroundColor: LinearColors.error,
+          ),
         );
       }
     }
@@ -461,11 +483,13 @@ class _ImportExportSettingsScreenState
 
   Future<void> _performImport(bool overwrite) async {
     try {
-      await ref.read(importExportProvider.notifier).importAndSaveConnections(
-        _importedConnections,
-        overwrite: overwrite,
-        addPrefix: !overwrite,
-      );
+      await ref
+          .read(importExportProvider.notifier)
+          .importAndSaveConnections(
+            _importedConnections,
+            overwrite: overwrite,
+            addPrefix: !overwrite,
+          );
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -483,7 +507,10 @@ class _ImportExportSettingsScreenState
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('导入失败: $e'), backgroundColor: LinearColors.error),
+          SnackBar(
+            content: Text('导入失败: $e'),
+            backgroundColor: LinearColors.error,
+          ),
         );
       }
     }

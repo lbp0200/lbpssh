@@ -23,8 +23,9 @@ void main() {
       outputController = StreamController<String>.broadcast();
 
       when(() => mockSession.inputService).thenReturn(mockInputService);
-      when(() => mockInputService.outputStream)
-          .thenAnswer((_) => outputController.stream);
+      when(
+        () => mockInputService.outputStream,
+      ).thenAnswer((_) => outputController.stream);
 
       service = KittySessionService(session: mockSession);
     });
@@ -74,26 +75,21 @@ void main() {
 
       test('throws when session is null', () async {
         final nullService = KittySessionService();
-        expect(
-          () => nullService.getTitle(),
-          throwsA(isA<Exception>()),
-        );
+        expect(() => nullService.getTitle(), throwsA(isA<Exception>()));
       });
     });
 
     group('setTitle', () {
       test('sends OSC 0 command', () async {
         await service.setTitle('My Terminal');
-        verify(() => mockSession.writeRaw('\x1b]0;My Terminal\x1b\\\\'))
-            .called(1);
+        verify(
+          () => mockSession.writeRaw('\x1b]0;My Terminal\x1b\\\\'),
+        ).called(1);
       });
 
       test('throws when session is null', () async {
         final nullService = KittySessionService();
-        expect(
-          () => nullService.setTitle('Test'),
-          throwsA(isA<Exception>()),
-        );
+        expect(() => nullService.setTitle('Test'), throwsA(isA<Exception>()));
       });
     });
 
@@ -116,7 +112,7 @@ void main() {
       test('sends echo command', () async {
         // Trigger the method but let it timeout
         unawaited(service.getWorkingDirectory());
-        await Future.delayed(Duration.zero);
+        await Future<void>.delayed(Duration.zero);
         verify(() => mockSession.writeRaw('echo \$PWD\r')).called(1);
       });
 
@@ -143,7 +139,7 @@ void main() {
     group('getTerminalSize', () {
       test('sends CSI 6n query', () async {
         unawaited(service.getTerminalSize());
-        await Future.delayed(Duration.zero);
+        await Future<void>.delayed(Duration.zero);
         verify(() => mockSession.writeRaw('\x1b[6n')).called(1);
       });
 
@@ -163,10 +159,7 @@ void main() {
 
       test('throws when session is null', () async {
         final nullService = KittySessionService();
-        expect(
-          () => nullService.getTerminalSize(),
-          throwsA(isA<Exception>()),
-        );
+        expect(() => nullService.getTerminalSize(), throwsA(isA<Exception>()));
       });
     });
 
@@ -178,10 +171,7 @@ void main() {
 
       test('throws when session is null', () async {
         final nullService = KittySessionService();
-        expect(
-          () => nullService.sendText('x'),
-          throwsA(isA<Exception>()),
-        );
+        expect(() => nullService.sendText('x'), throwsA(isA<Exception>()));
       });
     });
 
@@ -193,10 +183,7 @@ void main() {
 
       test('throws when session is null', () async {
         final nullService = KittySessionService();
-        expect(
-          () => nullService.sendCommand('x'),
-          throwsA(isA<Exception>()),
-        );
+        expect(() => nullService.sendCommand('x'), throwsA(isA<Exception>()));
       });
     });
 
@@ -224,7 +211,7 @@ void main() {
               'sendInterrupt' => nullService.sendInterrupt(),
               'sendSuspend' => nullService.sendSuspend(),
               'sendEOF' => nullService.sendEOF(),
-              _ => Future.value(),
+              _ => Future<void>.value(),
             },
             throwsA(isA<Exception>()),
           );
@@ -276,7 +263,7 @@ void main() {
               'bell' => nullService.bell(),
               'saveCursor' => nullService.saveCursor(),
               'restoreCursor' => nullService.restoreCursor(),
-              _ => Future.value(),
+              _ => Future<void>.value(),
             },
             throwsA(isA<Exception>()),
           );
@@ -363,7 +350,7 @@ void main() {
               'deleteLine' => nullService.deleteLine(),
               'deleteChar' => nullService.deleteChar(),
               'eraseChar' => nullService.eraseChar(),
-              _ => Future.value(),
+              _ => Future<void>.value(),
             },
             throwsA(isA<Exception>()),
           );

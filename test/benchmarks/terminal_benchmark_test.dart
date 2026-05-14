@@ -6,8 +6,14 @@ void main() {
   group('Terminal Performance Benchmarks', () {
     test('color parsing benchmark - uncached', () {
       final colors = [
-        '#FF5733', '#00FF00', '#0000FF', '#FFFF00',
-        '#FF00FF', '#00FFFF', '#FFFFFF', '#000000',
+        '#FF5733',
+        '#00FF00',
+        '#0000FF',
+        '#FFFF00',
+        '#FF00FF',
+        '#00FFFF',
+        '#FFFFFF',
+        '#000000',
       ];
 
       final stopwatch = Stopwatch()..start();
@@ -22,15 +28,23 @@ void main() {
       stopwatch.stop();
 
       // Should complete in reasonable time
-      print('Uncached: ${stopwatch.elapsedMilliseconds}ms for 8000 color parses');
+      print(
+        'Uncached: ${stopwatch.elapsedMilliseconds}ms for 8000 color parses',
+      );
       expect(stopwatch.elapsedMilliseconds, lessThan(200));
     });
 
     test('color parsing benchmark - cached', () {
       // Pre-cache colors
       final colors = [
-        '#FF5733', '#00FF00', '#0000FF', '#FFFF00',
-        '#FF00FF', '#00FFFF', '#FFFFFF', '#000000',
+        '#FF5733',
+        '#00FF00',
+        '#0000FF',
+        '#FFFF00',
+        '#FF00FF',
+        '#00FFFF',
+        '#FFFFFF',
+        '#000000',
       ];
       for (final color in colors) {
         ColorUtils.parseColorCached(color);
@@ -48,7 +62,9 @@ void main() {
       stopwatch.stop();
 
       // Cached should be much faster
-      print('Cached: ${stopwatch.elapsedMilliseconds}ms for 8000 color lookups');
+      print(
+        'Cached: ${stopwatch.elapsedMilliseconds}ms for 8000 color lookups',
+      );
       expect(stopwatch.elapsedMilliseconds, lessThan(50));
     });
 
@@ -76,7 +92,9 @@ void main() {
 
       stopwatch.stop();
 
-      print('Widget build: ${stopwatch.elapsedMilliseconds}ms for 100 iterations');
+      print(
+        'Widget build: ${stopwatch.elapsedMilliseconds}ms for 100 iterations',
+      );
       expect(stopwatch.elapsedMilliseconds, lessThan(500));
     });
   });

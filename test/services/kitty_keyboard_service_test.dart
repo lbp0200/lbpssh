@@ -48,10 +48,7 @@ void main() {
 
       test('throws when session is null', () async {
         final nullService = KittyKeyboardService();
-        expect(
-          () => nullService.sendText('test'),
-          throwsA(isA<Exception>()),
-        );
+        expect(() => nullService.sendText('test'), throwsA(isA<Exception>()));
       });
     });
 
@@ -86,10 +83,7 @@ void main() {
 
       test('throws when session is null', () async {
         final nullService = KittyKeyboardService();
-        expect(
-          () => nullService.sendKey('a'),
-          throwsA(isA<Exception>()),
-        );
+        expect(() => nullService.sendKey('a'), throwsA(isA<Exception>()));
       });
     });
 
@@ -130,17 +124,11 @@ void main() {
       });
 
       test('throws for function number below 1', () async {
-        expect(
-          () => service.sendFunctionKey(0),
-          throwsA(isA<Exception>()),
-        );
+        expect(() => service.sendFunctionKey(0), throwsA(isA<Exception>()));
       });
 
       test('throws for function number above 12', () async {
-        expect(
-          () => service.sendFunctionKey(13),
-          throwsA(isA<Exception>()),
-        );
+        expect(() => service.sendFunctionKey(13), throwsA(isA<Exception>()));
       });
     });
 
@@ -190,10 +178,7 @@ void main() {
       });
 
       test('throws for invalid key', () async {
-        expect(
-          () => service.sendHomeEnd('invalid'),
-          throwsA(isA<Exception>()),
-        );
+        expect(() => service.sendHomeEnd('invalid'), throwsA(isA<Exception>()));
       });
     });
 
@@ -265,8 +250,12 @@ void main() {
 
     group('setModifierKeys', () {
       test('sends modifier state OSC 200 sequence', () async {
-        await service.setModifierKeys(const ModifierKeys(shift: true, alt: true));
-        verify(() => mockSession.writeRaw('\x1b]200;shift+alt\x1b\\')).called(1);
+        await service.setModifierKeys(
+          const ModifierKeys(shift: true, alt: true),
+        );
+        verify(
+          () => mockSession.writeRaw('\x1b]200;shift+alt\x1b\\'),
+        ).called(1);
       });
 
       test('handles empty modifiers', () async {
@@ -350,17 +339,11 @@ void main() {
       });
 
       test('does not throw for empty response', () {
-        expect(
-          () => service.handleKeyboardResponse(''),
-          returnsNormally,
-        );
+        expect(() => service.handleKeyboardResponse(''), returnsNormally);
       });
 
       test('does not throw for malformed response', () {
-        expect(
-          () => service.handleKeyboardResponse('200;'),
-          returnsNormally,
-        );
+        expect(() => service.handleKeyboardResponse('200;'), returnsNormally);
       });
     });
   });

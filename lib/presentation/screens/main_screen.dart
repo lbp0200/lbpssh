@@ -33,10 +33,8 @@ class _MainScreenState extends ConsumerState<MainScreen> {
   ) {
     showDialog<void>(
       context: context,
-      builder: (context) => ErrorDetailDialog(
-        connection: connection,
-        errorMessage: errorMessage,
-      ),
+      builder: (context) =>
+          ErrorDetailDialog(connection: connection, errorMessage: errorMessage),
     );
   }
 

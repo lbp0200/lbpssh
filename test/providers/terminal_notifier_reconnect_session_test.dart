@@ -17,7 +17,8 @@ class _MockTerminalInputService extends Mock implements TerminalInputService {
   @override
   Stream<bool> get stateStream => const Stream.empty();
   @override
-  Future<String> executeCommand(String command, {bool silent = false}) async => '';
+  Future<String> executeCommand(String command, {bool silent = false}) async =>
+      '';
   @override
   void sendInput(String input) {}
   @override
@@ -101,7 +102,9 @@ void main() {
         // SSH.connect will hang since it tries a real network connection.
         // Use a timeout to catch this and verify the parsing logic worked.
         await expectLater(
-          () => notifier.reconnectSession('sess-001').timeout(const Duration(seconds: 5)),
+          () => notifier
+              .reconnectSession('sess-001')
+              .timeout(const Duration(seconds: 5)),
           throwsA(anyOf(isA<Exception>(), isA<TimeoutException>())),
         );
       },
@@ -206,7 +209,9 @@ void main() {
 
         // The SSH connection will fail (timeout or exception)
         await expectLater(
-          () => notifier.reconnectSession('sess-001').timeout(const Duration(seconds: 5)),
+          () => notifier
+              .reconnectSession('sess-001')
+              .timeout(const Duration(seconds: 5)),
           throwsA(anyOf(isA<Exception>(), isA<TimeoutException>())),
         );
       },
@@ -242,15 +247,21 @@ void main() {
 
         // Each call will attempt SSH.connect which will hang/timeout
         await expectLater(
-          () => notifier.reconnectSession('sess-001').timeout(const Duration(seconds: 5)),
+          () => notifier
+              .reconnectSession('sess-001')
+              .timeout(const Duration(seconds: 5)),
           throwsA(anyOf(isA<Exception>(), isA<TimeoutException>())),
         );
         await expectLater(
-          () => notifier.reconnectSession('sess-001').timeout(const Duration(seconds: 5)),
+          () => notifier
+              .reconnectSession('sess-001')
+              .timeout(const Duration(seconds: 5)),
           throwsA(anyOf(isA<Exception>(), isA<TimeoutException>())),
         );
         await expectLater(
-          () => notifier.reconnectSession('sess-001').timeout(const Duration(seconds: 5)),
+          () => notifier
+              .reconnectSession('sess-001')
+              .timeout(const Duration(seconds: 5)),
           throwsA(anyOf(isA<Exception>(), isA<TimeoutException>())),
         );
       },
@@ -286,7 +297,9 @@ void main() {
 
         // Will attempt SSH.connect which will timeout
         await expectLater(
-          () => notifier.reconnectSession('sess-001').timeout(const Duration(seconds: 5)),
+          () => notifier
+              .reconnectSession('sess-001')
+              .timeout(const Duration(seconds: 5)),
           throwsA(anyOf(isA<Exception>(), isA<TimeoutException>())),
         );
       },
@@ -321,7 +334,10 @@ void main() {
         );
 
         // Should complete without error for nonexistent session
-        await expectLater(notifier.reconnectSession('nonexistent-id'), completes);
+        await expectLater(
+          notifier.reconnectSession('nonexistent-id'),
+          completes,
+        );
       },
     );
   });

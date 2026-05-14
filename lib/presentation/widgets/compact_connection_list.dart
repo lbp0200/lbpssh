@@ -54,10 +54,7 @@ class CompactConnectionList extends ConsumerWidget {
               iconSize: 18,
               tooltip: '添加连接',
               padding: EdgeInsets.zero,
-              constraints: const BoxConstraints(
-                minWidth: 32,
-                minHeight: 32,
-              ),
+              constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
               color: LinearColors.accentInteractive,
             ),
           ],
@@ -81,7 +78,9 @@ class CompactConnectionList extends ConsumerWidget {
         const SizedBox(height: LinearSpacing.spacing4),
         Expanded(
           child: ListView.builder(
-            padding: const EdgeInsets.symmetric(vertical: LinearSpacing.spacing1),
+            padding: const EdgeInsets.symmetric(
+              vertical: LinearSpacing.spacing1,
+            ),
             itemCount: connections.length,
             itemBuilder: (context, index) {
               final connection = connections[index];
@@ -91,8 +90,7 @@ class CompactConnectionList extends ConsumerWidget {
                   onConnectionTap?.call(connection);
                 },
                 onEdit: () => _showConnectionForm(context, connection),
-                onDelete: () =>
-                    _deleteConnection(context, ref, connection),
+                onDelete: () => _deleteConnection(context, ref, connection),
               );
             },
           ),
@@ -133,7 +131,9 @@ class CompactConnectionList extends ConsumerWidget {
     );
 
     if (confirmed == true) {
-      await ref.read(connectionProvider.notifier).deleteConnection(connection.id);
+      await ref
+          .read(connectionProvider.notifier)
+          .deleteConnection(connection.id);
       if (context.mounted) {
         ScaffoldMessenger.of(
           context,
@@ -160,7 +160,10 @@ class _CompactConnectionItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: LinearSpacing.spacing4, vertical: LinearSpacing.spacing1),
+      margin: const EdgeInsets.symmetric(
+        horizontal: LinearSpacing.spacing4,
+        vertical: LinearSpacing.spacing1,
+      ),
       child: Tooltip(
         message:
             '${connection.name}\n${connection.username}@${connection.host}:${connection.port}',
@@ -171,7 +174,11 @@ class _CompactConnectionItem extends StatelessWidget {
               value: 'connect',
               child: Row(
                 children: [
-                  const Icon(Icons.play_arrow, size: 20, color: LinearColors.textPrimary),
+                  const Icon(
+                    Icons.play_arrow,
+                    size: 20,
+                    color: LinearColors.textPrimary,
+                  ),
                   const SizedBox(width: LinearSpacing.spacing8),
                   Text('连接到 ${connection.name}'),
                 ],
@@ -181,7 +188,11 @@ class _CompactConnectionItem extends StatelessWidget {
               value: 'edit',
               child: Row(
                 children: [
-                  const Icon(Icons.edit, size: 20, color: LinearColors.textPrimary),
+                  const Icon(
+                    Icons.edit,
+                    size: 20,
+                    color: LinearColors.textPrimary,
+                  ),
                   const SizedBox(width: LinearSpacing.spacing8),
                   Text('编辑 ${connection.name}'),
                 ],
@@ -218,14 +229,13 @@ class _CompactConnectionItem extends StatelessWidget {
             child: Container(
               width: double.infinity,
               height: 40,
-              margin: const EdgeInsets.symmetric(horizontal: LinearSpacing.spacing4),
+              margin: const EdgeInsets.symmetric(
+                horizontal: LinearSpacing.spacing4,
+              ),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(LinearRadius.standard),
                 color: LinearColors.fillSurface,
-                border: Border.all(
-                  color: LinearColors.borderSubtle,
-                  width: 1,
-                ),
+                border: Border.all(color: LinearColors.borderSubtle, width: 1),
               ),
               child: const Icon(
                 Icons.computer,

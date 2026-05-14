@@ -10,7 +10,8 @@ class TerminalSettingsPage extends ConsumerStatefulWidget {
   const TerminalSettingsPage({super.key});
 
   @override
-  ConsumerState<TerminalSettingsPage> createState() => _TerminalSettingsPageState();
+  ConsumerState<TerminalSettingsPage> createState() =>
+      _TerminalSettingsPageState();
 }
 
 class _TerminalSettingsPageState extends ConsumerState<TerminalSettingsPage> {
@@ -84,7 +85,8 @@ class _TerminalSettingsPageState extends ConsumerState<TerminalSettingsPage> {
     _lineHeightController.text = _config.lineHeight.toString();
     _paddingController.text = _config.padding.toString();
     _fontFamilyController.text = _config.fontFamily;
-    _keepaliveController.text = (_sshConfig.keepaliveInterval ~/ 1000).toString();
+    _keepaliveController.text = (_sshConfig.keepaliveInterval ~/ 1000)
+        .toString();
     _bgColorController.text = _config.backgroundColor;
     _fgColorController.text = _config.foregroundColor;
     _cursorColorController.text = _config.cursorColor;
@@ -128,373 +130,382 @@ class _TerminalSettingsPageState extends ConsumerState<TerminalSettingsPage> {
                 fontWeight: FontWeight.w600,
               ),
             ),
-          const SizedBox(height: LinearSpacing.spacing16),
-          _buildFontFamilySelector(),
-          const SizedBox(height: LinearSpacing.spacing16),
-          Row(
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text(
-                          '字体大小',
-                          style: TextStyle(color: LinearColors.textPrimary),
-                        ),
-                        Text(
-                          '${_config.fontSize.toInt()}px',
-                          style: TextStyle(
-                            color: Theme.of(context).colorScheme.primary,
-                            fontWeight: FontWeight.bold,
+            const SizedBox(height: LinearSpacing.spacing16),
+            _buildFontFamilySelector(),
+            const SizedBox(height: LinearSpacing.spacing16),
+            Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text(
+                            '字体大小',
+                            style: TextStyle(color: LinearColors.textPrimary),
                           ),
-                        ),
-                      ],
-                    ),
-                    Slider(
-                      value: _config.fontSize,
-                      min: 8,
-                      max: 32,
-                      divisions: 24,
-                      onChanged: _onFontSizeChanged,
-                    ),
-                    // 预设按钮
-                    SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                        children: _presetFontSizes.map((size) {
-                          final isSelected = _config.fontSize.toInt() == size;
-                          return Padding(
-                            padding: const EdgeInsets.only(right: 8),
-                            child: FilterChip(
-                              selected: isSelected,
-                              label: Text('${size}px'),
-                              onSelected: (_) => _onFontSizeChanged(size.toDouble()),
-                              padding: const EdgeInsets.symmetric(horizontal: 8),
+                          Text(
+                            '${_config.fontSize.toInt()}px',
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.primary,
+                              fontWeight: FontWeight.bold,
                             ),
-                          );
-                        }).toList(),
+                          ),
+                        ],
                       ),
+                      Slider(
+                        value: _config.fontSize,
+                        min: 8,
+                        max: 32,
+                        divisions: 24,
+                        onChanged: _onFontSizeChanged,
+                      ),
+                      // 预设按钮
+                      SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          children: _presetFontSizes.map((size) {
+                            final isSelected = _config.fontSize.toInt() == size;
+                            return Padding(
+                              padding: const EdgeInsets.only(right: 8),
+                              child: FilterChip(
+                                selected: isSelected,
+                                label: Text('${size}px'),
+                                onSelected: (_) =>
+                                    _onFontSizeChanged(size.toDouble()),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                ),
+                              ),
+                            );
+                          }).toList(),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: LinearSpacing.spacing16),
+                Expanded(
+                  child: TextFormField(
+                    controller: _fontWeightController,
+                    style: const TextStyle(color: LinearColors.textPrimary),
+                    decoration: const InputDecoration(
+                      labelText: '字重',
+                      labelStyle: TextStyle(color: LinearColors.textSecondary),
+                      suffixText: '100-900',
+                      suffixStyle: TextStyle(color: LinearColors.textTertiary),
+                      filled: true,
+                      fillColor: LinearColors.fillSurface,
                     ),
-                  ],
-                ),
-              ),
-              const SizedBox(width: LinearSpacing.spacing16),
-              Expanded(
-                child: TextFormField(
-                  controller: _fontWeightController,
-                  style: const TextStyle(color: LinearColors.textPrimary),
-                  decoration: const InputDecoration(
-                    labelText: '字重',
-                    labelStyle: TextStyle(color: LinearColors.textSecondary),
-                    suffixText: '100-900',
-                    suffixStyle: TextStyle(color: LinearColors.textTertiary),
-                    filled: true,
-                    fillColor: LinearColors.fillSurface,
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                    onChanged: (value) {
+                      final fontWeight = int.tryParse(value);
+                      if (fontWeight != null &&
+                          fontWeight >= 100 &&
+                          fontWeight <= 900) {
+                        _config = _config.copyWith(fontWeight: fontWeight);
+                      }
+                    },
                   ),
-                  keyboardType: TextInputType.number,
-                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                  onChanged: (value) {
-                    final fontWeight = int.tryParse(value);
-                    if (fontWeight != null &&
-                        fontWeight >= 100 &&
-                        fontWeight <= 900) {
-                      _config = _config.copyWith(fontWeight: fontWeight);
-                    }
-                  },
                 ),
-              ),
-            ],
-          ),
-          const SizedBox(height: LinearSpacing.spacing16),
-          Row(
-            children: [
-              Expanded(
-                child: TextFormField(
-                  controller: _letterSpacingController,
-                  style: const TextStyle(color: LinearColors.textPrimary),
-                  decoration: const InputDecoration(
-                    labelText: '字母间距',
-                    labelStyle: TextStyle(color: LinearColors.textSecondary),
-                    suffixText: 'em',
-                    suffixStyle: TextStyle(color: LinearColors.textTertiary),
-                    filled: true,
-                    fillColor: LinearColors.fillSurface,
+              ],
+            ),
+            const SizedBox(height: LinearSpacing.spacing16),
+            Row(
+              children: [
+                Expanded(
+                  child: TextFormField(
+                    controller: _letterSpacingController,
+                    style: const TextStyle(color: LinearColors.textPrimary),
+                    decoration: const InputDecoration(
+                      labelText: '字母间距',
+                      labelStyle: TextStyle(color: LinearColors.textSecondary),
+                      suffixText: 'em',
+                      suffixStyle: TextStyle(color: LinearColors.textTertiary),
+                      filled: true,
+                      fillColor: LinearColors.fillSurface,
+                    ),
+                    keyboardType: TextInputType.number,
+                    onChanged: (value) {
+                      final letterSpacing = double.tryParse(value);
+                      if (letterSpacing != null) {
+                        _config = _config.copyWith(
+                          letterSpacing: letterSpacing,
+                        );
+                      }
+                    },
                   ),
-                  keyboardType: TextInputType.number,
-                  onChanged: (value) {
-                    final letterSpacing = double.tryParse(value);
-                    if (letterSpacing != null) {
-                      _config = _config.copyWith(letterSpacing: letterSpacing);
-                    }
-                  },
                 ),
-              ),
-              const SizedBox(width: LinearSpacing.spacing16),
-              Expanded(
-                child: TextFormField(
-                  controller: _lineHeightController,
-                  style: const TextStyle(color: LinearColors.textPrimary),
-                  decoration: const InputDecoration(
-                    labelText: '行高',
-                    labelStyle: TextStyle(color: LinearColors.textSecondary),
-                    suffixText: '倍',
-                    suffixStyle: TextStyle(color: LinearColors.textTertiary),
-                    filled: true,
-                    fillColor: LinearColors.fillSurface,
+                const SizedBox(width: LinearSpacing.spacing16),
+                Expanded(
+                  child: TextFormField(
+                    controller: _lineHeightController,
+                    style: const TextStyle(color: LinearColors.textPrimary),
+                    decoration: const InputDecoration(
+                      labelText: '行高',
+                      labelStyle: TextStyle(color: LinearColors.textSecondary),
+                      suffixText: '倍',
+                      suffixStyle: TextStyle(color: LinearColors.textTertiary),
+                      filled: true,
+                      fillColor: LinearColors.fillSurface,
+                    ),
+                    keyboardType: TextInputType.number,
+                    onChanged: (value) {
+                      final lineHeight = double.tryParse(value);
+                      if (lineHeight != null) {
+                        _config = _config.copyWith(lineHeight: lineHeight);
+                      }
+                    },
                   ),
-                  keyboardType: TextInputType.number,
-                  onChanged: (value) {
-                    final lineHeight = double.tryParse(value);
-                    if (lineHeight != null) {
-                      _config = _config.copyWith(lineHeight: lineHeight);
-                    }
-                  },
                 ),
+              ],
+            ),
+            const SizedBox(height: LinearSpacing.spacing16),
+            TextFormField(
+              controller: _paddingController,
+              style: const TextStyle(color: LinearColors.textPrimary),
+              decoration: const InputDecoration(
+                labelText: '内边距',
+                labelStyle: TextStyle(color: LinearColors.textSecondary),
+                suffixText: 'px',
+                suffixStyle: TextStyle(color: LinearColors.textTertiary),
+                filled: true,
+                fillColor: LinearColors.fillSurface,
               ),
-            ],
-          ),
-          const SizedBox(height: LinearSpacing.spacing16),
-          TextFormField(
-            controller: _paddingController,
-            style: const TextStyle(color: LinearColors.textPrimary),
-            decoration: const InputDecoration(
-              labelText: '内边距',
-              labelStyle: TextStyle(color: LinearColors.textSecondary),
-              suffixText: 'px',
-              suffixStyle: TextStyle(color: LinearColors.textTertiary),
-              filled: true,
-              fillColor: LinearColors.fillSurface,
+              keyboardType: TextInputType.number,
+              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+              onChanged: (value) {
+                final padding = int.tryParse(value);
+                if (padding != null && padding >= 0) {
+                  _config = _config.copyWith(padding: padding);
+                }
+              },
             ),
-            keyboardType: TextInputType.number,
-            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-            onChanged: (value) {
-              final padding = int.tryParse(value);
-              if (padding != null && padding >= 0) {
-                _config = _config.copyWith(padding: padding);
-              }
-            },
-          ),
-          const SizedBox(height: LinearSpacing.spacing24),
-          // 实时预览区域
-          _buildTerminalPreview(),
-          const SizedBox(height: LinearSpacing.spacing24),
-          Text(
-            '颜色设置',
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              color: LinearColors.textPrimary,
-              fontWeight: FontWeight.w600,
+            const SizedBox(height: LinearSpacing.spacing24),
+            // 实时预览区域
+            _buildTerminalPreview(),
+            const SizedBox(height: LinearSpacing.spacing24),
+            Text(
+              '颜色设置',
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                color: LinearColors.textPrimary,
+                fontWeight: FontWeight.w600,
+              ),
             ),
-          ),
-          const SizedBox(height: LinearSpacing.spacing16),
-          Row(
-            children: [
-              Expanded(
-                child: TextFormField(
-                  controller: _bgColorController,
-                  style: const TextStyle(color: LinearColors.textPrimary),
-                  decoration: const InputDecoration(
-                    labelText: '背景颜色',
-                    labelStyle: TextStyle(color: LinearColors.textSecondary),
-                    filled: true,
-                    fillColor: LinearColors.fillSurface,
+            const SizedBox(height: LinearSpacing.spacing16),
+            Row(
+              children: [
+                Expanded(
+                  child: TextFormField(
+                    controller: _bgColorController,
+                    style: const TextStyle(color: LinearColors.textPrimary),
+                    decoration: const InputDecoration(
+                      labelText: '背景颜色',
+                      labelStyle: TextStyle(color: LinearColors.textSecondary),
+                      filled: true,
+                      fillColor: LinearColors.fillSurface,
+                    ),
+                    onChanged: (value) {
+                      _config = _config.copyWith(backgroundColor: value);
+                    },
                   ),
-                  onChanged: (value) {
-                    _config = _config.copyWith(backgroundColor: value);
-                  },
                 ),
-              ),
-              const SizedBox(width: LinearSpacing.spacing16),
-              Expanded(
-                child: TextFormField(
-                  controller: _fgColorController,
-                  style: const TextStyle(color: LinearColors.textPrimary),
-                  decoration: const InputDecoration(
-                    labelText: '前景颜色',
-                    labelStyle: TextStyle(color: LinearColors.textSecondary),
-                    filled: true,
-                    fillColor: LinearColors.fillSurface,
+                const SizedBox(width: LinearSpacing.spacing16),
+                Expanded(
+                  child: TextFormField(
+                    controller: _fgColorController,
+                    style: const TextStyle(color: LinearColors.textPrimary),
+                    decoration: const InputDecoration(
+                      labelText: '前景颜色',
+                      labelStyle: TextStyle(color: LinearColors.textSecondary),
+                      filled: true,
+                      fillColor: LinearColors.fillSurface,
+                    ),
+                    onChanged: (value) {
+                      _config = _config.copyWith(foregroundColor: value);
+                    },
                   ),
-                  onChanged: (value) {
-                    _config = _config.copyWith(foregroundColor: value);
-                  },
                 ),
+              ],
+            ),
+            const SizedBox(height: LinearSpacing.spacing16),
+            TextFormField(
+              controller: _cursorColorController,
+              style: const TextStyle(color: LinearColors.textPrimary),
+              decoration: const InputDecoration(
+                labelText: '光标颜色',
+                labelStyle: TextStyle(color: LinearColors.textSecondary),
+                filled: true,
+                fillColor: LinearColors.fillSurface,
               ),
-            ],
-          ),
-          const SizedBox(height: LinearSpacing.spacing16),
-          TextFormField(
-            controller: _cursorColorController,
-            style: const TextStyle(color: LinearColors.textPrimary),
-            decoration: const InputDecoration(
-              labelText: '光标颜色',
-              labelStyle: TextStyle(color: LinearColors.textSecondary),
-              filled: true,
-              fillColor: LinearColors.fillSurface,
+              onChanged: (value) {
+                _config = _config.copyWith(cursorColor: value);
+              },
             ),
-            onChanged: (value) {
-              _config = _config.copyWith(cursorColor: value);
-            },
-          ),
-          const SizedBox(height: LinearSpacing.spacing32),
-          Text(
-            '终端兼容性设置',
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              color: LinearColors.textPrimary,
-              fontWeight: FontWeight.w600,
+            const SizedBox(height: LinearSpacing.spacing32),
+            Text(
+              '终端兼容性设置',
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                color: LinearColors.textPrimary,
+                fontWeight: FontWeight.w600,
+              ),
             ),
-          ),
-          const SizedBox(height: LinearSpacing.spacing16),
-          SwitchListTile(
-            title: const Text(
-              '启用 Kitty 协议',
-              style: TextStyle(color: LinearColors.textPrimary),
+            const SizedBox(height: LinearSpacing.spacing16),
+            SwitchListTile(
+              title: const Text(
+                '启用 Kitty 协议',
+                style: TextStyle(color: LinearColors.textPrimary),
+              ),
+              subtitle: const Text(
+                '发送终端设备属性查询 (\\x1b[>1u)，让支持 Kitty 协议的应用（如 Neovim）自动启用高级特性。关闭此选项可兼容老旧终端设备。',
+                style: TextStyle(color: LinearColors.textTertiary),
+              ),
+              value: _config.enableKittyProtocol,
+              onChanged: (value) {
+                setState(() {
+                  _config = _config.copyWith(enableKittyProtocol: value);
+                });
+              },
             ),
-            subtitle: const Text(
-              '发送终端设备属性查询 (\\x1b[>1u)，让支持 Kitty 协议的应用（如 Neovim）自动启用高级特性。关闭此选项可兼容老旧终端设备。',
+            const SizedBox(height: LinearSpacing.spacing32),
+            Row(
+              children: [
+                OutlinedButton(
+                  onPressed: () {
+                    _loadConfig();
+                    setState(() {});
+                  },
+                  child: const Text('重置'),
+                ),
+                const SizedBox(width: LinearSpacing.spacing16),
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      final scaffoldMessenger = ScaffoldMessenger.maybeOf(
+                        context,
+                      );
+                      if (scaffoldMessenger == null) return;
+
+                      try {
+                        await ref
+                            .read(terminalConfigProvider.notifier)
+                            .updateConfig(_config);
+
+                        scaffoldMessenger.showSnackBar(
+                          const SnackBar(content: Text('设置已保存')),
+                        );
+                      } catch (e) {
+                        scaffoldMessenger.showSnackBar(
+                          SnackBar(content: Text('保存失败: $e')),
+                        );
+                      }
+                    },
+                    child: const Text('保存显示设置'),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: LinearSpacing.spacing32),
+            const Divider(),
+            const SizedBox(height: LinearSpacing.spacing24),
+            Text(
+              '默认终端应用',
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                color: LinearColors.textPrimary,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const SizedBox(height: LinearSpacing.spacing8),
+            const Text(
+              '选择执行 SSH 连接时打开的终端应用',
               style: TextStyle(color: LinearColors.textTertiary),
             ),
-            value: _config.enableKittyProtocol,
-            onChanged: (value) {
-              setState(() {
-                _config = _config.copyWith(enableKittyProtocol: value);
-              });
-            },
-          ),
-          const SizedBox(height: LinearSpacing.spacing32),
-          Row(
-            children: [
-              OutlinedButton(
-                onPressed: () {
-                  _loadConfig();
-                  setState(() {});
-                },
-                child: const Text('重置'),
+            const SizedBox(height: LinearSpacing.spacing16),
+            _buildDefaultTerminalSettings(),
+            const SizedBox(height: LinearSpacing.spacing32),
+            const Divider(),
+            const SizedBox(height: LinearSpacing.spacing24),
+            Text(
+              'SSH 连接设置',
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                color: LinearColors.textPrimary,
+                fontWeight: FontWeight.w600,
               ),
-              const SizedBox(width: LinearSpacing.spacing16),
-              Expanded(
-                child: ElevatedButton(
-                  onPressed: () async {
-                    final scaffoldMessenger = ScaffoldMessenger.maybeOf(
-                      context,
-                    );
-                    if (scaffoldMessenger == null) return;
-
-                    try {
-                      await ref.read(terminalConfigProvider.notifier).updateConfig(_config);
-
-                      scaffoldMessenger.showSnackBar(
-                        const SnackBar(content: Text('设置已保存')),
-                      );
-                    } catch (e) {
-                      scaffoldMessenger.showSnackBar(
-                        SnackBar(content: Text('保存失败: $e')),
-                      );
-                    }
-                  },
-                  child: const Text('保存显示设置'),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: LinearSpacing.spacing32),
-          const Divider(),
-          const SizedBox(height: LinearSpacing.spacing24),
-          Text(
-            '默认终端应用',
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              color: LinearColors.textPrimary,
-              fontWeight: FontWeight.w600,
             ),
-          ),
-          const SizedBox(height: LinearSpacing.spacing8),
-          const Text(
-            '选择执行 SSH 连接时打开的终端应用',
-            style: TextStyle(color: LinearColors.textTertiary),
-          ),
-          const SizedBox(height: LinearSpacing.spacing16),
-          _buildDefaultTerminalSettings(),
-          const SizedBox(height: LinearSpacing.spacing32),
-          const Divider(),
-          const SizedBox(height: LinearSpacing.spacing24),
-          Text(
-            'SSH 连接设置',
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              color: LinearColors.textPrimary,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          const SizedBox(height: LinearSpacing.spacing16),
-          Row(
-            children: [
-              Expanded(
-                child: TextFormField(
-                  controller: _keepaliveController,
-                  style: const TextStyle(color: LinearColors.textPrimary),
-                  decoration: const InputDecoration(
-                    labelText: 'Keepalive 间隔',
-                    labelStyle: TextStyle(color: LinearColors.textSecondary),
-                    suffixText: '秒',
-                    suffixStyle: TextStyle(color: LinearColors.textTertiary),
-                    helperText: '定期发送保活数据包，防止连接因空闲断开',
-                    helperStyle: TextStyle(color: LinearColors.textTertiary),
-                    filled: true,
-                    fillColor: LinearColors.fillSurface,
+            const SizedBox(height: LinearSpacing.spacing16),
+            Row(
+              children: [
+                Expanded(
+                  child: TextFormField(
+                    controller: _keepaliveController,
+                    style: const TextStyle(color: LinearColors.textPrimary),
+                    decoration: const InputDecoration(
+                      labelText: 'Keepalive 间隔',
+                      labelStyle: TextStyle(color: LinearColors.textSecondary),
+                      suffixText: '秒',
+                      suffixStyle: TextStyle(color: LinearColors.textTertiary),
+                      helperText: '定期发送保活数据包，防止连接因空闲断开',
+                      helperStyle: TextStyle(color: LinearColors.textTertiary),
+                      filled: true,
+                      fillColor: LinearColors.fillSurface,
+                    ),
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                    onChanged: (value) {
+                      final seconds = int.tryParse(value);
+                      if (seconds != null && seconds > 0) {
+                        _sshConfig = _sshConfig.copyWith(
+                          keepaliveInterval: seconds * 1000,
+                        );
+                      }
+                    },
                   ),
-                  keyboardType: TextInputType.number,
-                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                  onChanged: (value) {
-                    final seconds = int.tryParse(value);
-                    if (seconds != null && seconds > 0) {
-                      _sshConfig = _sshConfig.copyWith(
-                        keepaliveInterval: seconds * 1000,
-                      );
-                    }
-                  },
                 ),
-              ),
-            ],
-          ),
-          const SizedBox(height: LinearSpacing.spacing16),
-          Row(
-            children: [
-              OutlinedButton(
-                onPressed: () {
-                  _loadConfig();
-                  setState(() {});
-                },
-                child: const Text('重置'),
-              ),
-              const SizedBox(width: LinearSpacing.spacing16),
-              Expanded(
-                child: ElevatedButton(
-                  onPressed: () async {
-                    final scaffoldMessenger = ScaffoldMessenger.maybeOf(
-                      context,
-                    );
-                    if (scaffoldMessenger == null) return;
-
-                    try {
-                      await ref.read(sshConfigProvider.notifier).updateConfig(_sshConfig);
-
-                      scaffoldMessenger.showSnackBar(
-                        const SnackBar(content: Text('SSH 设置已保存')),
-                      );
-                    } catch (e) {
-                      scaffoldMessenger.showSnackBar(
-                        SnackBar(content: Text('保存失败: $e')),
-                      );
-                    }
+              ],
+            ),
+            const SizedBox(height: LinearSpacing.spacing16),
+            Row(
+              children: [
+                OutlinedButton(
+                  onPressed: () {
+                    _loadConfig();
+                    setState(() {});
                   },
-                  child: const Text('保存 SSH 设置'),
+                  child: const Text('重置'),
                 ),
-              ),
-            ],
-          ),
-        ],
-      ),
+                const SizedBox(width: LinearSpacing.spacing16),
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      final scaffoldMessenger = ScaffoldMessenger.maybeOf(
+                        context,
+                      );
+                      if (scaffoldMessenger == null) return;
+
+                      try {
+                        await ref
+                            .read(sshConfigProvider.notifier)
+                            .updateConfig(_sshConfig);
+
+                        scaffoldMessenger.showSnackBar(
+                          const SnackBar(content: Text('SSH 设置已保存')),
+                        );
+                      } catch (e) {
+                        scaffoldMessenger.showSnackBar(
+                          SnackBar(content: Text('保存失败: $e')),
+                        );
+                      }
+                    },
+                    child: const Text('保存 SSH 设置'),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -521,9 +532,7 @@ class _TerminalSettingsPageState extends ConsumerState<TerminalSettingsPage> {
         const SizedBox(height: LinearSpacing.spacing8),
         const Text(
           '选择或输入本地终端使用的 Shell 路径',
-          style: TextStyle(
-            color: LinearColors.textTertiary,
-          ),
+          style: TextStyle(color: LinearColors.textTertiary),
         ),
         const SizedBox(height: LinearSpacing.spacing16),
         DropdownButtonFormField<String>(
@@ -605,7 +614,9 @@ class _TerminalSettingsPageState extends ConsumerState<TerminalSettingsPage> {
           '提示：空值将自动使用系统默认 Shell (从 \$SHELL 环境变量获取)',
           style: TextStyle(
             fontSize: 12,
-            color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+            color: Theme.of(
+              context,
+            ).colorScheme.onSurface.withValues(alpha: 0.6),
           ),
         ),
       ],
@@ -654,10 +665,7 @@ class _TerminalSettingsPageState extends ConsumerState<TerminalSettingsPage> {
             ),
             const Text(
               '提示：使用下方按钮或滑块调整字体大小',
-              style: TextStyle(
-                fontSize: 11,
-                color: LinearColors.textTertiary,
-              ),
+              style: TextStyle(fontSize: 11, color: LinearColors.textTertiary),
             ),
           ],
         ),
@@ -678,11 +686,27 @@ class _TerminalSettingsPageState extends ConsumerState<TerminalSettingsPage> {
                 _buildPreviewLine('user@hostname:~\$', fgColor),
                 _buildPreviewLine('user@hostname:~\$ ls -la', fgColor),
                 _buildPreviewLine('total 24', fgColor.withValues(alpha: 0.7)),
-                _buildPreviewLine('drwxr-xr-x  5 user  group  160 Jan 15 10:30 .', fgColor.withValues(alpha: 0.7)),
-                _buildPreviewLine('drwxr-xr-x  3 root  root   100 Jan 15 10:30 ..', fgColor.withValues(alpha: 0.7)),
-                _buildPreviewLine('-rw-r--r--  1 user  group  220 Jan 15 10:30 .bashrc', fgColor.withValues(alpha: 0.7)),
-                _buildPreviewLine('-rw-r--r--  1 user  group  655 Jan 15 10:30 config.json', fgColor.withValues(alpha: 0.7)),
-                _buildPreviewLine('user@hostname:~\$ _', fgColor, showCursor: true),
+                _buildPreviewLine(
+                  'drwxr-xr-x  5 user  group  160 Jan 15 10:30 .',
+                  fgColor.withValues(alpha: 0.7),
+                ),
+                _buildPreviewLine(
+                  'drwxr-xr-x  3 root  root   100 Jan 15 10:30 ..',
+                  fgColor.withValues(alpha: 0.7),
+                ),
+                _buildPreviewLine(
+                  '-rw-r--r--  1 user  group  220 Jan 15 10:30 .bashrc',
+                  fgColor.withValues(alpha: 0.7),
+                ),
+                _buildPreviewLine(
+                  '-rw-r--r--  1 user  group  655 Jan 15 10:30 config.json',
+                  fgColor.withValues(alpha: 0.7),
+                ),
+                _buildPreviewLine(
+                  'user@hostname:~\$ _',
+                  fgColor,
+                  showCursor: true,
+                ),
               ],
             ),
           ),
@@ -713,13 +737,19 @@ class _TerminalSettingsPageState extends ConsumerState<TerminalSettingsPage> {
     );
   }
 
-  Widget _buildPreviewLine(String text, Color color, {bool showCursor = false}) {
+  Widget _buildPreviewLine(
+    String text,
+    Color color, {
+    bool showCursor = false,
+  }) {
     return Row(
       children: [
         Text(
           text,
           style: TextStyle(
-            fontFamily: _config.fontFamily.isNotEmpty ? _config.fontFamily : null,
+            fontFamily: _config.fontFamily.isNotEmpty
+                ? _config.fontFamily
+                : null,
             fontSize: _config.fontSize,
             height: _config.lineHeight,
             color: color,
@@ -812,7 +842,10 @@ class _TerminalSettingsPageState extends ConsumerState<TerminalSettingsPage> {
             }),
           ],
           onChanged: (value) {
-            if (value != null && value != 'programming_header' && value != 'system_header' && value != 'divider_item') {
+            if (value != null &&
+                value != 'programming_header' &&
+                value != 'system_header' &&
+                value != 'divider_item') {
               _fontFamilyController.text = value;
               _config = _config.copyWith(fontFamily: value);
             }
@@ -845,7 +878,9 @@ class _TerminalSettingsPageState extends ConsumerState<TerminalSettingsPage> {
           decoration: BoxDecoration(
             border: Border.all(color: Theme.of(context).dividerColor),
             borderRadius: BorderRadius.circular(8),
-            color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+            color: Theme.of(
+              context,
+            ).colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -854,14 +889,18 @@ class _TerminalSettingsPageState extends ConsumerState<TerminalSettingsPage> {
                 '字体预览',
                 style: TextStyle(
                   fontSize: 12,
-                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onSurface.withValues(alpha: 0.6),
                 ),
               ),
               const SizedBox(height: LinearSpacing.spacing8),
               Text(
                 'The quick brown fox jumps over the lazy dog.',
                 style: TextStyle(
-                  fontFamily: _config.fontFamily.isNotEmpty ? _config.fontFamily : null,
+                  fontFamily: _config.fontFamily.isNotEmpty
+                      ? _config.fontFamily
+                      : null,
                   fontSize: _config.fontSize,
                   fontWeight: _mapFontWeight(_config.fontWeight),
                   color: LinearColors.textPrimary,
@@ -871,7 +910,9 @@ class _TerminalSettingsPageState extends ConsumerState<TerminalSettingsPage> {
               Text(
                 '1234567890 !@#\$%^&*()',
                 style: TextStyle(
-                  fontFamily: _config.fontFamily.isNotEmpty ? _config.fontFamily : null,
+                  fontFamily: _config.fontFamily.isNotEmpty
+                      ? _config.fontFamily
+                      : null,
                   fontSize: _config.fontSize,
                   fontWeight: _mapFontWeight(_config.fontWeight),
                   color: LinearColors.textPrimary,
@@ -883,10 +924,7 @@ class _TerminalSettingsPageState extends ConsumerState<TerminalSettingsPage> {
         const SizedBox(height: LinearSpacing.spacing8),
         const Text(
           '提示：确保系统已安装所选字体。推荐使用等宽编程字体以获得最佳终端体验。',
-          style: TextStyle(
-            fontSize: 11,
-            color: LinearColors.textTertiary,
-          ),
+          style: TextStyle(fontSize: 11, color: LinearColors.textTertiary),
         ),
       ],
     );

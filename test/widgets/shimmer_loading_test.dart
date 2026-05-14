@@ -9,11 +9,8 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           theme: ThemeData.dark(),
-          home: Scaffold(
-            body: ShimmerLoading(
-              isLoading: false,
-              child: const Text('Content'),
-            ),
+          home: const Scaffold(
+            body: ShimmerLoading(isLoading: false, child: Text('Content')),
           ),
         ),
       );
@@ -26,11 +23,8 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           theme: ThemeData.dark(),
-          home: Scaffold(
-            body: ShimmerLoading(
-              isLoading: true,
-              child: const Text('Content'),
-            ),
+          home: const Scaffold(
+            body: ShimmerLoading(isLoading: true, child: Text('Content')),
           ),
         ),
       );
@@ -43,26 +37,21 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           theme: ThemeData.dark(),
-          home: const Scaffold(
-            body: ShimmerLoading(
-              child: Text('Content'),
-            ),
-          ),
+          home: const Scaffold(body: ShimmerLoading(child: Text('Content'))),
         ),
       );
 
       expect(find.byType(Shimmer), findsOneWidget);
     });
 
-    testWidgets('toggles between shimmer and child on isLoading change', (tester) async {
+    testWidgets('toggles between shimmer and child on isLoading change', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           theme: ThemeData.dark(),
-          home: Scaffold(
-            body: ShimmerLoading(
-              isLoading: true,
-              child: const Text('Content'),
-            ),
+          home: const Scaffold(
+            body: ShimmerLoading(isLoading: true, child: Text('Content')),
           ),
         ),
       );
@@ -72,11 +61,8 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           theme: ThemeData.dark(),
-          home: Scaffold(
-            body: ShimmerLoading(
-              isLoading: false,
-              child: const Text('Content'),
-            ),
+          home: const Scaffold(
+            body: ShimmerLoading(isLoading: false, child: Text('Content')),
           ),
         ),
       );

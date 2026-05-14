@@ -131,15 +131,15 @@ void main() {
 
       test('throws when session is null', () async {
         final nullService = KittySearchService();
-        expect(
-          () => nullService.search('hello'),
-          throwsA(isA<Exception>()),
-        );
+        expect(() => nullService.search('hello'), throwsA(isA<Exception>()));
       });
 
       test('updates current options when provided', () async {
         expect(service.currentOptions.wrap, isTrue);
-        await service.search('hello', options: const SearchOptions(wrap: false));
+        await service.search(
+          'hello',
+          options: const SearchOptions(wrap: false),
+        );
         expect(service.currentOptions.wrap, isFalse);
       });
     });
@@ -258,34 +258,28 @@ void main() {
 
       test('throws when session is null', () async {
         final nullService = KittySearchService();
-        expect(
-          () => nullService.clearSearch(),
-          throwsA(isA<Exception>()),
-        );
+        expect(() => nullService.clearSearch(), throwsA(isA<Exception>()));
       });
     });
 
     group('setHighlight', () {
       test('sends highlight on sequence', () async {
         await service.setHighlight(true);
-        verify(() => mockSession.writeRaw(
-          '\x1b]搜索结果;highlight=on\x1b\\\\',
-        )).called(1);
+        verify(
+          () => mockSession.writeRaw('\x1b]搜索结果;highlight=on\x1b\\\\'),
+        ).called(1);
       });
 
       test('sends highlight off sequence', () async {
         await service.setHighlight(false);
-        verify(() => mockSession.writeRaw(
-          '\x1b]搜索结果;highlight=off\x1b\\\\',
-        )).called(1);
+        verify(
+          () => mockSession.writeRaw('\x1b]搜索结果;highlight=off\x1b\\\\'),
+        ).called(1);
       });
 
       test('throws when session is null', () async {
         final nullService = KittySearchService();
-        expect(
-          () => nullService.setHighlight(true),
-          throwsA(isA<Exception>()),
-        );
+        expect(() => nullService.setHighlight(true), throwsA(isA<Exception>()));
       });
     });
 
@@ -337,10 +331,7 @@ void main() {
       });
 
       test('does nothing when no callback is set', () {
-        expect(
-          () => service.handleSearchResponse('found'),
-          returnsNormally,
-        );
+        expect(() => service.handleSearchResponse('found'), returnsNormally);
       });
 
       test('does not call callback for unrelated response', () {
@@ -351,10 +342,7 @@ void main() {
       });
 
       test('does not throw for empty response', () {
-        expect(
-          () => service.handleSearchResponse(''),
-          returnsNormally,
-        );
+        expect(() => service.handleSearchResponse(''), returnsNormally);
       });
     });
   });

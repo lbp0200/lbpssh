@@ -67,35 +67,29 @@ void main() {
       });
 
       test('includes arguments', () async {
-        await service.launch(
-          '/bin/ls',
-          arguments: ['-la', '/tmp'],
-        );
+        await service.launch('/bin/ls', arguments: ['-la', '/tmp']);
         verify(
-          () =>
-              mockSession.writeRaw('\x1b]6;p=/bin/ls;a=-la,/tmp;type=tab\x1b\\\\'),
+          () => mockSession.writeRaw(
+            '\x1b]6;p=/bin/ls;a=-la,/tmp;type=tab\x1b\\\\',
+          ),
         ).called(1);
       });
 
       test('includes cwd', () async {
-        await service.launch(
-          '/bin/sh',
-          cwd: '/home/user',
-        );
+        await service.launch('/bin/sh', cwd: '/home/user');
         verify(
-          () =>
-              mockSession.writeRaw('\x1b]6;p=/bin/sh;c=/home/user;type=tab\x1b\\\\'),
+          () => mockSession.writeRaw(
+            '\x1b]6;p=/bin/sh;c=/home/user;type=tab\x1b\\\\',
+          ),
         ).called(1);
       });
 
       test('includes title', () async {
-        await service.launch(
-          '/bin/bash',
-          title: 'My Terminal',
-        );
+        await service.launch('/bin/bash', title: 'My Terminal');
         verify(
-          () =>
-              mockSession.writeRaw('\x1b]6;p=/bin/bash;t=My Terminal;type=tab\x1b\\\\'),
+          () => mockSession.writeRaw(
+            '\x1b]6;p=/bin/bash;t=My Terminal;type=tab\x1b\\\\',
+          ),
         ).called(1);
       });
 
@@ -119,54 +113,41 @@ void main() {
       test('includes stealFocus when true', () async {
         await service.launch('/bin/ls', stealFocus: true);
         verify(
-          () => mockSession.writeRaw(
-            any(that: contains(';s=1')),
-          ),
+          () => mockSession.writeRaw(any(that: contains(';s=1'))),
         ).called(1);
       });
 
       test('includes stealFocus when false', () async {
         await service.launch('/bin/ls', stealFocus: false);
         verify(
-          () => mockSession.writeRaw(
-            any(that: contains(';s=0')),
-          ),
+          () => mockSession.writeRaw(any(that: contains(';s=0'))),
         ).called(1);
       });
 
       test('includes env', () async {
         await service.launch('/bin/ls', env: 'DISPLAY=:0');
         verify(
-          () => mockSession.writeRaw(
-            any(that: contains(';e=DISPLAY=:0')),
-          ),
+          () => mockSession.writeRaw(any(that: contains(';e=DISPLAY=:0'))),
         ).called(1);
       });
 
       test('includes hold when true', () async {
         await service.launch('/bin/ls', hold: true);
         verify(
-          () => mockSession.writeRaw(
-            any(that: contains(';h=1')),
-          ),
+          () => mockSession.writeRaw(any(that: contains(';h=1'))),
         ).called(1);
       });
 
       test('includes hold when false', () async {
         await service.launch('/bin/ls', hold: false);
         verify(
-          () => mockSession.writeRaw(
-            any(that: contains(';h=0')),
-          ),
+          () => mockSession.writeRaw(any(that: contains(';h=0'))),
         ).called(1);
       });
 
       test('throws when session is null', () async {
         final nullService = KittyLaunchService();
-        expect(
-          () => nullService.launch('/bin/ls'),
-          throwsA(isA<Exception>()),
-        );
+        expect(() => nullService.launch('/bin/ls'), throwsA(isA<Exception>()));
       });
     });
 
@@ -197,20 +178,15 @@ void main() {
       test('sends command with window type', () async {
         await service.launchInWindow('/bin/ls');
         verify(
-          () =>
-              mockSession.writeRaw('\x1b]6;p=/bin/ls;type=window\x1b\\\\'),
+          () => mockSession.writeRaw('\x1b]6;p=/bin/ls;type=window\x1b\\\\'),
         ).called(1);
       });
 
       test('forwards stealFocus', () async {
-        await service.launchInWindow(
-          '/bin/ls',
-          stealFocus: true,
-        );
+        await service.launchInWindow('/bin/ls', stealFocus: true);
         verify(
-          () => mockSession.writeRaw(
-            '\x1b]6;p=/bin/ls;type=window;s=1\x1b\\\\',
-          ),
+          () =>
+              mockSession.writeRaw('\x1b]6;p=/bin/ls;type=window;s=1\x1b\\\\'),
         ).called(1);
       });
     });
@@ -219,9 +195,8 @@ void main() {
       test('sends command with os type and empty program', () async {
         await service.openWithSystemDefault('/path/to/file');
         verify(
-          () => mockSession.writeRaw(
-            '\x1b]6;p=;c=/path/to/file;type=os\x1b\\\\',
-          ),
+          () =>
+              mockSession.writeRaw('\x1b]6;p=;c=/path/to/file;type=os\x1b\\\\'),
         ).called(1);
       });
     });
@@ -267,10 +242,7 @@ void main() {
       });
 
       test('includes body', () async {
-        await service.sendNotification(
-          title: 'Hello',
-          body: 'World',
-        );
+        await service.sendNotification(title: 'Hello', body: 'World');
         verify(
           () => mockSession.writeRaw(
             '\x1b]6;type=notification;title=Hello;b=World\x1b\\\\',
@@ -279,10 +251,7 @@ void main() {
       });
 
       test('includes sound', () async {
-        await service.sendNotification(
-          title: 'Alert',
-          sound: 'Basso',
-        );
+        await service.sendNotification(title: 'Alert', sound: 'Basso');
         verify(
           () => mockSession.writeRaw(
             '\x1b]6;type=notification;title=Alert;s=Basso\x1b\\\\',
@@ -371,7 +340,7 @@ void main() {
               'maximizeWindow' => nullService.maximizeWindow(),
               'setFullscreen' => nullService.setFullscreen(true),
               'setWindowTitle' => nullService.setWindowTitle('x'),
-              _ => Future.value(),
+              _ => Future<void>.value(),
             },
             throwsA(isA<Exception>()),
           );

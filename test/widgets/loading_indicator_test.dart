@@ -11,9 +11,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           theme: ThemeData.dark(),
-          home: Scaffold(
-            body: const LoadingIndicator(),
-          ),
+          home: const Scaffold(body: LoadingIndicator()),
         ),
       );
 
@@ -30,9 +28,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           theme: ThemeData.dark(),
-          home: Scaffold(
-            body: const LoadingIndicator(size: size),
-          ),
+          home: const Scaffold(body: LoadingIndicator(size: size)),
         ),
       );
 
@@ -46,31 +42,33 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           theme: ThemeData.dark(),
-          home: Scaffold(
-            body: const LoadingIndicator(color: customColor),
-          ),
+          home: const Scaffold(body: LoadingIndicator(color: customColor)),
         ),
       );
 
-      final progressIndicator =
-          tester.widget<CircularProgressIndicator>(find.byType(CircularProgressIndicator));
-      final valueColor = progressIndicator.valueColor as AlwaysStoppedAnimation<Color>;
+      final progressIndicator = tester.widget<CircularProgressIndicator>(
+        find.byType(CircularProgressIndicator),
+      );
+      final valueColor =
+          progressIndicator.valueColor as AlwaysStoppedAnimation<Color>;
       expect(valueColor.value, customColor);
     });
 
-    testWidgets('uses default accent color when no color provided', (tester) async {
+    testWidgets('uses default accent color when no color provided', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           theme: ThemeData.dark(),
-          home: const Scaffold(
-            body: LoadingIndicator(),
-          ),
+          home: const Scaffold(body: LoadingIndicator()),
         ),
       );
 
-      final progressIndicator =
-          tester.widget<CircularProgressIndicator>(find.byType(CircularProgressIndicator));
-      final valueColor = progressIndicator.valueColor as AlwaysStoppedAnimation<Color>;
+      final progressIndicator = tester.widget<CircularProgressIndicator>(
+        find.byType(CircularProgressIndicator),
+      );
+      final valueColor =
+          progressIndicator.valueColor as AlwaysStoppedAnimation<Color>;
       expect(valueColor.value, LinearColors.accentInteractive);
     });
 
@@ -78,14 +76,13 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           theme: ThemeData.dark(),
-          home: const Scaffold(
-            body: LoadingIndicator(),
-          ),
+          home: const Scaffold(body: LoadingIndicator()),
         ),
       );
 
-      final progressIndicator =
-          tester.widget<CircularProgressIndicator>(find.byType(CircularProgressIndicator));
+      final progressIndicator = tester.widget<CircularProgressIndicator>(
+        find.byType(CircularProgressIndicator),
+      );
       expect(progressIndicator.strokeWidth, 2);
     });
   });

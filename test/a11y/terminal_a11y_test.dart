@@ -26,12 +26,7 @@ void main() {
       // 验证 Focus widget 可以正确构建
       await tester.pumpWidget(
         const MaterialApp(
-          home: Scaffold(
-            body: Focus(
-              autofocus: true,
-              child: TextField(),
-            ),
-          ),
+          home: Scaffold(body: Focus(autofocus: true, child: TextField())),
         ),
       );
 
@@ -55,8 +50,12 @@ void main() {
       );
 
       // 验证 Semantics widget 存在 - 查找包含我们设置的 label 的 Semantics
-      final semanticsWidgets = tester.widgetList<Semantics>(find.byType(Semantics));
-      final hasLabel = semanticsWidgets.any((s) => s.properties.label == testLabel);
+      final semanticsWidgets = tester.widgetList<Semantics>(
+        find.byType(Semantics),
+      );
+      final hasLabel = semanticsWidgets.any(
+        (s) => s.properties.label == testLabel,
+      );
       expect(hasLabel, isTrue);
     });
   });

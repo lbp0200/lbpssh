@@ -4,10 +4,10 @@ import 'terminal_service.dart';
 
 /// 键盘事件类型
 enum KeyboardEventType {
-  keyPress,      // 按键按下
-  keyRelease,    // 按键释放
-  textInput,     // 文本输入
-  modifier,      // 修饰键变化
+  keyPress, // 按键按下
+  keyRelease, // 按键释放
+  textInput, // 文本输入
+  modifier, // 修饰键变化
 }
 
 /// 修饰键
@@ -30,9 +30,9 @@ class ModifierKeys {
 /// 键盘事件
 class KeyboardEvent {
   final KeyboardEventType type;
-  final String? key;           // 键名 (如 "a", "Enter", "F1")
-  final int? keyCode;          // 键码
-  final String? text;          // 文本输入
+  final String? key; // 键名 (如 "a", "Enter", "F1")
+  final int? keyCode; // 键码
+  final String? text; // 文本输入
   final ModifierKeys modifiers;
 
   const KeyboardEvent({
@@ -80,7 +80,10 @@ class KittyKeyboardService {
   ///
   /// [key] - 键名
   /// [modifiers] - 修饰键
-  Future<void> sendKey(String key, {ModifierKeys modifiers = const ModifierKeys()}) async {
+  Future<void> sendKey(
+    String key, {
+    ModifierKeys modifiers = const ModifierKeys(),
+  }) async {
     if (_session == null) {
       throw Exception('未连接到终端');
     }
@@ -301,17 +304,15 @@ class KittyKeyboardService {
         final state = response.substring(4);
         final modifiers = _parseModifiers(state);
 
-        onModifierChange?.call(KeyboardEvent(
-          type: KeyboardEventType.modifier,
-          modifiers: modifiers,
-        ));
+        onModifierChange?.call(
+          KeyboardEvent(type: KeyboardEventType.modifier, modifiers: modifiers),
+        );
       } else if (response.startsWith('201;')) {
         // 文本输入响应
         final text = response.substring(4);
-        onTextInput?.call(KeyboardEvent(
-          type: KeyboardEventType.textInput,
-          text: text,
-        ));
+        onTextInput?.call(
+          KeyboardEvent(type: KeyboardEventType.textInput, text: text),
+        );
       }
     } catch (e) {
       // 忽略解析错误

@@ -94,10 +94,7 @@ void main() {
 
       test('throws when session is null', () async {
         final nullService = KittyActionsService();
-        expect(
-          () => nullService.runProgram('ls'),
-          throwsA(isA<Exception>()),
-        );
+        expect(() => nullService.runProgram('ls'), throwsA(isA<Exception>()));
       });
     });
 
@@ -109,10 +106,7 @@ void main() {
 
       test('throws when session is null', () async {
         final nullService = KittyActionsService();
-        expect(
-          () => nullService.click(0, 0),
-          throwsA(isA<Exception>()),
-        );
+        expect(() => nullService.click(0, 0), throwsA(isA<Exception>()));
       });
     });
 
@@ -134,10 +128,7 @@ void main() {
 
       test('throws when session is null', () async {
         final nullService = KittyActionsService();
-        expect(
-          () => nullService.scroll(deltaY: -1),
-          throwsA(isA<Exception>()),
-        );
+        expect(() => nullService.scroll(deltaY: -1), throwsA(isA<Exception>()));
       });
     });
 
@@ -164,10 +155,7 @@ void main() {
 
       test('throws when session is null', () async {
         final nullService = KittyActionsService();
-        expect(
-          () => nullService.input('test'),
-          throwsA(isA<Exception>()),
-        );
+        expect(() => nullService.input('test'), throwsA(isA<Exception>()));
       });
     });
 
@@ -178,7 +166,14 @@ void main() {
       });
 
       test('supports all directions', () async {
-        for (final direction in ['up', 'down', 'left', 'right', 'home', 'end']) {
+        for (final direction in [
+          'up',
+          'down',
+          'left',
+          'right',
+          'home',
+          'end',
+        ]) {
           await service.navigate(direction);
         }
         verify(() => mockSession.writeRaw(any())).called(6);
@@ -186,10 +181,7 @@ void main() {
 
       test('throws when session is null', () async {
         final nullService = KittyActionsService();
-        expect(
-          () => nullService.navigate('up'),
-          throwsA(isA<Exception>()),
-        );
+        expect(() => nullService.navigate('up'), throwsA(isA<Exception>()));
       });
     });
 
@@ -323,10 +315,7 @@ void main() {
       });
 
       test('does not throw for empty response', () {
-        expect(
-          () => service.handleActionResponse(''),
-          returnsNormally,
-        );
+        expect(() => service.handleActionResponse(''), returnsNormally);
       });
 
       test('does not throw for malformed response', () {

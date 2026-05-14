@@ -131,10 +131,7 @@ class _AppSettingsScreenState extends State<AppSettingsScreen> {
               ],
             ),
           ),
-          Container(
-            width: 1,
-            color: LinearColors.borderSubtle,
-          ),
+          Container(width: 1, color: LinearColors.borderSubtle),
           Expanded(
             child: IndexedStack(
               index: _selectedIndex,
@@ -166,5 +163,3 @@ class _AppSettingsScreenState extends State<AppSettingsScreen> {
     }
   }
 }
-
-

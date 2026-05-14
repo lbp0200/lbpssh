@@ -15,29 +15,29 @@ class AppConfig {
     TerminalConfig? terminal,
     DefaultTerminalConfig? defaultTerminal,
     SshConfig? ssh,
-  })  : terminal = terminal ?? TerminalConfig.defaultConfig,
-        defaultTerminal = defaultTerminal ?? DefaultTerminalConfig.defaultConfig,
-        ssh = ssh ?? SshConfig.defaultConfig;
+  }) : terminal = terminal ?? TerminalConfig.defaultConfig,
+       defaultTerminal = defaultTerminal ?? DefaultTerminalConfig.defaultConfig,
+       ssh = ssh ?? SshConfig.defaultConfig;
 
   Map<String, dynamic> toJson() => {
-        'terminal': terminal.toJson(),
-        'defaultTerminal': defaultTerminal.toJson(),
-        'ssh': ssh.toJson(),
-      };
+    'terminal': terminal.toJson(),
+    'defaultTerminal': defaultTerminal.toJson(),
+    'ssh': ssh.toJson(),
+  };
 
   factory AppConfig.fromJson(Map<String, dynamic> json) => AppConfig(
-        terminal: json['terminal'] != null
-            ? TerminalConfig.fromJson(json['terminal'] as Map<String, dynamic>)
-            : null,
-        defaultTerminal: json['defaultTerminal'] != null
-            ? DefaultTerminalConfig.fromJson(
-                json['defaultTerminal'] as Map<String, dynamic>,
-              )
-            : null,
-        ssh: json['ssh'] != null
-            ? SshConfig.fromJson(json['ssh'] as Map<String, dynamic>)
-            : null,
-      );
+    terminal: json['terminal'] != null
+        ? TerminalConfig.fromJson(json['terminal'] as Map<String, dynamic>)
+        : null,
+    defaultTerminal: json['defaultTerminal'] != null
+        ? DefaultTerminalConfig.fromJson(
+            json['defaultTerminal'] as Map<String, dynamic>,
+          )
+        : null,
+    ssh: json['ssh'] != null
+        ? SshConfig.fromJson(json['ssh'] as Map<String, dynamic>)
+        : null,
+  );
 }
 
 class AppConfigService with ChangeNotifier {

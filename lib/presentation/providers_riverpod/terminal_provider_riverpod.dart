@@ -16,15 +16,11 @@ class TerminalState {
   final List<TerminalSession> sessions;
   final String? activeSessionId;
 
-  const TerminalState({
-    this.sessions = const [],
-    this.activeSessionId,
-  });
+  const TerminalState({this.sessions = const [], this.activeSessionId});
 
-  TerminalSession? get activeSession =>
-      activeSessionId != null
-          ? sessions.where((s) => s.id == activeSessionId).firstOrNull
-          : null;
+  TerminalSession? get activeSession => activeSessionId != null
+      ? sessions.where((s) => s.id == activeSessionId).firstOrNull
+      : null;
 
   TerminalState copyWith({
     List<TerminalSession>? sessions,
@@ -33,7 +29,9 @@ class TerminalState {
   }) {
     return TerminalState(
       sessions: sessions ?? this.sessions,
-      activeSessionId: clearActive ? null : (activeSessionId ?? this.activeSessionId),
+      activeSessionId: clearActive
+          ? null
+          : (activeSessionId ?? this.activeSessionId),
     );
   }
 
@@ -45,10 +43,7 @@ class TerminalState {
           listEquals(sessions, other.sessions);
 
   @override
-  int get hashCode => Object.hash(
-        activeSessionId,
-        Object.hashAll(sessions),
-      );
+  int get hashCode => Object.hash(activeSessionId, Object.hashAll(sessions));
 }
 
 /// 映射 [TerminalService.getAllSessions] 到 immutable 列表
@@ -91,7 +86,8 @@ class TerminalNotifier extends Notifier<TerminalState> {
 
     _services[sessionId] = localService;
 
-    final initialDir = Platform.environment['HOME'] ??
+    final initialDir =
+        Platform.environment['HOME'] ??
         Platform.environment['USERPROFILE'] ??
         Directory.current.path;
 
@@ -149,7 +145,8 @@ class TerminalNotifier extends Notifier<TerminalState> {
     final sshService = SshService();
     _services[sessionId] = sshService;
 
-    final name = '${connection.name} (${connection.username}@${connection.host})';
+    final name =
+        '${connection.name} (${connection.username}@${connection.host})';
 
     final session = _terminalService.createSession(
       id: sessionId,
@@ -171,7 +168,10 @@ class TerminalNotifier extends Notifier<TerminalState> {
       final s = _terminalService.getSession(sessionId);
       if (s != null) {
         try {
-          final pwdResult = await sshService.executeCommand('pwd', silent: true);
+          final pwdResult = await sshService.executeCommand(
+            'pwd',
+            silent: true,
+          );
           s.setWorkingDirectory(pwdResult.trim());
         } catch (e) {
           // 使用默认目录
@@ -234,7 +234,9 @@ class TerminalNotifier extends Notifier<TerminalState> {
       _services.remove(sessionId);
     }
 
-    final existingSession = state.sessions.where((TerminalSession s) => s.id == sessionId).firstOrNull;
+    final existingSession = state.sessions
+        .where((TerminalSession s) => s.id == sessionId)
+        .firstOrNull;
 
     if (existingSession == null) return;
 
@@ -250,15 +252,17 @@ class TerminalNotifier extends Notifier<TerminalState> {
     _services[sessionId] = sshService;
 
     try {
-      await sshService.connect(SshConnection(
-        id: '',
-        name: existingSession.name,
-        host: host,
-        port: 22,
-        username: username,
-        authType: AuthType.password,
-        password: '',
-      ));
+      await sshService.connect(
+        SshConnection(
+          id: '',
+          name: existingSession.name,
+          host: host,
+          port: 22,
+          username: username,
+          authType: AuthType.password,
+          password: '',
+        ),
+      );
     } catch (e) {
       _services.remove(sessionId);
       throw Exception('重连失败: $e');
@@ -277,7 +281,6 @@ class TerminalNotifier extends Notifier<TerminalState> {
   }
 }
 
-final terminalProvider =
-    NotifierProvider<TerminalNotifier, TerminalState>(
-      TerminalNotifier.new,
-    );
+final terminalProvider = NotifierProvider<TerminalNotifier, TerminalState>(
+  TerminalNotifier.new,
+);

@@ -23,8 +23,10 @@ void main() async {
 
   // 全局错误处理器
   FlutterError.onError = (details) {
-    SentryService().captureException(details.exception,
-        stackTrace: details.stack);
+    SentryService().captureException(
+      details.exception,
+      stackTrace: details.stack,
+    );
     FlutterError.presentError(details);
   };
 
@@ -84,10 +86,7 @@ class MyApp extends StatelessWidget {
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-      supportedLocales: const [
-        Locale('en'),
-        Locale('zh'),
-      ],
+      supportedLocales: const [Locale('en'), Locale('zh')],
     );
   }
 }

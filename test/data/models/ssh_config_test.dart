@@ -34,6 +34,5 @@ void main() {
       final copied = config.copyWith();
       expect(copied.keepaliveInterval, 30000);
     });
-
   });
 }

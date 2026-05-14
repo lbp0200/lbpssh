@@ -162,8 +162,9 @@ void main() {
     group('setCustomColor', () {
       test('converts #rrggbb to rgb format', () async {
         await service.setCustomColor('#ff8800');
-        verify(() => mockSession.writeRaw('\x1b[4:58:color=rgb:ff/88/00m'))
-            .called(1);
+        verify(
+          () => mockSession.writeRaw('\x1b[4:58:color=rgb:ff/88/00m'),
+        ).called(1);
       });
 
       test('passes through rgb format', () async {
@@ -201,8 +202,9 @@ void main() {
           ),
         );
         verify(() => mockSession.writeRaw('\x1b[4:58:2m')).called(1);
-        verify(() => mockSession.writeRaw('\x1b[4:58:color=rgb:ff/00/00m'))
-            .called(1);
+        verify(
+          () => mockSession.writeRaw('\x1b[4:58:color=rgb:ff/00/00m'),
+        ).called(1);
       });
 
       test('sets style without custom color', () async {
@@ -210,9 +212,7 @@ void main() {
           const UnderlineConfig(style: UnderlineStyle.curly),
         );
         verify(() => mockSession.writeRaw('\x1b[4:58:3m')).called(1);
-        verifyNever(
-          () => mockSession.writeRaw(any(that: contains('color='))),
-        );
+        verifyNever(() => mockSession.writeRaw(any(that: contains('color='))));
       });
 
       test('updates config', () async {
@@ -321,10 +321,7 @@ void main() {
 
       test('throws when session is null', () async {
         final nullService = KittyUnderlineService();
-        expect(
-          () => nullService.reset(),
-          throwsA(isA<Exception>()),
-        );
+        expect(() => nullService.reset(), throwsA(isA<Exception>()));
       });
     });
 
@@ -335,40 +332,27 @@ void main() {
       });
 
       test('throws for index below 0', () async {
-        expect(
-          () => service.setColorIndex(-1),
-          throwsA(isA<Exception>()),
-        );
+        expect(() => service.setColorIndex(-1), throwsA(isA<Exception>()));
       });
 
       test('throws for index above 255', () async {
-        expect(
-          () => service.setColorIndex(256),
-          throwsA(isA<Exception>()),
-        );
+        expect(() => service.setColorIndex(256), throwsA(isA<Exception>()));
       });
 
       test('throws when session is null', () async {
         final nullService = KittyUnderlineService();
-        expect(
-          () => nullService.setColorIndex(0),
-          throwsA(isA<Exception>()),
-        );
+        expect(() => nullService.setColorIndex(0), throwsA(isA<Exception>()));
       });
     });
 
     group('setTrueColor', () {
       test('sends SGR 58:2 command', () async {
         await service.setTrueColor(100, 150, 200);
-        verify(() => mockSession.writeRaw('\x1b[58:2:100;150;200m'))
-            .called(1);
+        verify(() => mockSession.writeRaw('\x1b[58:2:100;150;200m')).called(1);
       });
 
       test('throws for r below 0', () async {
-        expect(
-          () => service.setTrueColor(-1, 0, 0),
-          throwsA(isA<Exception>()),
-        );
+        expect(() => service.setTrueColor(-1, 0, 0), throwsA(isA<Exception>()));
       });
 
       test('throws for g above 255', () async {

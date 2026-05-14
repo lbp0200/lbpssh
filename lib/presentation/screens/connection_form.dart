@@ -16,7 +16,8 @@ class ConnectionFormScreen extends ConsumerStatefulWidget {
   const ConnectionFormScreen({super.key, this.connection});
 
   @override
-  ConsumerState<ConnectionFormScreen> createState() => _ConnectionFormScreenState();
+  ConsumerState<ConnectionFormScreen> createState() =>
+      _ConnectionFormScreenState();
 }
 
 class _ConnectionFormScreenState extends ConsumerState<ConnectionFormScreen> {
@@ -183,9 +184,9 @@ class _ConnectionFormScreenState extends ConsumerState<ConnectionFormScreen> {
     final file = File(filePath);
     if (!await file.exists()) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('文件不存在或无法访问')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('文件不存在或无法访问')));
       return;
     }
 
@@ -194,9 +195,9 @@ class _ConnectionFormScreenState extends ConsumerState<ConnectionFormScreen> {
       fileContent = await file.readAsString();
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('读取文件失败: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('读取文件失败: $e')));
       return;
     }
 
@@ -324,7 +325,9 @@ class _ConnectionFormScreenState extends ConsumerState<ConnectionFormScreen> {
             : null,
         jumpHost: jumpHost,
         socks5Proxy: socks5Proxy,
-        sshConfigHost: _authType == AuthType.sshConfig ? _selectedSshConfigHost : null,
+        sshConfigHost: _authType == AuthType.sshConfig
+            ? _selectedSshConfigHost
+            : null,
         notes: _notesController.text.isNotEmpty ? _notesController.text : null,
         createdAt: widget.connection?.createdAt,
         updatedAt: DateTime.now(),
@@ -344,12 +347,7 @@ class _ConnectionFormScreenState extends ConsumerState<ConnectionFormScreen> {
       );
     } catch (e, stackTrace) {
       if (!mounted) return;
-      showErrorDialog(
-        context,
-        title: '保存失败',
-        error: e,
-        stackTrace: stackTrace,
-      );
+      showErrorDialog(context, title: '保存失败', error: e, stackTrace: stackTrace);
     }
   }
 
@@ -374,15 +372,22 @@ class _ConnectionFormScreenState extends ConsumerState<ConnectionFormScreen> {
                 fillColor: LinearColors.fillSurface,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(LinearRadius.standard),
-                  borderSide: const BorderSide(color: LinearColors.borderStandard),
+                  borderSide: const BorderSide(
+                    color: LinearColors.borderStandard,
+                  ),
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(LinearRadius.standard),
-                  borderSide: const BorderSide(color: LinearColors.borderStandard),
+                  borderSide: const BorderSide(
+                    color: LinearColors.borderStandard,
+                  ),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(LinearRadius.standard),
-                  borderSide: const BorderSide(color: LinearColors.accentInteractive, width: 2),
+                  borderSide: const BorderSide(
+                    color: LinearColors.accentInteractive,
+                    width: 2,
+                  ),
                 ),
               ),
               validator: (value) {
@@ -401,22 +406,39 @@ class _ConnectionFormScreenState extends ConsumerState<ConnectionFormScreen> {
                     controller: _hostController,
                     decoration: InputDecoration(
                       labelText: '主机地址',
-                      labelStyle: const TextStyle(color: LinearColors.textSecondary),
+                      labelStyle: const TextStyle(
+                        color: LinearColors.textSecondary,
+                      ),
                       hintText: '例如：192.168.1.100',
-                      hintStyle: const TextStyle(color: LinearColors.textQuaternary),
+                      hintStyle: const TextStyle(
+                        color: LinearColors.textQuaternary,
+                      ),
                       filled: true,
                       fillColor: LinearColors.fillSurface,
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(LinearRadius.standard),
-                        borderSide: const BorderSide(color: LinearColors.borderStandard),
+                        borderRadius: BorderRadius.circular(
+                          LinearRadius.standard,
+                        ),
+                        borderSide: const BorderSide(
+                          color: LinearColors.borderStandard,
+                        ),
                       ),
                       enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(LinearRadius.standard),
-                        borderSide: const BorderSide(color: LinearColors.borderStandard),
+                        borderRadius: BorderRadius.circular(
+                          LinearRadius.standard,
+                        ),
+                        borderSide: const BorderSide(
+                          color: LinearColors.borderStandard,
+                        ),
                       ),
                       focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(LinearRadius.standard),
-                        borderSide: const BorderSide(color: LinearColors.accentInteractive, width: 2),
+                        borderRadius: BorderRadius.circular(
+                          LinearRadius.standard,
+                        ),
+                        borderSide: const BorderSide(
+                          color: LinearColors.accentInteractive,
+                          width: 2,
+                        ),
                       ),
                     ),
                     validator: (value) {
@@ -433,21 +455,38 @@ class _ConnectionFormScreenState extends ConsumerState<ConnectionFormScreen> {
                     controller: _portController,
                     decoration: InputDecoration(
                       labelText: '端口',
-                      labelStyle: const TextStyle(color: LinearColors.textSecondary),
-                      hintStyle: const TextStyle(color: LinearColors.textQuaternary),
+                      labelStyle: const TextStyle(
+                        color: LinearColors.textSecondary,
+                      ),
+                      hintStyle: const TextStyle(
+                        color: LinearColors.textQuaternary,
+                      ),
                       filled: true,
                       fillColor: LinearColors.fillSurface,
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(LinearRadius.standard),
-                        borderSide: const BorderSide(color: LinearColors.borderStandard),
+                        borderRadius: BorderRadius.circular(
+                          LinearRadius.standard,
+                        ),
+                        borderSide: const BorderSide(
+                          color: LinearColors.borderStandard,
+                        ),
                       ),
                       enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(LinearRadius.standard),
-                        borderSide: const BorderSide(color: LinearColors.borderStandard),
+                        borderRadius: BorderRadius.circular(
+                          LinearRadius.standard,
+                        ),
+                        borderSide: const BorderSide(
+                          color: LinearColors.borderStandard,
+                        ),
                       ),
                       focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(LinearRadius.standard),
-                        borderSide: const BorderSide(color: LinearColors.accentInteractive, width: 2),
+                        borderRadius: BorderRadius.circular(
+                          LinearRadius.standard,
+                        ),
+                        borderSide: const BorderSide(
+                          color: LinearColors.accentInteractive,
+                          width: 2,
+                        ),
                       ),
                     ),
                     keyboardType: TextInputType.number,
@@ -477,15 +516,22 @@ class _ConnectionFormScreenState extends ConsumerState<ConnectionFormScreen> {
                 fillColor: LinearColors.fillSurface,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(LinearRadius.standard),
-                  borderSide: const BorderSide(color: LinearColors.borderStandard),
+                  borderSide: const BorderSide(
+                    color: LinearColors.borderStandard,
+                  ),
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(LinearRadius.standard),
-                  borderSide: const BorderSide(color: LinearColors.borderStandard),
+                  borderSide: const BorderSide(
+                    color: LinearColors.borderStandard,
+                  ),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(LinearRadius.standard),
-                  borderSide: const BorderSide(color: LinearColors.accentInteractive, width: 2),
+                  borderSide: const BorderSide(
+                    color: LinearColors.accentInteractive,
+                    width: 2,
+                  ),
                 ),
               ),
               validator: (value) {
@@ -508,20 +554,33 @@ class _ConnectionFormScreenState extends ConsumerState<ConnectionFormScreen> {
                 fillColor: LinearColors.fillSurface,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(LinearRadius.standard),
-                  borderSide: const BorderSide(color: LinearColors.borderStandard),
+                  borderSide: const BorderSide(
+                    color: LinearColors.borderStandard,
+                  ),
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(LinearRadius.standard),
-                  borderSide: const BorderSide(color: LinearColors.borderStandard),
+                  borderSide: const BorderSide(
+                    color: LinearColors.borderStandard,
+                  ),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(LinearRadius.standard),
-                  borderSide: const BorderSide(color: LinearColors.accentInteractive, width: 2),
+                  borderSide: const BorderSide(
+                    color: LinearColors.accentInteractive,
+                    width: 2,
+                  ),
                 ),
               ),
               items: [
-                const DropdownMenuItem(value: AuthType.password, child: Text('密码认证')),
-                const DropdownMenuItem(value: AuthType.key, child: Text('密钥认证')),
+                const DropdownMenuItem(
+                  value: AuthType.password,
+                  child: Text('密码认证'),
+                ),
+                const DropdownMenuItem(
+                  value: AuthType.key,
+                  child: Text('密钥认证'),
+                ),
                 const DropdownMenuItem(
                   value: AuthType.keyWithPassword,
                   child: Text('密钥+密码认证'),
@@ -559,21 +618,32 @@ class _ConnectionFormScreenState extends ConsumerState<ConnectionFormScreen> {
                 controller: _passwordController,
                 decoration: InputDecoration(
                   labelText: '密码',
-                  labelStyle: const TextStyle(color: LinearColors.textSecondary),
-                  hintStyle: const TextStyle(color: LinearColors.textQuaternary),
+                  labelStyle: const TextStyle(
+                    color: LinearColors.textSecondary,
+                  ),
+                  hintStyle: const TextStyle(
+                    color: LinearColors.textQuaternary,
+                  ),
                   filled: true,
                   fillColor: LinearColors.fillSurface,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(LinearRadius.standard),
-                    borderSide: const BorderSide(color: LinearColors.borderStandard),
+                    borderSide: const BorderSide(
+                      color: LinearColors.borderStandard,
+                    ),
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(LinearRadius.standard),
-                    borderSide: const BorderSide(color: LinearColors.borderStandard),
+                    borderSide: const BorderSide(
+                      color: LinearColors.borderStandard,
+                    ),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(LinearRadius.standard),
-                    borderSide: const BorderSide(color: LinearColors.accentInteractive, width: 2),
+                    borderSide: const BorderSide(
+                      color: LinearColors.accentInteractive,
+                      width: 2,
+                    ),
                   ),
                   suffixIcon: IconButton(
                     icon: Icon(
@@ -607,24 +677,41 @@ class _ConnectionFormScreenState extends ConsumerState<ConnectionFormScreen> {
                           controller: _keyPathController,
                           readOnly: true,
                           decoration: InputDecoration(
-                            labelStyle: const TextStyle(color: LinearColors.textSecondary),
+                            labelStyle: const TextStyle(
+                              color: LinearColors.textSecondary,
+                            ),
                             hintText: _privateKeyContent != null
                                 ? '已选择私钥文件'
                                 : '点击右侧按钮选择私钥文件',
-                            hintStyle: const TextStyle(color: LinearColors.textQuaternary),
+                            hintStyle: const TextStyle(
+                              color: LinearColors.textQuaternary,
+                            ),
                             filled: true,
                             fillColor: LinearColors.fillSurface,
                             border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(LinearRadius.standard),
-                              borderSide: const BorderSide(color: LinearColors.borderStandard),
+                              borderRadius: BorderRadius.circular(
+                                LinearRadius.standard,
+                              ),
+                              borderSide: const BorderSide(
+                                color: LinearColors.borderStandard,
+                              ),
                             ),
                             enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(LinearRadius.standard),
-                              borderSide: const BorderSide(color: LinearColors.borderStandard),
+                              borderRadius: BorderRadius.circular(
+                                LinearRadius.standard,
+                              ),
+                              borderSide: const BorderSide(
+                                color: LinearColors.borderStandard,
+                              ),
                             ),
                             focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(LinearRadius.standard),
-                              borderSide: const BorderSide(color: LinearColors.accentInteractive, width: 2),
+                              borderRadius: BorderRadius.circular(
+                                LinearRadius.standard,
+                              ),
+                              borderSide: const BorderSide(
+                                color: LinearColors.accentInteractive,
+                                width: 2,
+                              ),
                             ),
                             suffixIcon: _privateKeyContent != null
                                 ? const Icon(
@@ -696,21 +783,32 @@ class _ConnectionFormScreenState extends ConsumerState<ConnectionFormScreen> {
                 controller: _keyPassphraseController,
                 decoration: InputDecoration(
                   labelText: '密钥密码',
-                  labelStyle: const TextStyle(color: LinearColors.textSecondary),
-                  hintStyle: const TextStyle(color: LinearColors.textQuaternary),
+                  labelStyle: const TextStyle(
+                    color: LinearColors.textSecondary,
+                  ),
+                  hintStyle: const TextStyle(
+                    color: LinearColors.textQuaternary,
+                  ),
                   filled: true,
                   fillColor: LinearColors.fillSurface,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(LinearRadius.standard),
-                    borderSide: const BorderSide(color: LinearColors.borderStandard),
+                    borderSide: const BorderSide(
+                      color: LinearColors.borderStandard,
+                    ),
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(LinearRadius.standard),
-                    borderSide: const BorderSide(color: LinearColors.borderStandard),
+                    borderSide: const BorderSide(
+                      color: LinearColors.borderStandard,
+                    ),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(LinearRadius.standard),
-                    borderSide: const BorderSide(color: LinearColors.accentInteractive, width: 2),
+                    borderSide: const BorderSide(
+                      color: LinearColors.accentInteractive,
+                      width: 2,
+                    ),
                   ),
                   suffixIcon: IconButton(
                     icon: Icon(
@@ -738,7 +836,9 @@ class _ConnectionFormScreenState extends ConsumerState<ConnectionFormScreen> {
                   decoration: BoxDecoration(
                     color: LinearColors.warning.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(LinearRadius.card),
-                    border: Border.all(color: LinearColors.warning.withValues(alpha: 0.3)),
+                    border: Border.all(
+                      color: LinearColors.warning.withValues(alpha: 0.3),
+                    ),
                   ),
                   child: const Row(
                     children: [
@@ -758,22 +858,39 @@ class _ConnectionFormScreenState extends ConsumerState<ConnectionFormScreen> {
                   initialValue: _selectedSshConfigHost,
                   decoration: InputDecoration(
                     labelText: '选择 SSH Config 主机',
-                    labelStyle: const TextStyle(color: LinearColors.textSecondary),
+                    labelStyle: const TextStyle(
+                      color: LinearColors.textSecondary,
+                    ),
                     hintText: '从 ~/.ssh/config 中选择',
-                    hintStyle: const TextStyle(color: LinearColors.textQuaternary),
+                    hintStyle: const TextStyle(
+                      color: LinearColors.textQuaternary,
+                    ),
                     filled: true,
                     fillColor: LinearColors.fillSurface,
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(LinearRadius.standard),
-                      borderSide: const BorderSide(color: LinearColors.borderStandard),
+                      borderRadius: BorderRadius.circular(
+                        LinearRadius.standard,
+                      ),
+                      borderSide: const BorderSide(
+                        color: LinearColors.borderStandard,
+                      ),
                     ),
                     enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(LinearRadius.standard),
-                      borderSide: const BorderSide(color: LinearColors.borderStandard),
+                      borderRadius: BorderRadius.circular(
+                        LinearRadius.standard,
+                      ),
+                      borderSide: const BorderSide(
+                        color: LinearColors.borderStandard,
+                      ),
                     ),
                     focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(LinearRadius.standard),
-                      borderSide: const BorderSide(color: LinearColors.accentInteractive, width: 2),
+                      borderRadius: BorderRadius.circular(
+                        LinearRadius.standard,
+                      ),
+                      borderSide: const BorderSide(
+                        color: LinearColors.accentInteractive,
+                        width: 2,
+                      ),
                     ),
                   ),
                   items: [
@@ -807,8 +924,9 @@ class _ConnectionFormScreenState extends ConsumerState<ConnectionFormScreen> {
                       _selectedSshConfigHost = value;
                       // 自动填充主机信息
                       if (value != null) {
-                        final entry = _sshConfigEntries
-                            .firstWhere((e) => e.hostName == value);
+                        final entry = _sshConfigEntries.firstWhere(
+                          (e) => e.hostName == value,
+                        );
                         _hostController.text = entry.getConnectHost();
                         if (entry.port != null) {
                           _portController.text = entry.port.toString();
@@ -844,7 +962,10 @@ class _ConnectionFormScreenState extends ConsumerState<ConnectionFormScreen> {
 
             // 跳板机配置
             CheckboxListTile(
-              title: const Text('使用跳板机', style: TextStyle(color: LinearColors.textPrimary)),
+              title: const Text(
+                '使用跳板机',
+                style: TextStyle(color: LinearColors.textPrimary),
+              ),
               value: _useJumpHost,
               onChanged: (value) {
                 setState(() {
@@ -863,21 +984,38 @@ class _ConnectionFormScreenState extends ConsumerState<ConnectionFormScreen> {
                       controller: _jumpHostController,
                       decoration: InputDecoration(
                         labelText: '跳板机地址',
-                        labelStyle: const TextStyle(color: LinearColors.textSecondary),
-                        hintStyle: const TextStyle(color: LinearColors.textQuaternary),
+                        labelStyle: const TextStyle(
+                          color: LinearColors.textSecondary,
+                        ),
+                        hintStyle: const TextStyle(
+                          color: LinearColors.textQuaternary,
+                        ),
                         filled: true,
                         fillColor: LinearColors.fillSurface,
                         border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(LinearRadius.standard),
-                          borderSide: const BorderSide(color: LinearColors.borderStandard),
+                          borderRadius: BorderRadius.circular(
+                            LinearRadius.standard,
+                          ),
+                          borderSide: const BorderSide(
+                            color: LinearColors.borderStandard,
+                          ),
                         ),
                         enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(LinearRadius.standard),
-                          borderSide: const BorderSide(color: LinearColors.borderStandard),
+                          borderRadius: BorderRadius.circular(
+                            LinearRadius.standard,
+                          ),
+                          borderSide: const BorderSide(
+                            color: LinearColors.borderStandard,
+                          ),
                         ),
                         focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(LinearRadius.standard),
-                          borderSide: const BorderSide(color: LinearColors.accentInteractive, width: 2),
+                          borderRadius: BorderRadius.circular(
+                            LinearRadius.standard,
+                          ),
+                          borderSide: const BorderSide(
+                            color: LinearColors.accentInteractive,
+                            width: 2,
+                          ),
                         ),
                       ),
                     ),
@@ -888,21 +1026,38 @@ class _ConnectionFormScreenState extends ConsumerState<ConnectionFormScreen> {
                       controller: _jumpPortController,
                       decoration: InputDecoration(
                         labelText: '端口',
-                        labelStyle: const TextStyle(color: LinearColors.textSecondary),
-                        hintStyle: const TextStyle(color: LinearColors.textQuaternary),
+                        labelStyle: const TextStyle(
+                          color: LinearColors.textSecondary,
+                        ),
+                        hintStyle: const TextStyle(
+                          color: LinearColors.textQuaternary,
+                        ),
                         filled: true,
                         fillColor: LinearColors.fillSurface,
                         border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(LinearRadius.standard),
-                          borderSide: const BorderSide(color: LinearColors.borderStandard),
+                          borderRadius: BorderRadius.circular(
+                            LinearRadius.standard,
+                          ),
+                          borderSide: const BorderSide(
+                            color: LinearColors.borderStandard,
+                          ),
                         ),
                         enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(LinearRadius.standard),
-                          borderSide: const BorderSide(color: LinearColors.borderStandard),
+                          borderRadius: BorderRadius.circular(
+                            LinearRadius.standard,
+                          ),
+                          borderSide: const BorderSide(
+                            color: LinearColors.borderStandard,
+                          ),
                         ),
                         focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(LinearRadius.standard),
-                          borderSide: const BorderSide(color: LinearColors.accentInteractive, width: 2),
+                          borderRadius: BorderRadius.circular(
+                            LinearRadius.standard,
+                          ),
+                          borderSide: const BorderSide(
+                            color: LinearColors.accentInteractive,
+                            width: 2,
+                          ),
                         ),
                       ),
                       keyboardType: TextInputType.number,
@@ -915,21 +1070,32 @@ class _ConnectionFormScreenState extends ConsumerState<ConnectionFormScreen> {
                 controller: _jumpUsernameController,
                 decoration: InputDecoration(
                   labelText: '跳板机用户名',
-                  labelStyle: const TextStyle(color: LinearColors.textSecondary),
-                  hintStyle: const TextStyle(color: LinearColors.textQuaternary),
+                  labelStyle: const TextStyle(
+                    color: LinearColors.textSecondary,
+                  ),
+                  hintStyle: const TextStyle(
+                    color: LinearColors.textQuaternary,
+                  ),
                   filled: true,
                   fillColor: LinearColors.fillSurface,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(LinearRadius.standard),
-                    borderSide: const BorderSide(color: LinearColors.borderStandard),
+                    borderSide: const BorderSide(
+                      color: LinearColors.borderStandard,
+                    ),
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(LinearRadius.standard),
-                    borderSide: const BorderSide(color: LinearColors.borderStandard),
+                    borderSide: const BorderSide(
+                      color: LinearColors.borderStandard,
+                    ),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(LinearRadius.standard),
-                    borderSide: const BorderSide(color: LinearColors.accentInteractive, width: 2),
+                    borderSide: const BorderSide(
+                      color: LinearColors.accentInteractive,
+                      width: 2,
+                    ),
                   ),
                 ),
               ),
@@ -938,21 +1104,32 @@ class _ConnectionFormScreenState extends ConsumerState<ConnectionFormScreen> {
                 initialValue: _jumpAuthType,
                 decoration: InputDecoration(
                   labelText: '跳板机认证方式',
-                  labelStyle: const TextStyle(color: LinearColors.textSecondary),
-                  hintStyle: const TextStyle(color: LinearColors.textQuaternary),
+                  labelStyle: const TextStyle(
+                    color: LinearColors.textSecondary,
+                  ),
+                  hintStyle: const TextStyle(
+                    color: LinearColors.textQuaternary,
+                  ),
                   filled: true,
                   fillColor: LinearColors.fillSurface,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(LinearRadius.standard),
-                    borderSide: const BorderSide(color: LinearColors.borderStandard),
+                    borderSide: const BorderSide(
+                      color: LinearColors.borderStandard,
+                    ),
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(LinearRadius.standard),
-                    borderSide: const BorderSide(color: LinearColors.borderStandard),
+                    borderSide: const BorderSide(
+                      color: LinearColors.borderStandard,
+                    ),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(LinearRadius.standard),
-                    borderSide: const BorderSide(color: LinearColors.accentInteractive, width: 2),
+                    borderSide: const BorderSide(
+                      color: LinearColors.accentInteractive,
+                      width: 2,
+                    ),
                   ),
                 ),
                 items: const [
@@ -974,21 +1151,38 @@ class _ConnectionFormScreenState extends ConsumerState<ConnectionFormScreen> {
                   controller: _jumpPasswordController,
                   decoration: InputDecoration(
                     labelText: '跳板机密码',
-                    labelStyle: const TextStyle(color: LinearColors.textSecondary),
-                    hintStyle: const TextStyle(color: LinearColors.textQuaternary),
+                    labelStyle: const TextStyle(
+                      color: LinearColors.textSecondary,
+                    ),
+                    hintStyle: const TextStyle(
+                      color: LinearColors.textQuaternary,
+                    ),
                     filled: true,
                     fillColor: LinearColors.fillSurface,
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(LinearRadius.standard),
-                      borderSide: const BorderSide(color: LinearColors.borderStandard),
+                      borderRadius: BorderRadius.circular(
+                        LinearRadius.standard,
+                      ),
+                      borderSide: const BorderSide(
+                        color: LinearColors.borderStandard,
+                      ),
                     ),
                     enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(LinearRadius.standard),
-                      borderSide: const BorderSide(color: LinearColors.borderStandard),
+                      borderRadius: BorderRadius.circular(
+                        LinearRadius.standard,
+                      ),
+                      borderSide: const BorderSide(
+                        color: LinearColors.borderStandard,
+                      ),
                     ),
                     focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(LinearRadius.standard),
-                      borderSide: const BorderSide(color: LinearColors.accentInteractive, width: 2),
+                      borderRadius: BorderRadius.circular(
+                        LinearRadius.standard,
+                      ),
+                      borderSide: const BorderSide(
+                        color: LinearColors.accentInteractive,
+                        width: 2,
+                      ),
                     ),
                   ),
                   obscureText: true,
@@ -1000,7 +1194,10 @@ class _ConnectionFormScreenState extends ConsumerState<ConnectionFormScreen> {
 
             // SOCKS5 代理配置
             CheckboxListTile(
-              title: const Text('使用 SOCKS5 代理', style: TextStyle(color: LinearColors.textPrimary)),
+              title: const Text(
+                '使用 SOCKS5 代理',
+                style: TextStyle(color: LinearColors.textPrimary),
+              ),
               value: _useSocks5Proxy,
               onChanged: (value) {
                 setState(() {
@@ -1019,22 +1216,39 @@ class _ConnectionFormScreenState extends ConsumerState<ConnectionFormScreen> {
                       controller: _socks5HostController,
                       decoration: InputDecoration(
                         labelText: '代理主机',
-                        labelStyle: const TextStyle(color: LinearColors.textSecondary),
+                        labelStyle: const TextStyle(
+                          color: LinearColors.textSecondary,
+                        ),
                         hintText: '例如：127.0.0.1',
-                        hintStyle: const TextStyle(color: LinearColors.textQuaternary),
+                        hintStyle: const TextStyle(
+                          color: LinearColors.textQuaternary,
+                        ),
                         filled: true,
                         fillColor: LinearColors.fillSurface,
                         border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(LinearRadius.standard),
-                          borderSide: const BorderSide(color: LinearColors.borderStandard),
+                          borderRadius: BorderRadius.circular(
+                            LinearRadius.standard,
+                          ),
+                          borderSide: const BorderSide(
+                            color: LinearColors.borderStandard,
+                          ),
                         ),
                         enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(LinearRadius.standard),
-                          borderSide: const BorderSide(color: LinearColors.borderStandard),
+                          borderRadius: BorderRadius.circular(
+                            LinearRadius.standard,
+                          ),
+                          borderSide: const BorderSide(
+                            color: LinearColors.borderStandard,
+                          ),
                         ),
                         focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(LinearRadius.standard),
-                          borderSide: const BorderSide(color: LinearColors.accentInteractive, width: 2),
+                          borderRadius: BorderRadius.circular(
+                            LinearRadius.standard,
+                          ),
+                          borderSide: const BorderSide(
+                            color: LinearColors.accentInteractive,
+                            width: 2,
+                          ),
                         ),
                       ),
                       validator: (value) {
@@ -1052,22 +1266,39 @@ class _ConnectionFormScreenState extends ConsumerState<ConnectionFormScreen> {
                       controller: _socks5PortController,
                       decoration: InputDecoration(
                         labelText: '端口',
-                        labelStyle: const TextStyle(color: LinearColors.textSecondary),
+                        labelStyle: const TextStyle(
+                          color: LinearColors.textSecondary,
+                        ),
                         hintText: '默认 1080',
-                        hintStyle: const TextStyle(color: LinearColors.textQuaternary),
+                        hintStyle: const TextStyle(
+                          color: LinearColors.textQuaternary,
+                        ),
                         filled: true,
                         fillColor: LinearColors.fillSurface,
                         border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(LinearRadius.standard),
-                          borderSide: const BorderSide(color: LinearColors.borderStandard),
+                          borderRadius: BorderRadius.circular(
+                            LinearRadius.standard,
+                          ),
+                          borderSide: const BorderSide(
+                            color: LinearColors.borderStandard,
+                          ),
                         ),
                         enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(LinearRadius.standard),
-                          borderSide: const BorderSide(color: LinearColors.borderStandard),
+                          borderRadius: BorderRadius.circular(
+                            LinearRadius.standard,
+                          ),
+                          borderSide: const BorderSide(
+                            color: LinearColors.borderStandard,
+                          ),
                         ),
                         focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(LinearRadius.standard),
-                          borderSide: const BorderSide(color: LinearColors.accentInteractive, width: 2),
+                          borderRadius: BorderRadius.circular(
+                            LinearRadius.standard,
+                          ),
+                          borderSide: const BorderSide(
+                            color: LinearColors.accentInteractive,
+                            width: 2,
+                          ),
                         ),
                       ),
                       keyboardType: TextInputType.number,
@@ -1094,22 +1325,39 @@ class _ConnectionFormScreenState extends ConsumerState<ConnectionFormScreen> {
                       controller: _socks5UsernameController,
                       decoration: InputDecoration(
                         labelText: '用户名',
-                        labelStyle: const TextStyle(color: LinearColors.textSecondary),
+                        labelStyle: const TextStyle(
+                          color: LinearColors.textSecondary,
+                        ),
                         hintText: '可选',
-                        hintStyle: const TextStyle(color: LinearColors.textQuaternary),
+                        hintStyle: const TextStyle(
+                          color: LinearColors.textQuaternary,
+                        ),
                         filled: true,
                         fillColor: LinearColors.fillSurface,
                         border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(LinearRadius.standard),
-                          borderSide: const BorderSide(color: LinearColors.borderStandard),
+                          borderRadius: BorderRadius.circular(
+                            LinearRadius.standard,
+                          ),
+                          borderSide: const BorderSide(
+                            color: LinearColors.borderStandard,
+                          ),
                         ),
                         enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(LinearRadius.standard),
-                          borderSide: const BorderSide(color: LinearColors.borderStandard),
+                          borderRadius: BorderRadius.circular(
+                            LinearRadius.standard,
+                          ),
+                          borderSide: const BorderSide(
+                            color: LinearColors.borderStandard,
+                          ),
                         ),
                         focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(LinearRadius.standard),
-                          borderSide: const BorderSide(color: LinearColors.accentInteractive, width: 2),
+                          borderRadius: BorderRadius.circular(
+                            LinearRadius.standard,
+                          ),
+                          borderSide: const BorderSide(
+                            color: LinearColors.accentInteractive,
+                            width: 2,
+                          ),
                         ),
                       ),
                     ),
@@ -1120,22 +1368,39 @@ class _ConnectionFormScreenState extends ConsumerState<ConnectionFormScreen> {
                       controller: _socks5PasswordController,
                       decoration: InputDecoration(
                         labelText: '密码',
-                        labelStyle: const TextStyle(color: LinearColors.textSecondary),
+                        labelStyle: const TextStyle(
+                          color: LinearColors.textSecondary,
+                        ),
                         hintText: '可选',
-                        hintStyle: const TextStyle(color: LinearColors.textQuaternary),
+                        hintStyle: const TextStyle(
+                          color: LinearColors.textQuaternary,
+                        ),
                         filled: true,
                         fillColor: LinearColors.fillSurface,
                         border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(LinearRadius.standard),
-                          borderSide: const BorderSide(color: LinearColors.borderStandard),
+                          borderRadius: BorderRadius.circular(
+                            LinearRadius.standard,
+                          ),
+                          borderSide: const BorderSide(
+                            color: LinearColors.borderStandard,
+                          ),
                         ),
                         enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(LinearRadius.standard),
-                          borderSide: const BorderSide(color: LinearColors.borderStandard),
+                          borderRadius: BorderRadius.circular(
+                            LinearRadius.standard,
+                          ),
+                          borderSide: const BorderSide(
+                            color: LinearColors.borderStandard,
+                          ),
                         ),
                         focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(LinearRadius.standard),
-                          borderSide: const BorderSide(color: LinearColors.accentInteractive, width: 2),
+                          borderRadius: BorderRadius.circular(
+                            LinearRadius.standard,
+                          ),
+                          borderSide: const BorderSide(
+                            color: LinearColors.accentInteractive,
+                            width: 2,
+                          ),
                         ),
                       ),
                       obscureText: true,
@@ -1167,15 +1432,22 @@ class _ConnectionFormScreenState extends ConsumerState<ConnectionFormScreen> {
                 fillColor: LinearColors.fillSurface,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(LinearRadius.standard),
-                  borderSide: const BorderSide(color: LinearColors.borderStandard),
+                  borderSide: const BorderSide(
+                    color: LinearColors.borderStandard,
+                  ),
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(LinearRadius.standard),
-                  borderSide: const BorderSide(color: LinearColors.borderStandard),
+                  borderSide: const BorderSide(
+                    color: LinearColors.borderStandard,
+                  ),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(LinearRadius.standard),
-                  borderSide: const BorderSide(color: LinearColors.accentInteractive, width: 2),
+                  borderSide: const BorderSide(
+                    color: LinearColors.accentInteractive,
+                    width: 2,
+                  ),
                 ),
               ),
               maxLines: 3,
@@ -1250,15 +1522,22 @@ class _ManualPathDialogState extends State<_ManualPathDialog> {
               fillColor: LinearColors.fillSurface,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(LinearRadius.standard),
-                borderSide: const BorderSide(color: LinearColors.borderStandard),
+                borderSide: const BorderSide(
+                  color: LinearColors.borderStandard,
+                ),
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(LinearRadius.standard),
-                borderSide: const BorderSide(color: LinearColors.borderStandard),
+                borderSide: const BorderSide(
+                  color: LinearColors.borderStandard,
+                ),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(LinearRadius.standard),
-                borderSide: const BorderSide(color: LinearColors.accentInteractive, width: 2),
+                borderSide: const BorderSide(
+                  color: LinearColors.accentInteractive,
+                  width: 2,
+                ),
               ),
             ),
             autofocus: true,
@@ -1266,10 +1545,7 @@ class _ManualPathDialogState extends State<_ManualPathDialog> {
           const SizedBox(height: LinearSpacing.spacing12),
           const Text(
             '提示：由于 macOS 沙箱限制，无法直接选择 ~/.ssh 目录中的文件，请手动输入完整路径。',
-            style: TextStyle(
-              fontSize: 12,
-              color: LinearColors.textTertiary,
-            ),
+            style: TextStyle(fontSize: 12, color: LinearColors.textTertiary),
           ),
         ],
       ),

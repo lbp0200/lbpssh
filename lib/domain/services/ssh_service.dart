@@ -96,9 +96,10 @@ class SshService implements TerminalInputService {
   final AppConfigService? _appConfigService;
 
   SshService({AppConfigService? appConfigService})
-      : _appConfigService = appConfigService;
+    : _appConfigService = appConfigService;
 
-  AppConfigService get _config => _appConfigService ?? AppConfigService.getInstance();
+  AppConfigService get _config =>
+      _appConfigService ?? AppConfigService.getInstance();
 
   SSHClient? _client;
   final _stateController = StreamController<SshConnectionState>.broadcast();
@@ -354,7 +355,9 @@ class SshService implements TerminalInputService {
               ? () => password!
               : null,
           identities: identities,
-          keepAliveInterval: Duration(milliseconds: _config.ssh.keepaliveInterval),
+          keepAliveInterval: Duration(
+            milliseconds: _config.ssh.keepaliveInterval,
+          ),
         );
       }
 
@@ -366,7 +369,11 @@ class SshService implements TerminalInputService {
       try {
         // 首选 PTY 模式（支持颜色、交互），使用保存的最新尺寸
         session = await _client!.shell(
-          pty: SSHPtyConfig(type: 'xterm', width: _ptyWidth, height: _ptyHeight),
+          pty: SSHPtyConfig(
+            type: 'xterm',
+            width: _ptyWidth,
+            height: _ptyHeight,
+          ),
         );
       } catch (e) {
         // 回退：不使用 PTY 的标准 shell

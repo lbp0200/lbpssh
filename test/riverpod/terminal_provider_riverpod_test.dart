@@ -35,7 +35,9 @@ void main() {
     mockAppConfigService = MockAppConfigService();
 
     // Setup default mock behavior
-    when(() => mockAppConfigService.terminal).thenReturn(TerminalConfig.defaultConfig);
+    when(
+      () => mockAppConfigService.terminal,
+    ).thenReturn(TerminalConfig.defaultConfig);
     when(() => mockTerminalService.getAllSessions()).thenReturn([]);
 
     container = ProviderContainer(
@@ -62,113 +64,139 @@ void main() {
 
     group('switchToSession', () {
       test(
-          'Given existing session, When switchToSession called, Then updates activeSessionId',
-          () {
-        // Arrange (Given)
-        final mockSession = MockTerminalSession();
-        when(() => mockSession.id).thenReturn('session1');
-        when(() => mockTerminalService.getSession('session1')).thenReturn(mockSession);
-        when(() => mockTerminalService.getAllSessions()).thenReturn([mockSession]);
+        'Given existing session, When switchToSession called, Then updates activeSessionId',
+        () {
+          // Arrange (Given)
+          final mockSession = MockTerminalSession();
+          when(() => mockSession.id).thenReturn('session1');
+          when(
+            () => mockTerminalService.getSession('session1'),
+          ).thenReturn(mockSession);
+          when(
+            () => mockTerminalService.getAllSessions(),
+          ).thenReturn([mockSession]);
 
-        // Recreate container with sessions available
-        container = ProviderContainer(
-          overrides: [
-            terminalServiceProvider.overrideWithValue(mockTerminalService),
-            appConfigServiceProvider.overrideWithValue(mockAppConfigService),
-          ],
-        );
+          // Recreate container with sessions available
+          container = ProviderContainer(
+            overrides: [
+              terminalServiceProvider.overrideWithValue(mockTerminalService),
+              appConfigServiceProvider.overrideWithValue(mockAppConfigService),
+            ],
+          );
 
-        // Act (When)
-        container.read(terminalProvider.notifier).switchToSession('session1');
+          // Act (When)
+          container.read(terminalProvider.notifier).switchToSession('session1');
 
-        // Assert (Then)
-        final state = container.read(terminalProvider);
-        expect(state.activeSessionId, 'session1');
-        verify(() => mockTerminalService.getSession('session1')).called(1);
-      });
+          // Assert (Then)
+          final state = container.read(terminalProvider);
+          expect(state.activeSessionId, 'session1');
+          verify(() => mockTerminalService.getSession('session1')).called(1);
+        },
+      );
 
       test(
-          'Given non-existing session, When switchToSession called, Then keeps activeSessionId unchanged',
-          () {
-        // Arrange (Given)
-        when(() => mockTerminalService.getSession('nonexistent')).thenReturn(null);
+        'Given non-existing session, When switchToSession called, Then keeps activeSessionId unchanged',
+        () {
+          // Arrange (Given)
+          when(
+            () => mockTerminalService.getSession('nonexistent'),
+          ).thenReturn(null);
 
-        // Act (When)
-        container.read(terminalProvider.notifier).switchToSession('nonexistent');
+          // Act (When)
+          container
+              .read(terminalProvider.notifier)
+              .switchToSession('nonexistent');
 
-        // Assert (Then)
-        final state = container.read(terminalProvider);
-        expect(state.activeSessionId, isNull);
-      });
+          // Assert (Then)
+          final state = container.read(terminalProvider);
+          expect(state.activeSessionId, isNull);
+        },
+      );
     });
 
     group('closeSession', () {
       test(
-          'Given session exists, When closeSession called, Then closes session and updates activeSessionId',
-          () {
-        // Arrange (Given)
-        final mockSession = MockTerminalSession();
-        when(() => mockSession.id).thenReturn('session1');
-        when(() => mockTerminalService.getSession('session1')).thenReturn(mockSession);
-        when(() => mockTerminalService.getAllSessions()).thenReturn([]);
+        'Given session exists, When closeSession called, Then closes session and updates activeSessionId',
+        () {
+          // Arrange (Given)
+          final mockSession = MockTerminalSession();
+          when(() => mockSession.id).thenReturn('session1');
+          when(
+            () => mockTerminalService.getSession('session1'),
+          ).thenReturn(mockSession);
+          when(() => mockTerminalService.getAllSessions()).thenReturn([]);
 
-        container = ProviderContainer(
-          overrides: [
-            terminalServiceProvider.overrideWithValue(mockTerminalService),
-            appConfigServiceProvider.overrideWithValue(mockAppConfigService),
-          ],
-        );
-        container.read(terminalProvider.notifier).switchToSession('session1');
+          container = ProviderContainer(
+            overrides: [
+              terminalServiceProvider.overrideWithValue(mockTerminalService),
+              appConfigServiceProvider.overrideWithValue(mockAppConfigService),
+            ],
+          );
+          container.read(terminalProvider.notifier).switchToSession('session1');
 
-        // Act (When)
-        container.read(terminalProvider.notifier).closeSession('session1');
+          // Act (When)
+          container.read(terminalProvider.notifier).closeSession('session1');
 
-        // Assert (Then)
-        verify(() => mockTerminalService.closeSession('session1')).called(1);
-        final state = container.read(terminalProvider);
-        expect(state.activeSessionId, isNull);
-      });
+          // Assert (Then)
+          verify(() => mockTerminalService.closeSession('session1')).called(1);
+          final state = container.read(terminalProvider);
+          expect(state.activeSessionId, isNull);
+        },
+      );
     });
 
     group('getSession', () {
       test(
-          'Given session exists, When getSession called, Then returns session',
-          () {
-        // Arrange (Given)
-        final mockSession = MockTerminalSession();
-        when(() => mockSession.id).thenReturn('session1');
-        when(() => mockTerminalService.getSession('session1')).thenReturn(mockSession);
+        'Given session exists, When getSession called, Then returns session',
+        () {
+          // Arrange (Given)
+          final mockSession = MockTerminalSession();
+          when(() => mockSession.id).thenReturn('session1');
+          when(
+            () => mockTerminalService.getSession('session1'),
+          ).thenReturn(mockSession);
 
-        // Act (When)
-        final result = container.read(terminalProvider.notifier).getSession('session1');
+          // Act (When)
+          final result = container
+              .read(terminalProvider.notifier)
+              .getSession('session1');
 
-        // Assert (Then)
-        expect(result, isNotNull);
-        expect(result!.id, 'session1');
-      });
+          // Assert (Then)
+          expect(result, isNotNull);
+          expect(result!.id, 'session1');
+        },
+      );
 
       test(
-          'Given session does not exist, When getSession called, Then returns null',
-          () {
-        // Arrange (Given)
-        when(() => mockTerminalService.getSession('nonexistent')).thenReturn(null);
+        'Given session does not exist, When getSession called, Then returns null',
+        () {
+          // Arrange (Given)
+          when(
+            () => mockTerminalService.getSession('nonexistent'),
+          ).thenReturn(null);
 
-        // Act (When)
-        final result = container.read(terminalProvider.notifier).getSession('nonexistent');
+          // Act (When)
+          final result = container
+              .read(terminalProvider.notifier)
+              .getSession('nonexistent');
 
-        // Assert (Then)
-        expect(result, isNull);
-      });
+          // Assert (Then)
+          expect(result, isNull);
+        },
+      );
     });
 
     group('session management', () {
-      test('Given no sessions, When accessing sessions, Then returns empty list', () {
-        // Act (When)
-        final state = container.read(terminalProvider);
+      test(
+        'Given no sessions, When accessing sessions, Then returns empty list',
+        () {
+          // Act (When)
+          final state = container.read(terminalProvider);
 
-        // Assert (Then)
-        expect(state.sessions, isEmpty);
-      });
+          // Assert (Then)
+          expect(state.sessions, isEmpty);
+        },
+      );
     });
   });
 }

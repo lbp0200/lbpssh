@@ -59,7 +59,9 @@ class _SftpBrowserScreenState extends ConsumerState<SftpBrowserScreen> {
     });
 
     try {
-      final tab = await ref.read(sftpProvider.notifier).openTab(widget.connection);
+      final tab = await ref
+          .read(sftpProvider.notifier)
+          .openTab(widget.connection);
       setState(() {
         _transferService = tab.service;
         _currentPath = tab.currentPath;
@@ -322,9 +324,16 @@ class _SftpBrowserScreenState extends ConsumerState<SftpBrowserScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.error, size: 48, color: Theme.of(context).colorScheme.error),
+            Icon(
+              Icons.error,
+              size: 48,
+              color: Theme.of(context).colorScheme.error,
+            ),
             const SizedBox(height: LinearSpacing.spacing16),
-            Text(_error!, style: TextStyle(color: Theme.of(context).colorScheme.error)),
+            Text(
+              _error!,
+              style: TextStyle(color: Theme.of(context).colorScheme.error),
+            ),
             const SizedBox(height: LinearSpacing.spacing16),
             ElevatedButton(onPressed: _connect, child: const Text('重试')),
           ],

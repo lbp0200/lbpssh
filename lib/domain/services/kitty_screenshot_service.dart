@@ -4,16 +4,12 @@ import 'dart:typed_data';
 import 'terminal_service.dart';
 
 /// 截图格式
-enum ScreenshotFormat {
-  png,
-  jpeg,
-  svg,
-}
+enum ScreenshotFormat { png, jpeg, svg }
 
 /// 截图区域
 enum ScreenshotArea {
-  screen,    // 整个屏幕
-  window,    // 当前窗口
+  screen, // 整个屏幕
+  window, // 当前窗口
   selection, // 选区
 }
 
@@ -37,7 +33,9 @@ class KittyScreenshotService {
   /// 截取整个屏幕
   ///
   /// [format] - 图片格式
-  Future<void> captureScreen({ScreenshotFormat format = ScreenshotFormat.png}) async {
+  Future<void> captureScreen({
+    ScreenshotFormat format = ScreenshotFormat.png,
+  }) async {
     if (_session == null) {
       throw Exception('未连接到终端');
     }
@@ -63,7 +61,9 @@ class KittyScreenshotService {
   /// 截取当前窗口
   ///
   /// [format] - 图片格式
-  Future<void> captureWindow({ScreenshotFormat format = ScreenshotFormat.png}) async {
+  Future<void> captureWindow({
+    ScreenshotFormat format = ScreenshotFormat.png,
+  }) async {
     if (_session == null) {
       throw Exception('未连接到终端');
     }
@@ -88,7 +88,9 @@ class KittyScreenshotService {
   /// 截取选区
   ///
   /// [format] - 图片格式
-  Future<void> captureSelection({ScreenshotFormat format = ScreenshotFormat.png}) async {
+  Future<void> captureSelection({
+    ScreenshotFormat format = ScreenshotFormat.png,
+  }) async {
     if (_session == null) {
       throw Exception('未连接到终端');
     }
@@ -142,7 +144,8 @@ class KittyScreenshotService {
     }
 
     // OSC 20 ; screenshot:area=rect:x:y:width:height:format
-    final cmd = '\x1b]20;screenshot:area=rect:x=$x:y=$y:w=$width:h=$height:format=$formatStr\x1b\\\\';
+    final cmd =
+        '\x1b]20;screenshot:area=rect:x=$x:y=$y:w=$width:h=$height:format=$formatStr\x1b\\\\';
     _session.writeRaw(cmd);
   }
 
@@ -187,14 +190,17 @@ class KittyScreenshotService {
     }
 
     // OSC 20 ; screenshot:save:path:area:format
-    final cmd = '\x1b]20;screenshot:save:$path:area=$areaStr:format=$formatStr\x1b\\\\';
+    final cmd =
+        '\x1b]20;screenshot:save:$path:area=$areaStr:format=$formatStr\x1b\\\\';
     _session.writeRaw(cmd);
   }
 
   /// 复制截图到剪贴板
   ///
   /// [area] - 截图区域
-  Future<void> copyToClipboard({ScreenshotArea area = ScreenshotArea.screen}) async {
+  Future<void> copyToClipboard({
+    ScreenshotArea area = ScreenshotArea.screen,
+  }) async {
     if (_session == null) {
       throw Exception('未连接到终端');
     }
@@ -266,7 +272,8 @@ class KittyScreenshotService {
     }
 
     // OSC 20 ; screenshot:transparent=1/0
-    final cmd = '\x1b]20;screenshot:transparent=${transparent ? "1" : "0"}\x1b\\\\';
+    final cmd =
+        '\x1b]20;screenshot:transparent=${transparent ? "1" : "0"}\x1b\\\\';
     _session.writeRaw(cmd);
   }
 
@@ -286,7 +293,8 @@ class KittyScreenshotService {
   /// Base64 解码
   Uint8List _decodeBase64(String data) {
     // 简化的 Base64 解码
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+    const chars =
+        'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
     final bytes = <int>[];
 
     // 移除可能的 data: 前缀

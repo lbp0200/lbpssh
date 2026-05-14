@@ -31,7 +31,9 @@ void main() {
       home: Scaffold(
         body: ProviderScope(
           overrides: [
-            connectionProvider.overrideWith(() => _MockConnectionNotifier(state)),
+            connectionProvider.overrideWith(
+              () => _MockConnectionNotifier(state),
+            ),
           ],
           child: ConnectionList(
             isCompact: isCompact,
@@ -205,68 +207,70 @@ void main() {
             ),
           ];
 
-          await tester.pumpWidget(createTestWidget(connections: connections, isCompact: true));
+          await tester.pumpWidget(
+            createTestWidget(connections: connections, isCompact: true),
+          );
 
           // In compact mode, terminal icon should exist
           expect(find.byIcon(Icons.terminal), findsOneWidget);
         },
       );
 
-      testWidgets(
-        'Given non-compact mode, When rendered, Then shows FAB',
-        (WidgetTester tester) async {
-          // Set up screen size
-          tester.view.physicalSize = const Size(1000, 1000);
-          tester.view.devicePixelRatio = 1.0;
-          addTearDown(() {
-            tester.view.resetPhysicalSize();
-            tester.view.resetDevicePixelRatio();
-          });
+      testWidgets('Given non-compact mode, When rendered, Then shows FAB', (
+        WidgetTester tester,
+      ) async {
+        // Set up screen size
+        tester.view.physicalSize = const Size(1000, 1000);
+        tester.view.devicePixelRatio = 1.0;
+        addTearDown(() {
+          tester.view.resetPhysicalSize();
+          tester.view.resetDevicePixelRatio();
+        });
 
-          final connections = [
-            SshConnection(
-              id: '1',
-              name: 'Server 1',
-              host: '192.168.1.1',
-              username: 'user1',
-              authType: AuthType.password,
-            ),
-          ];
+        final connections = [
+          SshConnection(
+            id: '1',
+            name: 'Server 1',
+            host: '192.168.1.1',
+            username: 'user1',
+            authType: AuthType.password,
+          ),
+        ];
 
-          await tester.pumpWidget(createTestWidget(connections: connections));
+        await tester.pumpWidget(createTestWidget(connections: connections));
 
-          // FAB should be visible in non-compact mode
-          expect(find.byIcon(Icons.add), findsOneWidget);
-        },
-      );
+        // FAB should be visible in non-compact mode
+        expect(find.byIcon(Icons.add), findsOneWidget);
+      });
 
-      testWidgets(
-        'Given compact mode, When rendered, Then does not show FAB',
-        (WidgetTester tester) async {
-          // Set up screen size
-          tester.view.physicalSize = const Size(1000, 1000);
-          tester.view.devicePixelRatio = 1.0;
-          addTearDown(() {
-            tester.view.resetPhysicalSize();
-            tester.view.resetDevicePixelRatio();
-          });
+      testWidgets('Given compact mode, When rendered, Then does not show FAB', (
+        WidgetTester tester,
+      ) async {
+        // Set up screen size
+        tester.view.physicalSize = const Size(1000, 1000);
+        tester.view.devicePixelRatio = 1.0;
+        addTearDown(() {
+          tester.view.resetPhysicalSize();
+          tester.view.resetDevicePixelRatio();
+        });
 
-          final connections = [
-            SshConnection(
-              id: '1',
-              name: 'Server 1',
-              host: '192.168.1.1',
-              username: 'user1',
-              authType: AuthType.password,
-            ),
-          ];
+        final connections = [
+          SshConnection(
+            id: '1',
+            name: 'Server 1',
+            host: '192.168.1.1',
+            username: 'user1',
+            authType: AuthType.password,
+          ),
+        ];
 
-          await tester.pumpWidget(createTestWidget(connections: connections, isCompact: true));
+        await tester.pumpWidget(
+          createTestWidget(connections: connections, isCompact: true),
+        );
 
-          // FAB should not be visible in compact mode
-          expect(find.byIcon(Icons.add), findsNothing);
-        },
-      );
+        // FAB should not be visible in compact mode
+        expect(find.byIcon(Icons.add), findsNothing);
+      });
     });
 
     group('hover state', () {

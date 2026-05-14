@@ -24,7 +24,9 @@ void main() {
   setUp(() {
     mockService = MockAppConfigService();
     when(() => mockService.terminal).thenReturn(TerminalConfig.defaultConfig);
-    when(() => mockService.defaultTerminal).thenReturn(DefaultTerminalConfig.defaultConfig);
+    when(
+      () => mockService.defaultTerminal,
+    ).thenReturn(DefaultTerminalConfig.defaultConfig);
     when(() => mockService.ssh).thenReturn(SshConfig.defaultConfig);
   });
 
@@ -35,9 +37,7 @@ void main() {
   group('terminalConfigProvider', () {
     test('should load initial config', () {
       container = ProviderContainer(
-        overrides: [
-          appConfigServiceProvider.overrideWithValue(mockService),
-        ],
+        overrides: [appConfigServiceProvider.overrideWithValue(mockService)],
       );
 
       final config = container.read(terminalConfigProvider);
@@ -46,12 +46,12 @@ void main() {
 
     test('should update config', () async {
       container = ProviderContainer(
-        overrides: [
-          appConfigServiceProvider.overrideWithValue(mockService),
-        ],
+        overrides: [appConfigServiceProvider.overrideWithValue(mockService)],
       );
 
-      when(() => mockService.saveTerminalConfig(any())).thenAnswer((_) async {});
+      when(
+        () => mockService.saveTerminalConfig(any()),
+      ).thenAnswer((_) async {});
 
       final notifier = container.read(terminalConfigProvider.notifier);
       await notifier.updateFontSize(20);
@@ -65,9 +65,7 @@ void main() {
   group('defaultTerminalConfigProvider', () {
     test('should load initial default terminal config', () {
       container = ProviderContainer(
-        overrides: [
-          appConfigServiceProvider.overrideWithValue(mockService),
-        ],
+        overrides: [appConfigServiceProvider.overrideWithValue(mockService)],
       );
 
       final config = container.read(defaultTerminalConfigProvider);
@@ -78,9 +76,7 @@ void main() {
   group('sshConfigProvider', () {
     test('should load initial ssh config', () {
       container = ProviderContainer(
-        overrides: [
-          appConfigServiceProvider.overrideWithValue(mockService),
-        ],
+        overrides: [appConfigServiceProvider.overrideWithValue(mockService)],
       );
 
       final config = container.read(sshConfigProvider);
@@ -89,9 +85,7 @@ void main() {
 
     test('should update ssh config', () async {
       container = ProviderContainer(
-        overrides: [
-          appConfigServiceProvider.overrideWithValue(mockService),
-        ],
+        overrides: [appConfigServiceProvider.overrideWithValue(mockService)],
       );
 
       when(() => mockService.saveSshConfig(any())).thenAnswer((_) async {});

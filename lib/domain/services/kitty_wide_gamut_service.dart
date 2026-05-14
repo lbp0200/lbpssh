@@ -4,11 +4,11 @@ import 'terminal_service.dart';
 
 /// 颜色空间
 enum ColorSpace {
-  sRGB,      // 标准 RGB
+  sRGB, // 标准 RGB
   displayP3, // Display P3
-  rec2020,   // REC.2020
-  a98RGB,    // Adobe RGB 98
-  proPhoto,  // ProPhoto RGB
+  rec2020, // REC.2020
+  a98RGB, // Adobe RGB 98
+  proPhoto, // ProPhoto RGB
 }
 
 /// 颜色配置文件
@@ -223,7 +223,8 @@ class KittyWideGamutService {
     final bi = (b * 65535).round();
 
     // OSC 12 ; color=rgb: r / g / b
-    final cmd = '\x1b]12;color=rgb:${ri ~/ 256}/${ri % 256}/${gi ~/ 256}/${gi % 256}/${bi ~/ 256}/${bi % 256}\x1b\\\\';
+    final cmd =
+        '\x1b]12;color=rgb:${ri ~/ 256}/${ri % 256}/${gi ~/ 256}/${gi % 256}/${bi ~/ 256}/${bi % 256}\x1b\\\\';
     _session.writeRaw(cmd);
   }
 
@@ -243,7 +244,8 @@ class KittyWideGamutService {
     final bi = (b * 65535).round();
 
     // OSC 131 ; color=rgb: r / g / b
-    final cmd = '\x1b]131;color=rgb:${ri ~/ 256}/${ri % 256}/${gi ~/ 256}/${gi % 256}/${bi ~/ 256}/${bi % 256}\x1b\\\\';
+    final cmd =
+        '\x1b]131;color=rgb:${ri ~/ 256}/${ri % 256}/${gi ~/ 256}/${gi % 256}/${bi ~/ 256}/${bi % 256}\x1b\\\\';
     _session.writeRaw(cmd);
   }
 
@@ -263,7 +265,8 @@ class KittyWideGamutService {
     final bi = (b * 65535).round();
 
     // OSC 132 ; color=rgb: r / g / b
-    final cmd = '\x1b]132;color=rgb:${ri ~/ 256}/${ri % 256}/${gi ~/ 256}/${gi % 256}/${bi ~/ 256}/${bi % 256}\x1b\\\\';
+    final cmd =
+        '\x1b]132;color=rgb:${ri ~/ 256}/${ri % 256}/${gi ~/ 256}/${gi % 256}/${bi ~/ 256}/${bi % 256}\x1b\\\\';
     _session.writeRaw(cmd);
   }
 

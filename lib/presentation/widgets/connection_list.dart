@@ -63,11 +63,16 @@ class ConnectionList extends ConsumerWidget {
       );
     }
 
-    final bottomPadding = isCompact ? LinearSpacing.spacing8 : LinearSpacing.spacing24 + LinearSpacing.spacing16;
+    final bottomPadding = isCompact
+        ? LinearSpacing.spacing8
+        : LinearSpacing.spacing24 + LinearSpacing.spacing16;
     return Stack(
       children: [
         ListView.builder(
-          padding: EdgeInsets.only(top: LinearSpacing.spacing8, bottom: bottomPadding),
+          padding: EdgeInsets.only(
+            top: LinearSpacing.spacing8,
+            bottom: bottomPadding,
+          ),
           itemCount: connections.length,
           itemBuilder: (context, index) {
             final connection = connections[index];
@@ -75,7 +80,9 @@ class ConnectionList extends ConsumerWidget {
               return _CompactConnectionItem(
                 connection: connection,
                 onTap: () => onConnectionTap?.call(connection),
-                onSftpTap: onSftpTap != null ? () => onSftpTap!(connection) : null,
+                onSftpTap: onSftpTap != null
+                    ? () => onSftpTap!(connection)
+                    : null,
               );
             }
             return _ConnectionListItem(
@@ -83,11 +90,13 @@ class ConnectionList extends ConsumerWidget {
               onTap: () => onConnectionTap?.call(connection),
               onEdit: () => _showConnectionForm(context, connection),
               onDelete: () => _deleteConnection(context, ref, connection),
-              onSftpTap: onSftpTap != null ? () => onSftpTap!(connection) : null,
+              onSftpTap: onSftpTap != null
+                  ? () => onSftpTap!(connection)
+                  : null,
             );
           },
         ),
-          if (!isCompact)
+        if (!isCompact)
           Positioned(
             bottom: LinearSpacing.spacing8,
             right: LinearSpacing.spacing8,
@@ -151,11 +160,13 @@ class ConnectionList extends ConsumerWidget {
     );
 
     if (confirmed == true) {
-      await ref.read(connectionProvider.notifier).deleteConnection(connection.id);
+      await ref
+          .read(connectionProvider.notifier)
+          .deleteConnection(connection.id);
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('连接已删除')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('连接已删除')));
       }
     }
   }
@@ -208,8 +219,8 @@ class _ConnectionListItemState extends State<_ConnectionListItem> {
               color: _isFocused
                   ? LinearColors.accentInteractive
                   : _isHovered
-                      ? LinearColors.borderStandard
-                      : LinearColors.borderSubtle,
+                  ? LinearColors.borderStandard
+                  : LinearColors.borderSubtle,
               width: _isFocused ? 2 : 1,
             ),
           ),
@@ -222,8 +233,12 @@ class _ConnectionListItemState extends State<_ConnectionListItem> {
                 setState(() => _isFocused = hasFocus);
               },
               borderRadius: BorderRadius.circular(LinearRadius.card),
-              focusColor: LinearColors.accentInteractive.withValues(alpha: 0.12),
-              hoverColor: LinearColors.accentInteractive.withValues(alpha: 0.08),
+              focusColor: LinearColors.accentInteractive.withValues(
+                alpha: 0.12,
+              ),
+              hoverColor: LinearColors.accentInteractive.withValues(
+                alpha: 0.08,
+              ),
               child: Container(
                 padding: const EdgeInsets.symmetric(
                   horizontal: LinearSpacing.spacing12,
@@ -235,8 +250,12 @@ class _ConnectionListItemState extends State<_ConnectionListItem> {
                       width: 36,
                       height: 36,
                       decoration: BoxDecoration(
-                        color: LinearColors.accentInteractive.withValues(alpha: 0.15),
-                        borderRadius: BorderRadius.circular(LinearRadius.standard),
+                        color: LinearColors.accentInteractive.withValues(
+                          alpha: 0.15,
+                        ),
+                        borderRadius: BorderRadius.circular(
+                          LinearRadius.standard,
+                        ),
                       ),
                       child: const Icon(
                         Icons.terminal,
@@ -303,7 +322,12 @@ class _ConnectionListItemState extends State<_ConnectionListItem> {
                                 color: LinearColors.textSecondary,
                               ),
                               SizedBox(width: LinearSpacing.spacing8 + 2),
-                              Text('编辑', style: TextStyle(color: LinearColors.textPrimary)),
+                              Text(
+                                '编辑',
+                                style: TextStyle(
+                                  color: LinearColors.textPrimary,
+                                ),
+                              ),
                             ],
                           ),
                         ),
@@ -311,9 +335,16 @@ class _ConnectionListItemState extends State<_ConnectionListItem> {
                           value: 'delete',
                           child: Row(
                             children: [
-                              Icon(Icons.delete, size: 18, color: LinearColors.error),
+                              Icon(
+                                Icons.delete,
+                                size: 18,
+                                color: LinearColors.error,
+                              ),
                               SizedBox(width: LinearSpacing.spacing8 + 2),
-                              Text('删除', style: TextStyle(color: LinearColors.error)),
+                              Text(
+                                '删除',
+                                style: TextStyle(color: LinearColors.error),
+                              ),
                             ],
                           ),
                         ),
@@ -372,8 +403,12 @@ class _CompactConnectionItem extends StatelessWidget {
                     width: 32,
                     height: 32,
                     decoration: BoxDecoration(
-                      color: LinearColors.accentInteractive.withValues(alpha: 0.15),
-                      borderRadius: BorderRadius.circular(LinearRadius.standard),
+                      color: LinearColors.accentInteractive.withValues(
+                        alpha: 0.15,
+                      ),
+                      borderRadius: BorderRadius.circular(
+                        LinearRadius.standard,
+                      ),
                     ),
                     child: const Icon(
                       Icons.terminal,

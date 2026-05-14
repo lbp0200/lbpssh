@@ -28,13 +28,15 @@ Widget createTestWidget({
       backgroundColor: LinearColors.background,
       body: ProviderScope(
         overrides: [
-          connectionProvider.overrideWith(() => _MockConnectionNotifier(
-            ConnectionState(
-              isLoading: false,
-              error: null,
-              connections: connections,
+          connectionProvider.overrideWith(
+            () => _MockConnectionNotifier(
+              ConnectionState(
+                isLoading: false,
+                error: null,
+                connections: connections,
+              ),
             ),
-          )),
+          ),
         ],
         child: ConnectionList(
           isCompact: isCompact,

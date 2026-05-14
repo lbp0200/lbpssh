@@ -100,9 +100,9 @@ class _ErrorDialogState extends State<ErrorDialog> {
     await Clipboard.setData(ClipboardData(text: _buildReport()));
     if (mounted) {
       setState(() => _copied = true);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('错误报告已复制到剪贴板')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('错误报告已复制到剪贴板')));
       Future.delayed(const Duration(seconds: 3), () {
         if (mounted) setState(() => _copied = false);
       });
@@ -162,7 +162,8 @@ class _ErrorDialogState extends State<ErrorDialog> {
               _buildSection(
                 title: '错误信息',
                 expanded: _errorExpanded,
-                onToggle: () => setState(() => _errorExpanded = !_errorExpanded),
+                onToggle: () =>
+                    setState(() => _errorExpanded = !_errorExpanded),
                 child: SelectableText(_errorString, style: errorTextStyle),
               ),
 
@@ -172,13 +173,15 @@ class _ErrorDialogState extends State<ErrorDialog> {
                 _buildSection(
                   title: 'Stack Trace',
                   expanded: _stackExpanded,
-                  onToggle: () => setState(() => _stackExpanded = !_stackExpanded),
+                  onToggle: () =>
+                      setState(() => _stackExpanded = !_stackExpanded),
                   child: SelectableText(_stackString, style: errorTextStyle),
                 ),
               ],
 
               // 额外上下文
-              if (widget.extraContext != null && widget.extraContext!.isNotEmpty) ...[
+              if (widget.extraContext != null &&
+                  widget.extraContext!.isNotEmpty) ...[
                 const SizedBox(height: 12),
                 Container(
                   padding: const EdgeInsets.all(LinearSpacing.spacing12),
@@ -274,9 +277,9 @@ class _ErrorDialogState extends State<ErrorDialog> {
                 const SizedBox(width: 4),
                 Text(
                   title,
-                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
                 ),
               ],
             ),

@@ -4,13 +4,13 @@ import 'terminal_service.dart';
 
 /// 操作类型
 enum ActionType {
-  openUrl,          // 打开 URL
-  openFile,         // 打开文件
-  runProgram,       // 运行程序
-  click,           // 点击
-  scroll,          // 滚动
-  input,           // 输入
-  navigate,        // 导航
+  openUrl, // 打开 URL
+  openFile, // 打开文件
+  runProgram, // 运行程序
+  click, // 点击
+  scroll, // 滚动
+  input, // 输入
+  navigate, // 导航
 }
 
 /// URL 动作
@@ -216,7 +216,10 @@ class KittyActionsService {
   /// 请求动作
   ///
   /// 请求终端执行某个动作
-  Future<void> requestAction(ActionType type, {Map<String, String>? params}) async {
+  Future<void> requestAction(
+    ActionType type, {
+    Map<String, String>? params,
+  }) async {
     if (_session == null) {
       throw Exception('未连接到终端');
     }
@@ -283,51 +286,54 @@ class KittyActionsService {
         // 解析动作类型并触发回调
         switch (actionType) {
           case 'open-url':
-            onAction?.call(ActionArgs(
-              type: ActionType.openUrl,
-              url: args['u'],
-            ));
+            onAction?.call(
+              ActionArgs(type: ActionType.openUrl, url: args['u']),
+            );
             break;
           case 'open-file':
-            onAction?.call(ActionArgs(
-              type: ActionType.openFile,
-              filePath: args['f'],
-              line: int.tryParse(args['l'] ?? ''),
-              column: int.tryParse(args['c'] ?? ''),
-            ));
+            onAction?.call(
+              ActionArgs(
+                type: ActionType.openFile,
+                filePath: args['f'],
+                line: int.tryParse(args['l'] ?? ''),
+                column: int.tryParse(args['c'] ?? ''),
+              ),
+            );
             break;
           case 'run-program':
-            onAction?.call(ActionArgs(
-              type: ActionType.runProgram,
-              program: args['p'],
-              arguments: args['a']?.split(','),
-            ));
+            onAction?.call(
+              ActionArgs(
+                type: ActionType.runProgram,
+                program: args['p'],
+                arguments: args['a']?.split(','),
+              ),
+            );
             break;
           case 'click':
-            onAction?.call(ActionArgs(
-              type: ActionType.click,
-              x: int.tryParse(args['x'] ?? ''),
-              y: int.tryParse(args['y'] ?? ''),
-            ));
+            onAction?.call(
+              ActionArgs(
+                type: ActionType.click,
+                x: int.tryParse(args['x'] ?? ''),
+                y: int.tryParse(args['y'] ?? ''),
+              ),
+            );
             break;
           case 'scroll':
-            onAction?.call(ActionArgs(
-              type: ActionType.scroll,
-              deltaX: int.tryParse(args['x'] ?? ''),
-              deltaY: int.tryParse(args['y'] ?? ''),
-            ));
+            onAction?.call(
+              ActionArgs(
+                type: ActionType.scroll,
+                deltaX: int.tryParse(args['x'] ?? ''),
+                deltaY: int.tryParse(args['y'] ?? ''),
+              ),
+            );
             break;
           case 'input':
-            onAction?.call(ActionArgs(
-              type: ActionType.input,
-              text: args['t'],
-            ));
+            onAction?.call(ActionArgs(type: ActionType.input, text: args['t']));
             break;
           case 'navigate':
-            onAction?.call(ActionArgs(
-              type: ActionType.navigate,
-              text: args['d'],
-            ));
+            onAction?.call(
+              ActionArgs(type: ActionType.navigate, text: args['d']),
+            );
             break;
         }
       }

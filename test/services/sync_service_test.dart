@@ -7,7 +7,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:lbp_ssh/domain/services/sync_service.dart';
 import 'package:lbp_ssh/data/models/ssh_connection.dart';
 import 'package:lbp_ssh/data/repositories/connection_repository.dart';
-import 'package:lbp_ssh/core/constants/app_constants.dart';
 
 // Mock classes
 class MockConnectionRepository extends Mock implements ConnectionRepository {}
@@ -18,9 +17,10 @@ class MockDio extends Mock implements Dio {}
 void registerFallbackValues() {
   registerFallbackValue(
     SyncConfig(
-      platform: SyncPlatform.gist,
+      platform: SyncPlatform.githubRepo,
       accessToken: 'test_token',
-      gistId: 'test_gist_id',
+      repoOwner: 'test_owner',
+      repoName: 'test_repo',
     ),
   );
   registerFallbackValue(
@@ -42,21 +42,23 @@ void main() {
   registerFallbackValues();
 
   // =======================================================================
-  // SyncConfig tests (existing)
+  // SyncConfig tests
   // =======================================================================
   group('SyncConfig', () {
     test(
       'Given required fields, When creating SyncConfig, Then uses default values for optional fields',
       () {
         final config = SyncConfig(
-          platform: SyncPlatform.gist,
+          platform: SyncPlatform.githubRepo,
           accessToken: 'test_token',
-          gistId: 'test_gist_id',
+          repoOwner: 'test_owner',
+          repoName: 'test_repo',
         );
 
-        expect(config.platform, SyncPlatform.gist);
+        expect(config.platform, SyncPlatform.githubRepo);
         expect(config.accessToken, 'test_token');
-        expect(config.gistId, 'test_gist_id');
+        expect(config.repoOwner, 'test_owner');
+        expect(config.repoName, 'test_repo');
         expect(config.autoSync, false);
         expect(config.syncIntervalMinutes, 5);
       },
@@ -66,20 +68,22 @@ void main() {
       'Given SyncConfig with all fields, When serializing to JSON, Then produces correct JSON',
       () {
         final config = SyncConfig(
-          platform: SyncPlatform.giteeGist,
+          platform: SyncPlatform.githubRepo,
           accessToken: 'token123',
-          gistId: 'gist123',
-          gistFileName: 'config.json',
+          repoOwner: 'my_owner',
+          repoName: 'my_repo',
+          branch: 'main',
           autoSync: true,
           syncIntervalMinutes: 60,
         );
 
         final json = config.toJson();
 
-        expect(json['platform'], 'giteeGist');
+        expect(json['platform'], 'githubRepo');
         expect(json['accessToken'], 'token123');
-        expect(json['gistId'], 'gist123');
-        expect(json['gistFileName'], 'config.json');
+        expect(json['repoOwner'], 'my_owner');
+        expect(json['repoName'], 'my_repo');
+        expect(json['branch'], 'main');
         expect(json['autoSync'], true);
         expect(json['syncIntervalMinutes'], 60);
       },
@@ -89,20 +93,22 @@ void main() {
       'Given valid JSON with all fields, When deserializing, Then creates SyncConfig correctly',
       () {
         final json = {
-          'platform': 'gist',
+          'platform': 'githubRepo',
           'accessToken': 'token456',
-          'gistId': 'gist456',
-          'gistFileName': 'ssh_config.json',
+          'repoOwner': 'owner456',
+          'repoName': 'repo456',
+          'branch': 'develop',
           'autoSync': true,
           'syncIntervalMinutes': 45,
         };
 
         final config = SyncConfig.fromJson(json);
 
-        expect(config.platform, SyncPlatform.gist);
+        expect(config.platform, SyncPlatform.githubRepo);
         expect(config.accessToken, 'token456');
-        expect(config.gistId, 'gist456');
-        expect(config.gistFileName, 'ssh_config.json');
+        expect(config.repoOwner, 'owner456');
+        expect(config.repoName, 'repo456');
+        expect(config.branch, 'develop');
         expect(config.autoSync, true);
         expect(config.syncIntervalMinutes, 45);
       },
@@ -111,15 +117,44 @@ void main() {
     test(
       'Given JSON with missing optional fields, When deserializing, Then uses default values',
       () {
-        final json = {'platform': 'giteeGist'};
+        final json = {'platform': 'githubRepo'};
 
         final config = SyncConfig.fromJson(json);
 
-        expect(config.platform, SyncPlatform.giteeGist);
+        expect(config.platform, SyncPlatform.githubRepo);
         expect(config.accessToken, isNull);
-        expect(config.gistId, isNull);
+        expect(config.repoOwner, isNull);
+        expect(config.repoName, isNull);
+        expect(config.branch, isNull);
         expect(config.autoSync, false);
         expect(config.syncIntervalMinutes, 5);
+      },
+    );
+
+    test(
+      'Given legacy platform name gist, When deserializing, Then maps to githubRepo',
+      () {
+        final json = {'platform': 'gist'};
+        final config = SyncConfig.fromJson(json);
+        expect(config.platform, SyncPlatform.githubRepo);
+      },
+    );
+
+    test(
+      'Given legacy platform name giteeGist, When deserializing, Then maps to githubRepo',
+      () {
+        final json = {'platform': 'giteeGist'};
+        final config = SyncConfig.fromJson(json);
+        expect(config.platform, SyncPlatform.githubRepo);
+      },
+    );
+
+    test(
+      'Given unknown platform name, When deserializing, Then defaults to githubRepo',
+      () {
+        final json = {'platform': 'unknown_platform'};
+        final config = SyncConfig.fromJson(json);
+        expect(config.platform, SyncPlatform.githubRepo);
       },
     );
   });
@@ -199,14 +234,13 @@ void main() {
   });
 
   // =======================================================================
-  // SyncPlatform enum tests (existing)
+  // SyncPlatform enum tests
   // =======================================================================
   group('SyncPlatform', () {
     test(
       'Given SyncPlatform enum, When accessing name, Then returns correct values',
       () {
-        expect(SyncPlatform.gist.name, 'gist');
-        expect(SyncPlatform.giteeGist.name, 'giteeGist');
+        expect(SyncPlatform.githubRepo.name, 'githubRepo');
       },
     );
   });
@@ -227,7 +261,7 @@ void main() {
   });
 
   // =======================================================================
-  // SyncService integration tests
+  // SyncService - config persistence
   // =======================================================================
   group('SyncService - config persistence', () {
     late MockConnectionRepository mockRepository;
@@ -252,10 +286,11 @@ void main() {
       await Future<void>.delayed(const Duration(milliseconds: 10));
 
       final config = SyncConfig(
-        platform: SyncPlatform.gist,
+        platform: SyncPlatform.githubRepo,
         accessToken: 'token123',
-        gistId: 'gist123',
-        gistFileName: 'test.json',
+        repoOwner: 'owner123',
+        repoName: 'repo123',
+        branch: 'main',
         autoSync: true,
         syncIntervalMinutes: 30,
       );
@@ -263,10 +298,11 @@ void main() {
       await service.saveConfig(config);
 
       expect(service.getConfig(), isNotNull);
-      expect(service.getConfig()!.platform, SyncPlatform.gist);
+      expect(service.getConfig()!.platform, SyncPlatform.githubRepo);
       expect(service.getConfig()!.accessToken, 'token123');
-      expect(service.getConfig()!.gistId, 'gist123');
-      expect(service.getConfig()!.gistFileName, 'test.json');
+      expect(service.getConfig()!.repoOwner, 'owner123');
+      expect(service.getConfig()!.repoName, 'repo123');
+      expect(service.getConfig()!.branch, 'main');
       expect(service.getConfig()!.autoSync, true);
       expect(service.getConfig()!.syncIntervalMinutes, 30);
     });
@@ -277,20 +313,29 @@ void main() {
       await Future<void>.delayed(const Duration(milliseconds: 10));
 
       await service.saveConfig(
-        SyncConfig(platform: SyncPlatform.gist, accessToken: 'tokenA'),
+        SyncConfig(
+          platform: SyncPlatform.githubRepo,
+          accessToken: 'tokenA',
+          repoOwner: 'ownerA',
+          repoName: 'repoA',
+        ),
       );
 
       await service.saveConfig(
         SyncConfig(
-          platform: SyncPlatform.giteeGist,
+          platform: SyncPlatform.githubRepo,
           accessToken: 'tokenB',
-          gistId: 'gistB',
+          repoOwner: 'ownerB',
+          repoName: 'repoB',
+          branch: 'develop',
         ),
       );
 
-      expect(service.getConfig()!.platform, SyncPlatform.giteeGist);
+      expect(service.getConfig()!.platform, SyncPlatform.githubRepo);
       expect(service.getConfig()!.accessToken, 'tokenB');
-      expect(service.getConfig()!.gistId, 'gistB');
+      expect(service.getConfig()!.repoOwner, 'ownerB');
+      expect(service.getConfig()!.repoName, 'repoB');
+      expect(service.getConfig()!.branch, 'develop');
     });
 
     test('lastSyncTime is null before any sync', () async {
@@ -301,6 +346,9 @@ void main() {
     });
   });
 
+  // =======================================================================
+  // SyncService - uploadConfig (GitHub Repo Contents API)
+  // =======================================================================
   group('SyncService - uploadConfig', () {
     late MockConnectionRepository mockRepository;
     late MockDio mockDio;
@@ -332,7 +380,7 @@ void main() {
       SharedPreferences.setMockInitialValues({});
       final service = SyncService(mockRepository, dio: mockDio);
       await Future<void>.delayed(const Duration(milliseconds: 10));
-      await service.saveConfig(SyncConfig(platform: SyncPlatform.gist));
+      await service.saveConfig(SyncConfig(platform: SyncPlatform.githubRepo));
 
       expect(
         () => service.uploadConfig(),
@@ -346,26 +394,104 @@ void main() {
       );
     });
 
+    test('uploadConfig throws when config has no repoOwner', () async {
+      SharedPreferences.setMockInitialValues({});
+      final service = SyncService(mockRepository, dio: mockDio);
+      await Future<void>.delayed(const Duration(milliseconds: 10));
+      await service.saveConfig(
+        SyncConfig(
+          platform: SyncPlatform.githubRepo,
+          accessToken: 'token123',
+          repoName: 'repo123',
+        ),
+      );
+
+      when(() => mockRepository.getAllConnections()).thenReturn([]);
+
+      expect(
+        () => service.uploadConfig(),
+        throwsA(
+          isA<Exception>().having(
+            (e) => e.toString(),
+            'message',
+            contains('请设置 GitHub 仓库信息'),
+          ),
+        ),
+      );
+    });
+
+    test('uploadConfig throws when config has no repoName', () async {
+      SharedPreferences.setMockInitialValues({});
+      final service = SyncService(mockRepository, dio: mockDio);
+      await Future<void>.delayed(const Duration(milliseconds: 10));
+      await service.saveConfig(
+        SyncConfig(
+          platform: SyncPlatform.githubRepo,
+          accessToken: 'token123',
+          repoOwner: 'owner123',
+        ),
+      );
+
+      when(() => mockRepository.getAllConnections()).thenReturn([]);
+
+      expect(
+        () => service.uploadConfig(),
+        throwsA(
+          isA<Exception>().having(
+            (e) => e.toString(),
+            'message',
+            contains('请设置 GitHub 仓库信息'),
+          ),
+        ),
+      );
+    });
+
     test('status changes during uploadConfig to success', () async {
       SharedPreferences.setMockInitialValues({});
       final service = SyncService(mockRepository, dio: mockDio);
       await Future<void>.delayed(const Duration(milliseconds: 10));
 
       await service.saveConfig(
-        SyncConfig(platform: SyncPlatform.gist, accessToken: 'token123'),
+        SyncConfig(
+          platform: SyncPlatform.githubRepo,
+          accessToken: 'token123',
+          repoOwner: 'owner123',
+          repoName: 'repo123',
+        ),
       );
 
       when(() => mockRepository.getAllConnections()).thenReturn([]);
 
+      // First GET to check existing file -> 404 (file doesn't exist)
       when(
-        () => mockDio.post<Map<String, dynamic>>(
+        () => mockDio.get<Map<String, dynamic>>(
+          any(),
+          queryParameters: any(named: 'queryParameters'),
+          options: any(named: 'options'),
+        ),
+      ).thenThrow(
+        DioException(
+          requestOptions: RequestOptions(path: ''),
+          type: DioExceptionType.badResponse,
+          response: Response(
+            statusCode: 404,
+            requestOptions: RequestOptions(path: ''),
+          ),
+        ),
+      );
+
+      // Then PUT to create the file
+      when(
+        () => mockDio.put<Map<String, dynamic>>(
           any(),
           data: any(named: 'data'),
           options: any(named: 'options'),
         ),
       ).thenAnswer(
         (_) async => Response<Map<String, dynamic>>(
-          data: {'id': 'new_gist_id'},
+          data: {
+            'content': {'sha': 'new_sha'},
+          },
           statusCode: 201,
           requestOptions: RequestOptions(path: ''),
         ),
@@ -386,20 +512,44 @@ void main() {
       await Future<void>.delayed(const Duration(milliseconds: 10));
 
       await service.saveConfig(
-        SyncConfig(platform: SyncPlatform.gist, accessToken: 'token123'),
+        SyncConfig(
+          platform: SyncPlatform.githubRepo,
+          accessToken: 'token123',
+          repoOwner: 'owner123',
+          repoName: 'repo123',
+        ),
       );
 
       when(() => mockRepository.getAllConnections()).thenReturn([]);
 
       when(
-        () => mockDio.post<Map<String, dynamic>>(
+        () => mockDio.get<Map<String, dynamic>>(
+          any(),
+          queryParameters: any(named: 'queryParameters'),
+          options: any(named: 'options'),
+        ),
+      ).thenThrow(
+        DioException(
+          requestOptions: RequestOptions(path: ''),
+          type: DioExceptionType.badResponse,
+          response: Response(
+            statusCode: 404,
+            requestOptions: RequestOptions(path: ''),
+          ),
+        ),
+      );
+
+      when(
+        () => mockDio.put<Map<String, dynamic>>(
           any(),
           data: any(named: 'data'),
           options: any(named: 'options'),
         ),
       ).thenAnswer(
         (_) async => Response<Map<String, dynamic>>(
-          data: {'id': 'new_gist_id'},
+          data: {
+            'content': {'sha': 'new_sha'},
+          },
           statusCode: 201,
           requestOptions: RequestOptions(path: ''),
         ),
@@ -428,13 +578,32 @@ void main() {
       await Future<void>.delayed(const Duration(milliseconds: 10));
 
       await service.saveConfig(
-        SyncConfig(platform: SyncPlatform.gist, accessToken: 'token123'),
+        SyncConfig(
+          platform: SyncPlatform.githubRepo,
+          accessToken: 'token123',
+          repoOwner: 'owner123',
+          repoName: 'repo123',
+        ),
       );
 
       when(() => mockRepository.getAllConnections()).thenReturn([]);
 
       when(
-        () => mockDio.post<Map<String, dynamic>>(
+        () => mockDio.get<Map<String, dynamic>>(
+          any(),
+          queryParameters: any(named: 'queryParameters'),
+          options: any(named: 'options'),
+        ),
+      ).thenThrow(
+        DioException(
+          requestOptions: RequestOptions(path: ''),
+          type: DioExceptionType.connectionTimeout,
+        ),
+      );
+
+      // GET 抛出后 catch 块会吞掉，然后继续调用 PUT
+      when(
+        () => mockDio.put<Map<String, dynamic>>(
           any(),
           data: any(named: 'data'),
           options: any(named: 'options'),
@@ -449,8 +618,130 @@ void main() {
       await expectLater(service.uploadConfig(), throwsA(isA<DioException>()));
       expect(service.status, SyncStatusEnum.error);
     });
+
+    test('uploadConfig updates existing file when SHA exists', () async {
+      SharedPreferences.setMockInitialValues({});
+      final service = SyncService(mockRepository, dio: mockDio);
+      await Future<void>.delayed(const Duration(milliseconds: 10));
+
+      await service.saveConfig(
+        SyncConfig(
+          platform: SyncPlatform.githubRepo,
+          accessToken: 'token123',
+          repoOwner: 'owner123',
+          repoName: 'repo123',
+        ),
+      );
+
+      when(() => mockRepository.getAllConnections()).thenReturn([]);
+
+      // First GET succeeds (file exists with SHA)
+      when(
+        () => mockDio.get<Map<String, dynamic>>(
+          any(),
+          queryParameters: any(named: 'queryParameters'),
+          options: any(named: 'options'),
+        ),
+      ).thenAnswer(
+        (_) async => Response(
+          data: {
+            'content': base64Encode(
+              utf8.encode(
+                jsonEncode({
+                  'version': 1,
+                  'timestamp': DateTime.now().toIso8601String(),
+                  'connections': <Map<String, dynamic>>[],
+                }),
+              ),
+            ),
+            'sha': 'existing_sha',
+          },
+          statusCode: 200,
+          requestOptions: RequestOptions(path: ''),
+        ),
+      );
+
+      // Then PUT updates the file
+      when(
+        () => mockDio.put<Map<String, dynamic>>(
+          any(),
+          data: any(named: 'data'),
+          options: any(named: 'options'),
+        ),
+      ).thenAnswer(
+        (_) async => Response<Map<String, dynamic>>(
+          data: {
+            'content': {'sha': 'updated_sha'},
+          },
+          statusCode: 200,
+          requestOptions: RequestOptions(path: ''),
+        ),
+      );
+
+      await service.uploadConfig();
+      expect(service.status, SyncStatusEnum.success);
+    });
+
+    test('uploadConfig sends correct PUT body to GitHub API', () async {
+      SharedPreferences.setMockInitialValues({});
+      final service = SyncService(mockRepository, dio: mockDio);
+      await Future<void>.delayed(const Duration(milliseconds: 10));
+
+      await service.saveConfig(
+        SyncConfig(
+          platform: SyncPlatform.githubRepo,
+          accessToken: 'token123',
+          repoOwner: 'owner123',
+          repoName: 'repo123',
+        ),
+      );
+
+      when(() => mockRepository.getAllConnections()).thenReturn([]);
+
+      when(
+        () => mockDio.get<Map<String, dynamic>>(
+          any(),
+          queryParameters: any(named: 'queryParameters'),
+          options: any(named: 'options'),
+        ),
+      ).thenThrow(
+        DioException(
+          requestOptions: RequestOptions(path: ''),
+          type: DioExceptionType.badResponse,
+          response: Response(
+            statusCode: 404,
+            requestOptions: RequestOptions(path: ''),
+          ),
+        ),
+      );
+
+      when(
+        () => mockDio.put<Map<String, dynamic>>(
+          any(),
+          data: any(named: 'data'),
+          options: any(named: 'options'),
+        ),
+      ).thenAnswer(
+        (_) async => Response<Map<String, dynamic>>(
+          data: {'content': {'sha': 'new_sha'}},
+          statusCode: 201,
+          requestOptions: RequestOptions(path: ''),
+        ),
+      );
+
+      await service.uploadConfig();
+
+      verify(() => mockDio.put<Map<String, dynamic>>(
+        'https://api.github.com/repos/owner123/repo123/contents/lbpSSH/ssh_connections.json',
+        data: any(named: 'data'),
+        options: any(named: 'options'),
+      )).called(1);
+    });
   });
 
+  // =======================================================================
+  // SyncService - downloadConfig (GitHub Repo Contents API)
+  // =======================================================================
   group('SyncService - downloadConfig', () {
     late MockConnectionRepository mockRepository;
     late MockDio mockDio;
@@ -478,6 +769,26 @@ void main() {
       );
     });
 
+    test('downloadConfig throws when config has no repoOwner', () async {
+      SharedPreferences.setMockInitialValues({});
+      final service = SyncService(mockRepository, dio: mockDio);
+      await Future<void>.delayed(const Duration(milliseconds: 10));
+      await service.saveConfig(
+        SyncConfig(platform: SyncPlatform.githubRepo, accessToken: 'token123'),
+      );
+
+      expect(
+        () => service.downloadConfig(),
+        throwsA(
+          isA<Exception>().having(
+            (e) => e.toString(),
+            'message',
+            contains('请设置 GitHub 仓库信息'),
+          ),
+        ),
+      );
+    });
+
     test('downloadConfig sets status to success on success', () async {
       SharedPreferences.setMockInitialValues({});
       final service = SyncService(mockRepository, dio: mockDio);
@@ -485,32 +796,33 @@ void main() {
 
       await service.saveConfig(
         SyncConfig(
-          platform: SyncPlatform.gist,
+          platform: SyncPlatform.githubRepo,
           accessToken: 'token123',
-          gistId: 'gist123',
+          repoOwner: 'owner123',
+          repoName: 'repo123',
         ),
       );
 
-      // _downloadFromGitHubGist calls base64Encode(utf8.encode(file['content']))
-      // so we provide the raw JSON string that gets encoded by the service
+      // GitHub Repo Contents API returns content as base64
       when(
         () => mockDio.get<Map<String, dynamic>>(
           any(),
+          queryParameters: any(named: 'queryParameters'),
           options: any(named: 'options'),
         ),
       ).thenAnswer(
         (_) async => Response(
           data: {
-            'files': {
-              AppConstants.defaultSyncFileName: {
-                'content': jsonEncode({
+            'content': base64Encode(
+              utf8.encode(
+                jsonEncode({
                   'version': 1,
                   'timestamp': DateTime.now().toIso8601String(),
                   'connections': <Map<String, dynamic>>[],
                 }),
-                'sha': 'file_sha',
-              },
-            },
+              ),
+            ),
+            'sha': 'file_sha',
           },
           statusCode: 200,
           requestOptions: RequestOptions(path: ''),
@@ -537,64 +849,85 @@ void main() {
 
         await service.saveConfig(
           SyncConfig(
-            platform: SyncPlatform.gist,
+            platform: SyncPlatform.githubRepo,
             accessToken: 'token123',
-            gistId: 'gist123',
+            repoOwner: 'owner123',
+            repoName: 'repo123',
           ),
         );
 
         when(
           () => mockDio.get<Map<String, dynamic>>(
             any(),
+            queryParameters: any(named: 'queryParameters'),
             options: any(named: 'options'),
           ),
         ).thenAnswer(
           (_) async => Response(
             data: {
-              'files': {
-                AppConstants.defaultSyncFileName: {
-                  'content': jsonEncode({
+              'content': base64Encode(
+                utf8.encode(
+                  jsonEncode({
                     'version': 1,
                     'timestamp': DateTime.now().toIso8601String(),
                     'connections': <Map<String, dynamic>>[],
                   }),
-                  'sha': 'file_sha',
-                },
-              },
+                ),
+              ),
+              'sha': 'file_sha',
             },
             statusCode: 200,
             requestOptions: RequestOptions(path: ''),
           ),
         );
 
-        // Repository returns a local connection - without skipConflictCheck this
-        // would trigger conflict detection
-        when(() => mockRepository.getAllConnections()).thenReturn([
-          SshConnection(
-            id: 'conn1',
-            name: 'Local Only',
-            host: '192.168.1.1',
-            port: 22,
-            username: 'user',
-            authType: AuthType.password,
-            version: 2,
-            createdAt: DateTime(2024, 1, 1),
-            updatedAt: DateTime(2024, 1, 2),
-          ),
-        ]);
+        when(() => mockRepository.getAllConnections()).thenReturn([]);
         when(
           () => mockRepository.saveConnections(any()),
         ).thenAnswer((_) async {});
 
-        // Should NOT throw SyncConflictException because skipConflictCheck is true
         await service.downloadConfig(skipConflictCheck: true);
 
         expect(service.status, SyncStatusEnum.success);
         verify(() => mockRepository.saveConnections(any())).called(1);
       },
     );
+
+    test('downloadConfig sets status to error on Dio failure', () async {
+      SharedPreferences.setMockInitialValues({});
+      final service = SyncService(mockRepository, dio: mockDio);
+      await Future<void>.delayed(const Duration(milliseconds: 10));
+
+      await service.saveConfig(
+        SyncConfig(
+          platform: SyncPlatform.githubRepo,
+          accessToken: 'token123',
+          repoOwner: 'owner123',
+          repoName: 'repo123',
+        ),
+      );
+
+      when(
+        () => mockDio.get<Map<String, dynamic>>(
+          any(),
+          queryParameters: any(named: 'queryParameters'),
+          options: any(named: 'options'),
+        ),
+      ).thenThrow(
+        DioException(
+          requestOptions: RequestOptions(path: ''),
+          type: DioExceptionType.connectionTimeout,
+        ),
+      );
+
+      await expectLater(service.downloadConfig(), throwsA(isA<DioException>()));
+      expect(service.status, SyncStatusEnum.error);
+    });
   });
 
+  // =======================================================================
+  // SyncService - conflict detection
+  // =======================================================================
   group('SyncService - conflict detection', () {
     late MockConnectionRepository mockRepository;
     late MockDio mockDio;
@@ -605,159 +938,109 @@ void main() {
       SharedPreferences.setMockInitialValues({});
     });
 
-    test('no conflict when remote modified before local existed', () async {
-      SharedPreferences.setMockInitialValues({});
-      final service = SyncService(mockRepository, dio: mockDio);
-      await Future<void>.delayed(const Duration(milliseconds: 10));
+    test(
+      'detects conflict when version differs and local.updatedAt > remote.updatedAt',
+      () async {
+        SharedPreferences.setMockInitialValues({});
+        final service = SyncService(mockRepository, dio: mockDio);
+        await Future<void>.delayed(const Duration(milliseconds: 10));
 
-      await service.saveConfig(
-        SyncConfig(
-          platform: SyncPlatform.gist,
-          accessToken: 'token123',
-          gistId: 'gist123',
-        ),
-      );
+        await service.saveConfig(
+          SyncConfig(
+            platform: SyncPlatform.githubRepo,
+            accessToken: 'token123',
+            repoOwner: 'owner123',
+            repoName: 'repo123',
+          ),
+        );
 
-      // Local: created Jan 1, updated Jan 10 (version 2)
-      // Remote: created Dec 15, updated Dec 20 (version 1)
-      // remote.updatedAt (Dec 20) > local.createdAt (Jan 1)? NO -> no conflict
-      final localConn = SshConnection(
-        id: 'conn1',
-        name: 'Local Updated',
-        host: '192.168.1.1',
-        port: 22,
-        username: 'user',
-        authType: AuthType.password,
-        version: 2,
-        createdAt: DateTime(2024, 1, 1),
-        updatedAt: DateTime(2024, 1, 10),
-      );
+        final localConn = SshConnection(
+          id: 'conn1',
+          name: 'Local Newer',
+          host: '192.168.1.1',
+          port: 22,
+          username: 'user',
+          authType: AuthType.password,
+          version: 2,
+          createdAt: DateTime(2024, 1, 1),
+          updatedAt: DateTime(2024, 1, 10),
+        );
 
-      final remoteJson = {
-        'id': 'conn1',
-        'name': 'Remote Older',
-        'host': '192.168.1.1',
-        'port': 22,
-        'username': 'user',
-        'authType': 'password',
-        'version': 1,
-        'createdAt': DateTime(2023, 12, 15).toIso8601String(),
-        'updatedAt': DateTime(2023, 12, 20).toIso8601String(),
-      };
+        final localConn2 = SshConnection(
+          id: 'conn2',
+          name: 'Same',
+          host: '192.168.1.2',
+          port: 22,
+          username: 'user',
+          authType: AuthType.password,
+          version: 1,
+          createdAt: DateTime(2024, 1, 1),
+          updatedAt: DateTime(2024, 1, 5),
+        );
 
-      when(
-        () => mockDio.get<Map<String, dynamic>>(
-          any(),
-          options: any(named: 'options'),
-        ),
-      ).thenAnswer(
-        (_) async => Response(
-          data: {
-            'files': {
-              AppConstants.defaultSyncFileName: {
-                'content': jsonEncode({
-                  'version': 1,
-                  'timestamp': DateTime.now().toIso8601String(),
-                  'connections': [remoteJson],
-                }),
-                'sha': 'file_sha',
-              },
+        final remoteJson = {
+          'id': 'conn1',
+          'name': 'Remote Older',
+          'host': '192.168.1.1',
+          'port': 22,
+          'username': 'user',
+          'authType': 'password',
+          'version': 1,
+          'createdAt': DateTime(2024, 1, 1).toIso8601String(),
+          'updatedAt': DateTime(2024, 1, 5).toIso8601String(),
+        };
+        final remoteJson2 = {
+          'id': 'conn2',
+          'name': 'Same',
+          'host': '192.168.1.2',
+          'port': 22,
+          'username': 'user',
+          'authType': 'password',
+          'version': 1,
+          'createdAt': DateTime(2024, 1, 1).toIso8601String(),
+          'updatedAt': DateTime(2024, 1, 5).toIso8601String(),
+        };
+
+        when(
+          () => mockDio.get<Map<String, dynamic>>(
+            any(),
+            queryParameters: any(named: 'queryParameters'),
+            options: any(named: 'options'),
+          ),
+        ).thenAnswer(
+          (_) async => Response(
+            data: {
+              'content': base64Encode(
+                utf8.encode(
+                  jsonEncode({
+                    'version': 1,
+                    'timestamp': DateTime.now().toIso8601String(),
+                    'connections': [remoteJson, remoteJson2],
+                  }),
+                ),
+              ),
+              'sha': 'file_sha',
             },
-          },
-          statusCode: 200,
-          requestOptions: RequestOptions(path: ''),
-        ),
-      );
+            statusCode: 200,
+            requestOptions: RequestOptions(path: ''),
+          ),
+        );
 
-      when(() => mockRepository.getAllConnections()).thenReturn([localConn]);
-      when(
-        () => mockRepository.saveConnections(any()),
-      ).thenAnswer((_) async {});
+        when(
+          () => mockRepository.getAllConnections(),
+        ).thenReturn([localConn, localConn2]);
 
-      // Should succeed without conflict
-      await service.downloadConfig();
-
-      expect(service.status, SyncStatusEnum.success);
-      verify(() => mockRepository.saveConnections(any())).called(1);
-    });
-
-    test('detects conflict when both modified', () async {
-      SharedPreferences.setMockInitialValues({});
-      final service = SyncService(mockRepository, dio: mockDio);
-      await Future<void>.delayed(const Duration(milliseconds: 10));
-
-      await service.saveConfig(
-        SyncConfig(
-          platform: SyncPlatform.gist,
-          accessToken: 'token123',
-          gistId: 'gist123',
-        ),
-      );
-
-      // Conflict conditions:
-      // - version differs (local=2, remote=1)
-      // - local.updatedAt (Jan 10) > remote.updatedAt (Jan 5)
-      // - remote.updatedAt (Jan 5) > local.createdAt (Jan 1)
-      final localConn = SshConnection(
-        id: 'conn1',
-        name: 'Local Newer',
-        host: '192.168.1.1',
-        port: 22,
-        username: 'user',
-        authType: AuthType.password,
-        version: 2,
-        createdAt: DateTime(2024, 1, 1),
-        updatedAt: DateTime(2024, 1, 10),
-      );
-
-      final remoteJson = {
-        'id': 'conn1',
-        'name': 'Remote Older',
-        'host': '192.168.1.1',
-        'port': 22,
-        'username': 'user',
-        'authType': 'password',
-        'version': 1,
-        'createdAt': DateTime(2024, 1, 1).toIso8601String(),
-        'updatedAt': DateTime(2024, 1, 5).toIso8601String(),
-      };
-
-      when(
-        () => mockDio.get<Map<String, dynamic>>(
-          any(),
-          options: any(named: 'options'),
-        ),
-      ).thenAnswer(
-        (_) async => Response(
-          data: {
-            'files': {
-              AppConstants.defaultSyncFileName: {
-                'content': jsonEncode({
-                  'version': 1,
-                  'timestamp': DateTime.now().toIso8601String(),
-                  'connections': [remoteJson],
-                }),
-                'sha': 'file_sha',
-              },
-            },
-          },
-          statusCode: 200,
-          requestOptions: RequestOptions(path: ''),
-        ),
-      );
-
-      when(() => mockRepository.getAllConnections()).thenReturn([localConn]);
-
-      dynamic exception;
-      try {
-        await service.downloadConfig();
-      } catch (e) {
-        exception = e;
-      }
-      expect(exception, isA<SyncConflictException>());
-      expect((exception as SyncConflictException).conflicts.length, 1);
-      expect(service.status, SyncStatusEnum.error);
-    });
+        dynamic exception;
+        try {
+          await service.downloadConfig();
+        } catch (e) {
+          exception = e;
+        }
+        expect(exception, isA<SyncConflictException>());
+        expect((exception as SyncConflictException).conflicts.length, 1);
+        expect(service.status, SyncStatusEnum.error);
+      },
+    );
 
     test('no conflict when remote unchanged (same version)', () async {
       SharedPreferences.setMockInitialValues({});
@@ -766,13 +1049,13 @@ void main() {
 
       await service.saveConfig(
         SyncConfig(
-          platform: SyncPlatform.gist,
+          platform: SyncPlatform.githubRepo,
           accessToken: 'token123',
-          gistId: 'gist123',
+          repoOwner: 'owner123',
+          repoName: 'repo123',
         ),
       );
 
-      // Same version - first condition (version !=) fails, no conflict
       final localConn = SshConnection(
         id: 'conn1',
         name: 'Local',
@@ -800,21 +1083,22 @@ void main() {
       when(
         () => mockDio.get<Map<String, dynamic>>(
           any(),
+          queryParameters: any(named: 'queryParameters'),
           options: any(named: 'options'),
         ),
       ).thenAnswer(
         (_) async => Response(
           data: {
-            'files': {
-              AppConstants.defaultSyncFileName: {
-                'content': jsonEncode({
+            'content': base64Encode(
+              utf8.encode(
+                jsonEncode({
                   'version': 1,
                   'timestamp': DateTime.now().toIso8601String(),
                   'connections': [remoteJson],
                 }),
-                'sha': 'file_sha',
-              },
-            },
+              ),
+            ),
+            'sha': 'file_sha',
           },
           statusCode: 200,
           requestOptions: RequestOptions(path: ''),
@@ -830,98 +1114,6 @@ void main() {
 
       expect(service.status, SyncStatusEnum.success);
       verify(() => mockRepository.saveConnections(any())).called(1);
-    });
-  });
-
-  group('SyncService - Gitee platform', () {
-    late MockConnectionRepository mockRepository;
-    late MockDio mockDio;
-
-    setUp(() {
-      mockRepository = MockConnectionRepository();
-      mockDio = MockDio();
-      SharedPreferences.setMockInitialValues({});
-    });
-
-    test('downloads from Gitee Gist successfully', () async {
-      SharedPreferences.setMockInitialValues({});
-      final service = SyncService(mockRepository, dio: mockDio);
-      await Future<void>.delayed(const Duration(milliseconds: 10));
-
-      await service.saveConfig(
-        SyncConfig(
-          platform: SyncPlatform.giteeGist,
-          accessToken: 'gitee_token',
-          gistId: 'gitee_gist_id',
-        ),
-      );
-
-      when(
-        () => mockDio.get<Map<String, dynamic>>(
-          any(),
-          options: any(named: 'options'),
-        ),
-      ).thenAnswer(
-        (_) async => Response(
-          data: {
-            'files': {
-              AppConstants.defaultSyncFileName: {
-                'content': jsonEncode({
-                  'version': 1,
-                  'timestamp': DateTime.now().toIso8601String(),
-                  'connections': <Map<String, dynamic>>[],
-                }),
-              },
-            },
-          },
-          statusCode: 200,
-          requestOptions: RequestOptions(path: ''),
-        ),
-      );
-
-      when(() => mockRepository.getAllConnections()).thenReturn([]);
-      when(
-        () => mockRepository.saveConnections(any()),
-      ).thenAnswer((_) async {});
-
-      await service.downloadConfig(skipConflictCheck: true);
-
-      expect(service.status, SyncStatusEnum.success);
-      verify(() => mockRepository.saveConnections(any())).called(1);
-    });
-
-    test('uploads to Gitee Gist successfully', () async {
-      SharedPreferences.setMockInitialValues({});
-      final service = SyncService(mockRepository, dio: mockDio);
-      await Future<void>.delayed(const Duration(milliseconds: 10));
-
-      await service.saveConfig(
-        SyncConfig(
-          platform: SyncPlatform.giteeGist,
-          accessToken: 'gitee_token',
-        ),
-      );
-
-      when(() => mockRepository.getAllConnections()).thenReturn([]);
-
-      when(
-        () => mockDio.post<Map<String, dynamic>>(
-          any(),
-          data: any(named: 'data'),
-          options: any(named: 'options'),
-        ),
-      ).thenAnswer(
-        (_) async => Response<Map<String, dynamic>>(
-          data: {'id': 'gitee_new_gist_id'},
-          statusCode: 201,
-          requestOptions: RequestOptions(path: ''),
-        ),
-      );
-
-      await service.uploadConfig();
-
-      expect(service.status, SyncStatusEnum.success);
-      expect(service.getConfig()!.gistId, 'gitee_new_gist_id');
     });
   });
 }

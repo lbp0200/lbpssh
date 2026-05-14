@@ -4,8 +4,8 @@ import 'terminal_service.dart';
 
 /// 搜索方向
 enum SearchDirection {
-  forward,   // 向前搜索
-  backward,  // 向后搜索
+  forward, // 向前搜索
+  backward, // 向后搜索
 }
 
 /// 搜索选项
@@ -248,15 +248,9 @@ class KittySearchService {
       // 格式取决于终端实现
       // 先检查否定响应，避免 "not found" 被 "found" 匹配
       if (response.contains('not found') || response.contains('no match')) {
-        onSearchResult?.call(SearchResult(
-          text: _lastSearchText,
-          found: false,
-        ));
+        onSearchResult?.call(SearchResult(text: _lastSearchText, found: false));
       } else if (response.contains('found')) {
-        onSearchResult?.call(SearchResult(
-          text: _lastSearchText,
-          found: true,
-        ));
+        onSearchResult?.call(SearchResult(text: _lastSearchText, found: true));
       }
     } catch (e) {
       // 忽略解析错误

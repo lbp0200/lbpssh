@@ -26,11 +26,15 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            connectionRepositoryProvider.overrideWithValue(connectionRepository),
+            connectionRepositoryProvider.overrideWithValue(
+              connectionRepository,
+            ),
             terminalServiceProvider.overrideWithValue(terminalService),
             syncServiceProvider.overrideWith((ref) => syncService),
             appConfigServiceProvider.overrideWithValue(appConfigService),
-            importExportServiceProvider.overrideWith((ref) => importExportService),
+            importExportServiceProvider.overrideWith(
+              (ref) => importExportService,
+            ),
           ],
           child: const MyApp(),
         ),
@@ -55,11 +59,15 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            connectionRepositoryProvider.overrideWithValue(connectionRepository),
+            connectionRepositoryProvider.overrideWithValue(
+              connectionRepository,
+            ),
             terminalServiceProvider.overrideWithValue(terminalService),
             syncServiceProvider.overrideWith((ref) => syncService),
             appConfigServiceProvider.overrideWithValue(appConfigService),
-            importExportServiceProvider.overrideWith((ref) => importExportService),
+            importExportServiceProvider.overrideWith(
+              (ref) => importExportService,
+            ),
           ],
           child: const MyApp(),
         ),

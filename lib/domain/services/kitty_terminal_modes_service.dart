@@ -5,27 +5,27 @@ import 'terminal_service.dart';
 /// 终端模式
 enum TerminalMode {
   // ANSI 模式
-  cursorKeys (0, 'Application Cursor Keys (DECCKM)'),
-  column132 (1, '132 Columns (DECCOLM)'),
-  smoothScroll (4, 'Smooth Scroll (DECSCLM)'),
-  reverseVideo (5, 'Reverse Video (DECSCNM)'),
-  originMode (6, 'Origin Mode (DECOM)'),
-  autoWrap (7, 'Auto Wrap (DECAWM)'),
-  autoRepeat (8, 'Auto Repeat (DECARM)'),
-  interlace (12, 'Interlace (DECINLM)'),
-  printing (17, 'Print Form Feed (DECPFF)'),
-  printerExtend (18, 'Extended Print (DECPEX)'),
-  cursorVisible (25, 'Visible Cursor (DECTCEM)'),
-  bracketedPaste (2004, 'Bracketed Paste Mode'),
-  synchronizedOutput (2022, 'Synchronized Output'),
-  sixelScrolling (8452, 'Sixel Scrolling'),
-  iTerm2Mouse (1000, 'iTerm2 Mouse Tracking'),
-  iTerm2Highlight (1002, 'iTerm2 Mouse Highlight'),
-  iTerm2Any (1005, 'iTerm2 Mouse Any'),
-  sgrMouse (1006, 'SGR Mouse'),
-  urxvtMouse (1015, 'URxvt Mouse'),
-  sixelMode (6070, 'Sixel Mode'),
-  kittyGraphics (71, 'Kitty Graphics Protocol');
+  cursorKeys(0, 'Application Cursor Keys (DECCKM)'),
+  column132(1, '132 Columns (DECCOLM)'),
+  smoothScroll(4, 'Smooth Scroll (DECSCLM)'),
+  reverseVideo(5, 'Reverse Video (DECSCNM)'),
+  originMode(6, 'Origin Mode (DECOM)'),
+  autoWrap(7, 'Auto Wrap (DECAWM)'),
+  autoRepeat(8, 'Auto Repeat (DECARM)'),
+  interlace(12, 'Interlace (DECINLM)'),
+  printing(17, 'Print Form Feed (DECPFF)'),
+  printerExtend(18, 'Extended Print (DECPEX)'),
+  cursorVisible(25, 'Visible Cursor (DECTCEM)'),
+  bracketedPaste(2004, 'Bracketed Paste Mode'),
+  synchronizedOutput(2022, 'Synchronized Output'),
+  sixelScrolling(8452, 'Sixel Scrolling'),
+  iTerm2Mouse(1000, 'iTerm2 Mouse Tracking'),
+  iTerm2Highlight(1002, 'iTerm2 Mouse Highlight'),
+  iTerm2Any(1005, 'iTerm2 Mouse Any'),
+  sgrMouse(1006, 'SGR Mouse'),
+  urxvtMouse(1015, 'URxvt Mouse'),
+  sixelMode(6070, 'Sixel Mode'),
+  kittyGraphics(71, 'Kitty Graphics Protocol');
 
   final int value;
   final String description;
@@ -149,7 +149,9 @@ class KittyTerminalModesService {
   }
 
   /// 启用鼠标追踪
-  Future<void> enableMouseTracking({MouseTrackingMode mode = MouseTrackingMode.click}) async {
+  Future<void> enableMouseTracking({
+    MouseTrackingMode mode = MouseTrackingMode.click,
+  }) async {
     switch (mode) {
       case MouseTrackingMode.click:
         await setMode(TerminalMode.sgrMouse);
@@ -299,7 +301,7 @@ class KittyTerminalModesService {
 
 /// 鼠标追踪模式
 enum MouseTrackingMode {
-  click,      // 点击时发送事件
+  click, // 点击时发送事件
   highlight, // 高亮时发送事件
-  any,       // 任何移动都发送事件
+  any, // 任何移动都发送事件
 }

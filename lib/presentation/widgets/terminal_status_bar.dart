@@ -10,11 +10,7 @@ class TerminalStatusBar extends StatefulWidget {
   final TerminalSession session;
   final VoidCallback? onReconnect;
 
-  const TerminalStatusBar({
-    super.key,
-    required this.session,
-    this.onReconnect,
-  });
+  const TerminalStatusBar({super.key, required this.session, this.onReconnect});
 
   @override
   State<TerminalStatusBar> createState() => _TerminalStatusBarState();
@@ -35,8 +31,9 @@ class _TerminalStatusBarState extends State<TerminalStatusBar> {
 
   void _syncInitialState() {
     if (widget.session.connectionStartTime != null) {
-      _connectionDuration = DateTime.now()
-          .difference(widget.session.connectionStartTime!);
+      _connectionDuration = DateTime.now().difference(
+        widget.session.connectionStartTime!,
+      );
     }
   }
 
@@ -50,8 +47,9 @@ class _TerminalStatusBarState extends State<TerminalStatusBar> {
     _durationTimer = Timer.periodic(const Duration(seconds: 1), (_) {
       if (widget.session.connectionStartTime != null && mounted) {
         setState(() {
-          _connectionDuration = DateTime.now()
-              .difference(widget.session.connectionStartTime!);
+          _connectionDuration = DateTime.now().difference(
+            widget.session.connectionStartTime!,
+          );
         });
       }
     });
@@ -66,40 +64,37 @@ class _TerminalStatusBarState extends State<TerminalStatusBar> {
 
   @override
   Widget build(BuildContext context) {
-    final isConnected = widget.session.connectionState ==
-        SshConnectionState.connected;
-    final isConnecting = widget.session.connectionState ==
-        SshConnectionState.connecting;
-    final isDisconnected = widget.session.connectionState ==
-        SshConnectionState.disconnected ||
+    final isConnected =
+        widget.session.connectionState == SshConnectionState.connected;
+    final isConnecting =
+        widget.session.connectionState == SshConnectionState.connecting;
+    final isDisconnected =
+        widget.session.connectionState == SshConnectionState.disconnected ||
         widget.session.connectionState == SshConnectionState.error;
 
     // 颜色方案 - Linear 风格
     final indicatorColor = isConnecting
         ? LinearColors.warning
         : isConnected
-            ? LinearColors.success
-            : isDisconnected
-                ? LinearColors.error
-                : LinearColors.accent; // 本地终端
+        ? LinearColors.success
+        : isDisconnected
+        ? LinearColors.error
+        : LinearColors.accent; // 本地终端
 
     final statusText = widget.session.isLocal
         ? 'Local'
         : isConnecting
-            ? 'Connecting...'
-            : isConnected
-                ? 'Connected'
-                : 'Disconnected';
+        ? 'Connecting...'
+        : isConnected
+        ? 'Connected'
+        : 'Disconnected';
 
     return Container(
       height: 28,
       decoration: BoxDecoration(
         color: LinearColors.panel.withValues(alpha: 0.9),
         border: const Border(
-          top: BorderSide(
-            color: LinearColors.borderSubtle,
-            width: 1,
-          ),
+          top: BorderSide(color: LinearColors.borderSubtle, width: 1),
         ),
       ),
       padding: const EdgeInsets.symmetric(horizontal: LinearSpacing.spacing8),
@@ -157,14 +152,28 @@ class _TerminalStatusBarState extends State<TerminalStatusBar> {
           ],
           const Spacer(),
           // 重连按钮（仅 SSH 断开时显示）
-          if (isDisconnected && !widget.session.isLocal && widget.onReconnect != null)
+          if (isDisconnected &&
+              !widget.session.isLocal &&
+              widget.onReconnect != null)
             TextButton.icon(
               onPressed: widget.onReconnect,
-              icon: const Icon(Icons.refresh, size: 14, color: LinearColors.textTertiary),
-              label: const Text('Reconnect', style: TextStyle(fontSize: 12, color: LinearColors.textTertiary)),
+              icon: const Icon(
+                Icons.refresh,
+                size: 14,
+                color: LinearColors.textTertiary,
+              ),
+              label: const Text(
+                'Reconnect',
+                style: TextStyle(
+                  fontSize: 12,
+                  color: LinearColors.textTertiary,
+                ),
+              ),
               style: TextButton.styleFrom(
                 foregroundColor: LinearColors.textTertiary,
-                padding: const EdgeInsets.symmetric(horizontal: LinearSpacing.spacing8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: LinearSpacing.spacing8,
+                ),
                 minimumSize: Size.zero,
               ),
             ),

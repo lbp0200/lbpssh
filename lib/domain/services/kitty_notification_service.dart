@@ -6,7 +6,8 @@ import 'terminal_service.dart';
 typedef NotificationCallback = void Function(String notificationId);
 
 /// 通知进度回调
-typedef NotificationProgressCallback = void Function(String notificationId, int progress);
+typedef NotificationProgressCallback =
+    void Function(String notificationId, int progress);
 
 /// 桌面通知服务
 ///

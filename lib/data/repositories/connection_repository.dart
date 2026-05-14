@@ -57,7 +57,7 @@ class ConnectionRepository {
       // 实际迁移需要在有 Hive 依赖的情况下进行，或者用户手动导出导入
 
       // 如果检测到 Hive 目录但 JSON 文件不存在，说明可能需要迁移
-      // 但由于已移除 Hive 依赖，这里返回 false，让用户通过同步功能从 Gist 恢复
+      // 但由于已移除 Hive 依赖，这里返回 false，让用户通过同步功能从 GitHub 仓库恢复
       return false;
     } catch (e) {
       // 迁移失败，返回 false

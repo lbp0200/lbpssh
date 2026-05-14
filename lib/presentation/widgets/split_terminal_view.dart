@@ -26,7 +26,9 @@ class _SplitTerminalViewState extends State<SplitTerminalView> {
     return LayoutBuilder(
       builder: (context, constraints) {
         final isHorizontal = widget.direction == SplitDirection.horizontal;
-        final totalSize = isHorizontal ? constraints.maxWidth : constraints.maxHeight;
+        final totalSize = isHorizontal
+            ? constraints.maxWidth
+            : constraints.maxHeight;
         final firstSize = totalSize * _splitPosition;
 
         if (isHorizontal) {
@@ -40,7 +42,11 @@ class _SplitTerminalViewState extends State<SplitTerminalView> {
               ),
               GestureDetector(
                 onHorizontalDragUpdate: (details) => setState(() {
-                  _splitPosition = (_splitPosition + details.delta.dx / totalSize).clamp(0.1, 0.9);
+                  _splitPosition =
+                      (_splitPosition + details.delta.dx / totalSize).clamp(
+                        0.1,
+                        0.9,
+                      );
                 }),
                 child: MouseRegion(
                   cursor: SystemMouseCursors.resizeColumn,
@@ -51,9 +57,7 @@ class _SplitTerminalViewState extends State<SplitTerminalView> {
                   ),
                 ),
               ),
-              Expanded(
-                child: _TerminalContainer(sessionId: widget.sessionId2),
-              ),
+              Expanded(child: _TerminalContainer(sessionId: widget.sessionId2)),
             ],
           );
         } else {
@@ -67,7 +71,11 @@ class _SplitTerminalViewState extends State<SplitTerminalView> {
               ),
               GestureDetector(
                 onVerticalDragUpdate: (details) => setState(() {
-                  _splitPosition = (_splitPosition + details.delta.dy / totalSize).clamp(0.1, 0.9);
+                  _splitPosition =
+                      (_splitPosition + details.delta.dy / totalSize).clamp(
+                        0.1,
+                        0.9,
+                      );
                 }),
                 child: MouseRegion(
                   cursor: SystemMouseCursors.resizeRow,
@@ -78,9 +86,7 @@ class _SplitTerminalViewState extends State<SplitTerminalView> {
                   ),
                 ),
               ),
-              Expanded(
-                child: _TerminalContainer(sessionId: widget.sessionId2),
-              ),
+              Expanded(child: _TerminalContainer(sessionId: widget.sessionId2)),
             ],
           );
         }

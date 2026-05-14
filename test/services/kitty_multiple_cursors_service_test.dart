@@ -44,30 +44,31 @@ void main() {
     group('insertCursor', () {
       test('sends insert cursor command', () async {
         await service.insertCursor(5, 10);
-        verify(() => mockSession.writeRaw(
-          any(that: startsWith('\x1b[6>cursor;id=c')),
-        )).called(1);
+        verify(
+          () =>
+              mockSession.writeRaw(any(that: startsWith('\x1b[6>cursor;id=c'))),
+        ).called(1);
       });
 
       test('includes coordinates in command', () async {
         await service.insertCursor(5, 10);
-        verify(() => mockSession.writeRaw(
-          any(that: contains(';x=5;y=10')),
-        )).called(1);
+        verify(
+          () => mockSession.writeRaw(any(that: contains(';x=5;y=10'))),
+        ).called(1);
       });
 
       test('includes select flag when select is true', () async {
         await service.insertCursor(5, 10, select: true);
-        verify(() => mockSession.writeRaw(
-          any(that: contains(';s=1')),
-        )).called(1);
+        verify(
+          () => mockSession.writeRaw(any(that: contains(';s=1'))),
+        ).called(1);
       });
 
       test('omits select flag when select is false', () async {
         await service.insertCursor(5, 10);
-        verify(() => mockSession.writeRaw(
-          any(that: isNot(contains(';s=1'))),
-        )).called(1);
+        verify(
+          () => mockSession.writeRaw(any(that: isNot(contains(';s=1')))),
+        ).called(1);
       });
 
       test('returns a cursor id', () async {
@@ -85,10 +86,7 @@ void main() {
 
       test('throws when session is null', () async {
         final nullService = KittyMultipleCursorsService();
-        expect(
-          () => nullService.insertCursor(0, 0),
-          throwsA(isA<Exception>()),
-        );
+        expect(() => nullService.insertCursor(0, 0), throwsA(isA<Exception>()));
       });
     });
 
@@ -97,9 +95,9 @@ void main() {
         await service.insertCursor(0, 0);
         final id = service.cursors.first.id;
         await service.moveCursor(id, 10, 20);
-        verify(() => mockSession.writeRaw(
-          '\x1b[6>cursor;id=$id;x=10;y=20\x1b\\\\',
-        )).called(1);
+        verify(
+          () => mockSession.writeRaw('\x1b[6>cursor;id=$id;x=10;y=20\x1b\\\\'),
+        ).called(1);
       });
 
       test('updates local cursor position', () async {
@@ -123,17 +121,17 @@ void main() {
       test('sends select 1 command', () async {
         final id = await service.insertCursor(0, 0);
         await service.selectCursor(id, true);
-        verify(() => mockSession.writeRaw(
-          '\x1b[6>cursor;id=$id;s=1\x1b\\\\',
-        )).called(1);
+        verify(
+          () => mockSession.writeRaw('\x1b[6>cursor;id=$id;s=1\x1b\\\\'),
+        ).called(1);
       });
 
       test('sends select 0 command', () async {
         final id = await service.insertCursor(0, 0, select: true);
         await service.selectCursor(id, false);
-        verify(() => mockSession.writeRaw(
-          '\x1b[6>cursor;id=$id;s=0\x1b\\\\',
-        )).called(1);
+        verify(
+          () => mockSession.writeRaw('\x1b[6>cursor;id=$id;s=0\x1b\\\\'),
+        ).called(1);
       });
 
       test('updates local cursor selection state', () async {
@@ -155,9 +153,9 @@ void main() {
       test('sends delete cursor command', () async {
         final id = await service.insertCursor(0, 0);
         await service.deleteCursor(id);
-        verify(() => mockSession.writeRaw(
-          '\x1b[6>cursor;id=$id;d=1\x1b\\\\',
-        )).called(1);
+        verify(
+          () => mockSession.writeRaw('\x1b[6>cursor;id=$id;d=1\x1b\\\\'),
+        ).called(1);
       });
 
       test('removes cursor from local list', () async {
@@ -170,19 +168,16 @@ void main() {
 
       test('throws when session is null', () async {
         final nullService = KittyMultipleCursorsService();
-        expect(
-          () => nullService.deleteCursor('c1'),
-          throwsA(isA<Exception>()),
-        );
+        expect(() => nullService.deleteCursor('c1'), throwsA(isA<Exception>()));
       });
     });
 
     group('clearAllCursors', () {
       test('sends clear all cursors command', () async {
         await service.clearAllCursors();
-        verify(() => mockSession.writeRaw(
-          '\x1b[6>cursor;d=*\x1b\\\\',
-        )).called(1);
+        verify(
+          () => mockSession.writeRaw('\x1b[6>cursor;d=*\x1b\\\\'),
+        ).called(1);
       });
 
       test('clears local cursor list', () async {
@@ -195,10 +190,7 @@ void main() {
 
       test('throws when session is null', () async {
         final nullService = KittyMultipleCursorsService();
-        expect(
-          () => nullService.clearAllCursors(),
-          throwsA(isA<Exception>()),
-        );
+        expect(() => nullService.clearAllCursors(), throwsA(isA<Exception>()));
       });
     });
 
@@ -220,9 +212,9 @@ void main() {
       test('sends activate cursor command', () async {
         final id = await service.insertCursor(0, 0);
         await service.activateCursor(id);
-        verify(() => mockSession.writeRaw(
-          '\x1b[6>cursor;id=$id;a=1\x1b\\\\',
-        )).called(1);
+        verify(
+          () => mockSession.writeRaw('\x1b[6>cursor;id=$id;a=1\x1b\\\\'),
+        ).called(1);
       });
 
       test('throws when session is null', () async {
@@ -238,9 +230,9 @@ void main() {
       test('sends deactivate cursor command', () async {
         final id = await service.insertCursor(0, 0);
         await service.deactivateCursor(id);
-        verify(() => mockSession.writeRaw(
-          '\x1b[6>cursor;id=$id;a=0\x1b\\\\',
-        )).called(1);
+        verify(
+          () => mockSession.writeRaw('\x1b[6>cursor;id=$id;a=0\x1b\\\\'),
+        ).called(1);
       });
 
       test('throws when session is null', () async {
@@ -256,9 +248,9 @@ void main() {
       test('sends set shape command', () async {
         final id = await service.insertCursor(0, 0);
         await service.setCursorShape(id, 'bar');
-        verify(() => mockSession.writeRaw(
-          '\x1b[6>cursor;id=$id;shape=bar\x1b\\\\',
-        )).called(1);
+        verify(
+          () => mockSession.writeRaw('\x1b[6>cursor;id=$id;shape=bar\x1b\\\\'),
+        ).called(1);
       });
 
       test('throws when session is null', () async {
@@ -294,26 +286,22 @@ void main() {
       });
 
       test('ignores malformed response', () {
-        expect(
-          () => service.handleResponse('garbage'),
-          returnsNormally,
-        );
+        expect(() => service.handleResponse('garbage'), returnsNormally);
         expect(service.cursors, isEmpty);
       });
 
       test('ignores empty response', () {
-        expect(
-          () => service.handleResponse(''),
-          returnsNormally,
-        );
+        expect(() => service.handleResponse(''), returnsNormally);
       });
     });
 
     group('cursors getter', () {
       test('returns unmodifiable list', () {
         expect(service.cursors, isA<List<VirtualCursor>>());
-        expect(() => service.cursors.add(const VirtualCursor(id: '', x: 0, y: 0)),
-          throwsA(isA<UnsupportedError>()));
+        expect(
+          () => service.cursors.add(const VirtualCursor(id: '', x: 0, y: 0)),
+          throwsA(isA<UnsupportedError>()),
+        );
       });
     });
   });

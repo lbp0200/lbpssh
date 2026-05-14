@@ -5,277 +5,302 @@ void main() {
   group('FileListParser', () {
     group('parse', () {
       test(
-          'Given valid Linux ls -la output (long-iso format), When parse called, Then returns file items',
-          () {
-        // Arrange (Given) - Using --time-style=long-iso format: permissions links user group size date time name
-        const output = '''total 24
+        'Given valid Linux ls -la output (long-iso format), When parse called, Then returns file items',
+        () {
+          // Arrange (Given) - Using --time-style=long-iso format: permissions links user group size date time name
+          const output = '''total 24
 drwxr-xr-x  5 user user 4096 2024-02-24 20:08 dirname
 -rw-r--r--  1 user user  1234 2024-02-24 20:08 file.txt
 -rw-r--r--  1 user user  5678 2024-01-15 10:30 another-file.log''';
 
-        // Act (When)
-        final items = FileListParser.parse(output, '/home/user');
+          // Act (When)
+          final items = FileListParser.parse(output, '/home/user');
 
-        // Assert (Then)
-        expect(items.length, 3); // Excludes . and ..
-        expect(items[0].name, 'dirname');
-        expect(items[0].isDirectory, true);
-        expect(items[0].size, 4096);
-        expect(items[1].name, 'file.txt');
-        expect(items[1].isDirectory, false);
-        expect(items[1].size, 1234);
-        expect(items[2].name, 'another-file.log');
-        expect(items[2].isDirectory, false);
-        expect(items[2].size, 5678);
-      });
+          // Assert (Then)
+          expect(items.length, 3); // Excludes . and ..
+          expect(items[0].name, 'dirname');
+          expect(items[0].isDirectory, true);
+          expect(items[0].size, 4096);
+          expect(items[1].name, 'file.txt');
+          expect(items[1].isDirectory, false);
+          expect(items[1].size, 1234);
+          expect(items[2].name, 'another-file.log');
+          expect(items[2].isDirectory, false);
+          expect(items[2].size, 5678);
+        },
+      );
 
       test(
-          'Given macOS ls -la output, When parse called, Then returns file items',
-          () {
-        // Arrange (Given)
-        const output = '''total 24
+        'Given macOS ls -la output, When parse called, Then returns file items',
+        () {
+          // Arrange (Given)
+          const output = '''total 24
 drwxr-xr-x   5 user  staff   160 Feb 24 20:08 .
 drwxr-xr-x   1 user  staff   160 Feb 24 20:08 ..
 drwxr-xr-x   3 user  staff   96 Dec 24 10:30 Documents
 -rw-r--r--   1 user  staff  1234 Feb 24 20:08 test.txt''';
 
-        // Act (When)
-        final items = FileListParser.parse(output, '/Users/user', osType: 'darwin');
+          // Act (When)
+          final items = FileListParser.parse(
+            output,
+            '/Users/user',
+            osType: 'darwin',
+          );
 
-        // Assert (Then)
-        expect(items.length, 2);
-        expect(items[0].name, 'Documents');
-        expect(items[0].isDirectory, true);
-        expect(items[1].name, 'test.txt');
-        expect(items[1].isDirectory, false);
-      });
-
-      test(
-          'Given empty output, When parse called, Then returns empty list',
-          () {
-        // Arrange (Given)
-        const output = '';
-
-        // Act (When)
-        final items = FileListParser.parse(output, '/home/user');
-
-        // Assert (Then)
-        expect(items, isEmpty);
-      });
+          // Assert (Then)
+          expect(items.length, 2);
+          expect(items[0].name, 'Documents');
+          expect(items[0].isDirectory, true);
+          expect(items[1].name, 'test.txt');
+          expect(items[1].isDirectory, false);
+        },
+      );
 
       test(
-          'Given output with only total line, When parse called, Then returns empty list',
-          () {
-        // Arrange (Given)
-        const output = 'total 0';
+        'Given empty output, When parse called, Then returns empty list',
+        () {
+          // Arrange (Given)
+          const output = '';
 
-        // Act (When)
-        final items = FileListParser.parse(output, '/home/user');
+          // Act (When)
+          final items = FileListParser.parse(output, '/home/user');
 
-        // Assert (Then)
-        expect(items, isEmpty);
-      });
+          // Assert (Then)
+          expect(items, isEmpty);
+        },
+      );
 
       test(
-          'Given output with whitespace lines, When parse called, Then skips empty lines',
-          () {
-        // Arrange (Given)
-        const output = '''total 24
+        'Given output with only total line, When parse called, Then returns empty list',
+        () {
+          // Arrange (Given)
+          const output = 'total 0';
+
+          // Act (When)
+          final items = FileListParser.parse(output, '/home/user');
+
+          // Assert (Then)
+          expect(items, isEmpty);
+        },
+      );
+
+      test(
+        'Given output with whitespace lines, When parse called, Then skips empty lines',
+        () {
+          // Arrange (Given)
+          const output = '''total 24
 
 drwxr-xr-x  5 user user 4096 Feb 24 20:08 dirname
 
 -rw-r--r--  1 user user 1234 Feb 24 20:08 file.txt
 ''';
 
-        // Act (When)
-        final items = FileListParser.parse(output, '/home/user');
+          // Act (When)
+          final items = FileListParser.parse(output, '/home/user');
 
-        // Assert (Then)
-        expect(items.length, 2);
-      });
+          // Assert (Then)
+          expect(items.length, 2);
+        },
+      );
 
       test(
-          'Given filename with spaces, When parse called, Then preserves filename',
-          () {
-        // Arrange (Given)
-        const output = '''total 24
+        'Given filename with spaces, When parse called, Then preserves filename',
+        () {
+          // Arrange (Given)
+          const output = '''total 24
 -rw-r--r--  1 user user 1234 Feb 24 20:08 file with spaces.txt
 drwxr-xr-x  3 user user 4096 Feb 24 10:30 dir name''';
 
-        // Act (When)
-        final items = FileListParser.parse(output, '/home/user');
+          // Act (When)
+          final items = FileListParser.parse(output, '/home/user');
 
-        // Assert (Then)
-        expect(items.length, 2);
-        expect(items[0].name, 'file with spaces.txt');
-        expect(items[1].name, 'dir name');
-      });
+          // Assert (Then)
+          expect(items.length, 2);
+          expect(items[0].name, 'file with spaces.txt');
+          expect(items[1].name, 'dir name');
+        },
+      );
 
       test(
-          'Given symlink, When parse called, Then identifies as file (not directory)',
-          () {
-        // Arrange (Given)
-        const output = '''total 8
+        'Given symlink, When parse called, Then identifies as file (not directory)',
+        () {
+          // Arrange (Given)
+          const output = '''total 8
 lrwxrwxrwx  1 user user   24 Feb 24 20:08 link -> target''';
 
-        // Act (When)
-        final items = FileListParser.parse(output, '/home/user');
+          // Act (When)
+          final items = FileListParser.parse(output, '/home/user');
 
-        // Assert (Then)
-        expect(items.length, 1);
-        expect(items[0].name, 'link -> target');
-        expect(items[0].isDirectory, false); // symlink starts with 'l', not 'd'
-      });
+          // Assert (Then)
+          expect(items.length, 1);
+          expect(items[0].name, 'link -> target');
+          expect(
+            items[0].isDirectory,
+            false,
+          ); // symlink starts with 'l', not 'd'
+        },
+      );
 
       test(
-          'Given full path construction, When parse called, Then constructs correct full path',
-          () {
-        // Arrange (Given)
-        const output = '''total 8
+        'Given full path construction, When parse called, Then constructs correct full path',
+        () {
+          // Arrange (Given)
+          const output = '''total 8
 -rw-r--r--  1 user user 100 Feb 24 20:08 file.txt''';
 
-        // Act (When)
-        final items = FileListParser.parse(output, '/home/user');
+          // Act (When)
+          final items = FileListParser.parse(output, '/home/user');
 
-        // Assert (Then)
-        expect(items[0].path, '/home/user/file.txt');
-      });
+          // Assert (Then)
+          expect(items[0].path, '/home/user/file.txt');
+        },
+      );
 
       test(
-          'Given root path, When parse called, Then constructs correct full path',
-          () {
-        // Arrange (Given)
-        const output = '''total 8
+        'Given root path, When parse called, Then constructs correct full path',
+        () {
+          // Arrange (Given)
+          const output = '''total 8
 drwxr-xr-x  2 root root 4096 Feb 24 20:08 etc''';
 
-        // Act (When)
-        final items = FileListParser.parse(output, '/');
+          // Act (When)
+          final items = FileListParser.parse(output, '/');
 
-        // Assert (Then)
-        expect(items[0].path, '/etc');
-      });
+          // Assert (Then)
+          expect(items[0].path, '/etc');
+        },
+      );
     });
 
     group('parse with date formats', () {
       test(
-          'Given ISO date format (Linux), When parse called, Then parses date correctly',
-          () {
-        // Arrange (Given)
-        const output = '''total 8
+        'Given ISO date format (Linux), When parse called, Then parses date correctly',
+        () {
+          // Arrange (Given)
+          const output = '''total 8
 -rw-r--r--  1 user user 1234 2024-01-15 10:30 file.txt''';
 
-        // Act (When)
-        final items = FileListParser.parse(output, '/home/user');
+          // Act (When)
+          final items = FileListParser.parse(output, '/home/user');
 
-        // Assert (Then)
-        expect(items[0].modified, isNotNull);
-        expect(items[0].modified!.year, 2024);
-        expect(items[0].modified!.month, 1);
-        expect(items[0].modified!.day, 15);
-        expect(items[0].modified!.hour, 10);
-        expect(items[0].modified!.minute, 30);
-      });
+          // Assert (Then)
+          expect(items[0].modified, isNotNull);
+          expect(items[0].modified!.year, 2024);
+          expect(items[0].modified!.month, 1);
+          expect(items[0].modified!.day, 15);
+          expect(items[0].modified!.hour, 10);
+          expect(items[0].modified!.minute, 30);
+        },
+      );
 
       test(
-          'Given macOS date format, When parse called, Then parses date correctly',
-          () {
-        // Arrange (Given)
-        const output = '''total 8
+        'Given macOS date format, When parse called, Then parses date correctly',
+        () {
+          // Arrange (Given)
+          const output = '''total 8
 -rw-r--r--  1 user staff 1234 Dec 25 14:30 file.txt''';
 
-        // Act (When)
-        final items = FileListParser.parse(output, '/Users/user', osType: 'darwin');
+          // Act (When)
+          final items = FileListParser.parse(
+            output,
+            '/Users/user',
+            osType: 'darwin',
+          );
 
-        // Assert (Then)
-        expect(items[0].modified, isNotNull);
-        expect(items[0].modified!.month, 12);
-        expect(items[0].modified!.day, 25);
-        expect(items[0].modified!.hour, 14);
-        expect(items[0].modified!.minute, 30);
-      });
+          // Assert (Then)
+          expect(items[0].modified, isNotNull);
+          expect(items[0].modified!.month, 12);
+          expect(items[0].modified!.day, 25);
+          expect(items[0].modified!.hour, 14);
+          expect(items[0].modified!.minute, 30);
+        },
+      );
 
       test(
-          'Given invalid date format, When parse called, Then returns null for modified',
-          () {
-        // Arrange (Given)
-        const output = '''total 8
+        'Given invalid date format, When parse called, Then returns null for modified',
+        () {
+          // Arrange (Given)
+          const output = '''total 8
 -rw-r--r--  1 user user 1234 unknown date file.txt''';
 
-        // Act (When)
-        final items = FileListParser.parse(output, '/home/user');
+          // Act (When)
+          final items = FileListParser.parse(output, '/home/user');
 
-        // Assert (Then)
-        expect(items[0].modified, isNull);
-      });
+          // Assert (Then)
+          expect(items[0].modified, isNull);
+        },
+      );
     });
 
     group('parse with special cases', () {
       test(
-          'Given file with sticky bit permissions, When parse called, Then parses correctly',
-          () {
-        // Arrange (Given)
-        const output = '''total 8
+        'Given file with sticky bit permissions, When parse called, Then parses correctly',
+        () {
+          // Arrange (Given)
+          const output = '''total 8
 drwxrwxrwt  5 root root 4096 Feb 24 20:08 tmp''';
 
-        // Act (When)
-        final items = FileListParser.parse(output, '/tmp');
+          // Act (When)
+          final items = FileListParser.parse(output, '/tmp');
 
-        // Assert (Then)
-        expect(items.length, 1);
-        expect(items[0].name, 'tmp');
-        expect(items[0].isDirectory, true);
-      });
+          // Assert (Then)
+          expect(items.length, 1);
+          expect(items[0].name, 'tmp');
+          expect(items[0].isDirectory, true);
+        },
+      );
 
       test(
-          'Given file with setuid/setgid permissions, When parse called, Then parses correctly',
-          () {
-        // Arrange (Given)
-        const output = '''total 8
+        'Given file with setuid/setgid permissions, When parse called, Then parses correctly',
+        () {
+          // Arrange (Given)
+          const output = '''total 8
 -rwsr-sr-x  1 root root 1234 Feb 24 20:08 privileged''';
 
-        // Act (When)
-        final items = FileListParser.parse(output, '/usr/bin');
+          // Act (When)
+          final items = FileListParser.parse(output, '/usr/bin');
 
-        // Assert (Then)
-        expect(items.length, 1);
-        expect(items[0].name, 'privileged');
-        expect(items[0].isDirectory, false);
-      });
+          // Assert (Then)
+          expect(items.length, 1);
+          expect(items[0].name, 'privileged');
+          expect(items[0].isDirectory, false);
+        },
+      );
 
       test(
-          'Given hidden file starting with dot, When parse called, Then includes in list',
-          () {
-        // Arrange (Given)
-        const output = '''total 8
+        'Given hidden file starting with dot, When parse called, Then includes in list',
+        () {
+          // Arrange (Given)
+          const output = '''total 8
 -rw-r--r--  1 user user 1234 Feb 24 20:08 .hidden''';
 
-        // Act (When)
-        final items = FileListParser.parse(output, '/home/user');
+          // Act (When)
+          final items = FileListParser.parse(output, '/home/user');
 
-        // Assert (Then)
-        expect(items.length, 1);
-        expect(items[0].name, '.hidden');
-      });
+          // Assert (Then)
+          expect(items.length, 1);
+          expect(items[0].name, '.hidden');
+        },
+      );
 
       test(
-          'Given file with very long name, When parse called, Then preserves full name',
-          () {
-        // Arrange (Given)
-        final longName = 'a' * 200;
-        final output = '''total 8
+        'Given file with very long name, When parse called, Then preserves full name',
+        () {
+          // Arrange (Given)
+          final longName = 'a' * 200;
+          final output = '''total 8
 -rw-r--r--  1 user user 1234 Feb 24 20:08 $longName''';
 
-        // Act (When)
-        final items = FileListParser.parse(output, '/home/user');
+          // Act (When)
+          final items = FileListParser.parse(output, '/home/user');
 
-        // Assert (Then)
-        expect(items.length, 1);
-        expect(items[0].name, longName);
-      });
+          // Assert (Then)
+          expect(items.length, 1);
+          expect(items[0].name, longName);
+        },
+      );
 
-      test(
-          'Given file with zero size, When parse called, Then size is 0',
-          () {
+      test('Given file with zero size, When parse called, Then size is 0', () {
         // Arrange (Given)
         const output = '''total 0
 -rw-r--r--  1 user user 0 Feb 24 20:08 empty''';

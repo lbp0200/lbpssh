@@ -188,7 +188,10 @@ class KittyRemoteControlService {
   }
 
   /// 发送带修饰键的字符
-  Future<void> sendKeyWithModifier(String key, {ModifierKey modifier = ModifierKey.none}) async {
+  Future<void> sendKeyWithModifier(
+    String key, {
+    ModifierKey modifier = ModifierKey.none,
+  }) async {
     if (_session == null) {
       throw Exception('未连接到终端');
     }
@@ -295,11 +298,9 @@ class KittyRemoteControlService {
         if (parts.isNotEmpty && parts[0] == 'R') {
           // 屏幕内容
           final content = parts.sublist(1).join(';');
-          onBufferContent?.call(BufferContent(
-            startLine: 0,
-            lines: 0,
-            content: content,
-          ));
+          onBufferContent?.call(
+            BufferContent(startLine: 0, lines: 0, content: content),
+          );
         }
         return;
       }
@@ -313,7 +314,8 @@ class KittyRemoteControlService {
 
   /// Base64 编码
   String _encodeBase64(String text) {
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+    const chars =
+        'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
     final bytes = text.codeUnits;
     final buffer = StringBuffer();
 
@@ -324,7 +326,9 @@ class KittyRemoteControlService {
 
       buffer.write(chars[(b1 >> 2) & 0x3F]);
       buffer.write(chars[((b1 << 4) | (b2 >> 4)) & 0x3F]);
-      buffer.write(i + 1 < bytes.length ? chars[((b2 << 2) | (b3 >> 6)) & 0x3F] : '=');
+      buffer.write(
+        i + 1 < bytes.length ? chars[((b2 << 2) | (b3 >> 6)) & 0x3F] : '=',
+      );
       buffer.write(i + 2 < bytes.length ? chars[b3 & 0x3F] : '=');
     }
 
@@ -333,10 +337,4 @@ class KittyRemoteControlService {
 }
 
 /// 修饰键
-enum ModifierKey {
-  none,
-  ctrl,
-  alt,
-  shift,
-  super_,
-}
+enum ModifierKey { none, ctrl, alt, shift, super_ }
