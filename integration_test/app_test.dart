@@ -17,6 +17,7 @@ void main() {
     testWidgets('app should launch and show main screen', (tester) async {
       // 创建测试依赖
       final connectionRepository = ConnectionRepository();
+      await connectionRepository.init();
       final terminalService = TerminalService();
       final syncService = SyncService(connectionRepository);
       final appConfigService = AppConfigService.getInstance();
@@ -51,6 +52,7 @@ void main() {
     testWidgets('app should have theme support', (tester) async {
       // 创建测试依赖
       final connectionRepository = ConnectionRepository();
+      await connectionRepository.init();
       final terminalService = TerminalService();
       final syncService = SyncService(connectionRepository);
       final appConfigService = AppConfigService.getInstance();

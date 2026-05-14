@@ -70,6 +70,27 @@ class _ConnectionFormScreenState extends ConsumerState<ConnectionFormScreen> {
     }
   }
 
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _hostController.dispose();
+    _portController.dispose();
+    _usernameController.dispose();
+    _passwordController.dispose();
+    _keyPathController.dispose();
+    _keyPassphraseController.dispose();
+    _notesController.dispose();
+    _jumpHostController.dispose();
+    _jumpPortController.dispose();
+    _jumpUsernameController.dispose();
+    _jumpPasswordController.dispose();
+    _socks5HostController.dispose();
+    _socks5PortController.dispose();
+    _socks5UsernameController.dispose();
+    _socks5PasswordController.dispose();
+    super.dispose();
+  }
+
   void _loadSshConfigEntries() {
     _sshConfigEntries = SshConfigService.readConfigFile();
   }
@@ -1018,6 +1039,12 @@ class _ConnectionFormScreenState extends ConsumerState<ConnectionFormScreen> {
                           ),
                         ),
                       ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return '请输入跳板机地址';
+                        }
+                        return null;
+                      },
                     ),
                   ),
                   const SizedBox(width: LinearSpacing.spacing16),
@@ -1061,6 +1088,16 @@ class _ConnectionFormScreenState extends ConsumerState<ConnectionFormScreen> {
                         ),
                       ),
                       keyboardType: TextInputType.number,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return '请输入跳板机端口';
+                        }
+                        final port = int.tryParse(value);
+                        if (port == null || port < 1 || port > 65535) {
+                          return '端口号无效';
+                        }
+                        return null;
+                      },
                     ),
                   ),
                 ],
@@ -1098,6 +1135,12 @@ class _ConnectionFormScreenState extends ConsumerState<ConnectionFormScreen> {
                     ),
                   ),
                 ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return '请输入跳板机用户名';
+                  }
+                  return null;
+                },
               ),
               const SizedBox(height: LinearSpacing.spacing16),
               DropdownButtonFormField<AuthType>(

@@ -265,7 +265,7 @@ class _TerminalViewWithSelectionState
 
   @override
   Widget build(BuildContext context) {
-    final graphicsManager = widget.terminal.graphicsManager as dynamic;
+    final graphicsManager = widget.terminal.graphicsManager;
 
     // 使用与 kterm TerminalPainter._measureCharSize() 完全相同的计算方式
     // 这样 GraphicsOverlayWidget 中的图片位置与终端字符单元格精确对齐
@@ -358,13 +358,12 @@ class _TerminalViewWithSelectionState
             ),
           ),
         ),
-        if (graphicsManager != null)
-          GraphicsOverlayWidget(
-            graphicsManager: graphicsManager,
-            cellWidth: cellWidth,
-            cellHeight: cellHeight,
-            scrollOffset: 0,
-          ),
+        GraphicsOverlayWidget(
+          graphicsManager: graphicsManager,
+          cellWidth: cellWidth,
+          cellHeight: cellHeight,
+          scrollOffset: 0,
+        ),
       ],
     );
   }

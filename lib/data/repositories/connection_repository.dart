@@ -28,41 +28,12 @@ class ConnectionRepository {
     }
     _configFile = File('${configDir.path}/$_fileName');
 
-    // 如果文件不存在，尝试从 Hive 迁移数据
     if (!await _configFile!.exists()) {
-      final migrated = await _migrateFromHive();
-      if (!migrated) {
-        // 如果没有旧数据，创建空文件
-        await _configFile!.writeAsString('[]');
-      }
+      await _configFile!.writeAsString('[]');
     }
 
     // 加载缓存
     await _loadCache();
-  }
-
-  /// 从 Hive 迁移数据到 JSON 文件（如果存在旧数据）
-  Future<bool> _migrateFromHive() async {
-    try {
-      // 检查是否存在 Hive 数据目录
-      final dir = await getApplicationSupportDirectory();
-      final hiveDir = Directory('${dir.path}/hive');
-
-      if (!await hiveDir.exists()) {
-        return false; // 没有 Hive 数据
-      }
-
-      // 尝试读取 Hive Box 文件（Hive 使用二进制格式，这里简化处理）
-      // 注意：由于已经移除了 Hive 依赖，这里只做文件存在性检查
-      // 实际迁移需要在有 Hive 依赖的情况下进行，或者用户手动导出导入
-
-      // 如果检测到 Hive 目录但 JSON 文件不存在，说明可能需要迁移
-      // 但由于已移除 Hive 依赖，这里返回 false，让用户通过同步功能从 GitHub 仓库恢复
-      return false;
-    } catch (e) {
-      // 迁移失败，返回 false
-      return false;
-    }
   }
 
   /// 从文件加载数据到缓存

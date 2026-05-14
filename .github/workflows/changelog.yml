@@ -14,14 +14,15 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Generate CHANGELOG
+      - name: Generate and push CHANGELOG
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
         run: |
           git log --pretty=format:"- %s (%h)" --since="2025-01-01" > CHANGELOG.md
-      - name: Commit CHANGELOG
-        run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           git add CHANGELOG.md
-          git commit -m "docs: update CHANGELOG" || echo "No changes"
-      - name: Push changes
-        run: git push
+          git diff --cached --quiet || {
+            git commit -m "docs: update CHANGELOG"
+            git push "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}" HEAD:${{ github.ref_name }}
+          }

@@ -5,8 +5,8 @@ import 'dart:io';
 import 'package:dartssh2/dartssh2.dart';
 import 'package:path/path.dart' as p;
 
+import '../../data/models/file_item.dart';
 import 'file_list_parser.dart';
-import '../../presentation/screens/sftp_browser_screen.dart';
 import 'terminal_service.dart';
 import 'ssh_service.dart';
 
@@ -86,6 +86,7 @@ class ProtocolSupportResult {
 /// Kitty 协议文件传输编码器
 class KittyFileTransferEncoder {
   const KittyFileTransferEncoder();
+
   /// 编码文件名为 base64
   String encodeFileName(String name) {
     return base64Encode(utf8.encode(name));

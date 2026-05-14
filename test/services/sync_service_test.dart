@@ -723,7 +723,9 @@ void main() {
         ),
       ).thenAnswer(
         (_) async => Response<Map<String, dynamic>>(
-          data: {'content': {'sha': 'new_sha'}},
+          data: {
+            'content': {'sha': 'new_sha'},
+          },
           statusCode: 201,
           requestOptions: RequestOptions(path: ''),
         ),
@@ -731,11 +733,13 @@ void main() {
 
       await service.uploadConfig();
 
-      verify(() => mockDio.put<Map<String, dynamic>>(
-        'https://api.github.com/repos/owner123/repo123/contents/lbpSSH/ssh_connections.json',
-        data: any(named: 'data'),
-        options: any(named: 'options'),
-      )).called(1);
+      verify(
+        () => mockDio.put<Map<String, dynamic>>(
+          'https://api.github.com/repos/owner123/repo123/contents/lbpSSH/ssh_connections.json',
+          data: any(named: 'data'),
+          options: any(named: 'options'),
+        ),
+      ).called(1);
     });
   });
 

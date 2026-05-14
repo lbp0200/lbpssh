@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../data/models/ssh_connection.dart';
 import '../../data/repositories/connection_repository.dart';
@@ -72,7 +71,7 @@ class SyncConfig {
 }
 
 /// 配置同步服务
-class SyncService with ChangeNotifier {
+class SyncService {
   final ConnectionRepository _repository;
   final Dio _dio;
   final SharedPreferences? _prefs;
@@ -88,12 +87,16 @@ class SyncService with ChangeNotifier {
 
   /// 加载同步配置
   Future<void> _loadConfig() async {
-    final prefs = _prefs ?? await SharedPreferences.getInstance();
-    final configJson = prefs.getString(AppConstants.syncSettingsKey);
-    if (configJson != null) {
-      _config = SyncConfig.fromJson(
-        jsonDecode(configJson) as Map<String, dynamic>,
-      );
+    try {
+      final prefs = _prefs ?? await SharedPreferences.getInstance();
+      final configJson = prefs.getString(AppConstants.syncSettingsKey);
+      if (configJson != null) {
+        _config = SyncConfig.fromJson(
+          jsonDecode(configJson) as Map<String, dynamic>,
+        );
+      }
+    } catch (_) {
+      _config = null;
     }
   }
 
@@ -105,7 +108,6 @@ class SyncService with ChangeNotifier {
       AppConstants.syncSettingsKey,
       jsonEncode(config.toJson()),
     );
-    notifyListeners();
   }
 
   /// 获取同步配置
@@ -162,9 +164,10 @@ class SyncService with ChangeNotifier {
       final jsonData = jsonDecode(content) as Map<String, dynamic>;
 
       // 解析连接配置
-      final connectionsJson = jsonData['connections'] as List;
+      final connectionsJson = jsonData['connections'] as List? ?? [];
       final connections = connectionsJson
-          .map((json) => SshConnection.fromJson(json as Map<String, dynamic>))
+          .whereType<Map<String, dynamic>>()
+          .map((json) => SshConnection.fromJson(json))
           .toList();
 
       // 检测冲突（除非明确跳过）
@@ -221,8 +224,8 @@ class SyncService with ChangeNotifier {
       if (getResponse.data is Map<String, dynamic>) {
         existingSha = getResponse.data!['sha'] as String?;
       }
-    } catch (_) {
-      // 文件不存在，从头创建
+    } on DioException catch (e) {
+      if (e.response?.statusCode != 404) rethrow;
     }
 
     final putData = <String, dynamic>{

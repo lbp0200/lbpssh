@@ -13,6 +13,9 @@ class AppConstants {
   static const String defaultBranch = 'main';
 
   // GitHub OAuth
+  // 需要在 GitHub OAuth App 设置中创建应用后替换为真实的 Client ID
+  // 创建地址: https://github.com/settings/developers
+  // 回调地址: lbpssh://oauth/callback
   static const String githubClientId = 'your_github_client_id';
   static const String githubRedirectUri = 'lbpssh://oauth/callback';
 

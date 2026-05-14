@@ -82,10 +82,10 @@ Future<SSHSocket> connectViaSocks5Proxy(
     [proxy],
     InternetAddress(targetHost, type: InternetAddressType.unix),
     targetPort,
-  );
+  ).timeout(timeout ?? const Duration(seconds: 30));
 
   // 包装为 SSHSocket
-  return _Socks5ProxySocket(socksSocket as Socket);
+  return _Socks5ProxySocket(socksSocket.socket);
 }
 
 /// SSH 连接状态

@@ -19,7 +19,6 @@ class TerminalStatusBar extends StatefulWidget {
 class _TerminalStatusBarState extends State<TerminalStatusBar> {
   Timer? _durationTimer;
   Duration _connectionDuration = Duration.zero;
-  final String _latency = '--';
 
   @override
   void initState() {
@@ -117,17 +116,6 @@ class _TerminalStatusBarState extends State<TerminalStatusBar> {
               fontSize: 12,
             ),
           ),
-          // 延迟（仅 SSH 连接显示）
-          if (!widget.session.isLocal && isConnected) ...[
-            const SizedBox(width: LinearSpacing.spacing8),
-            Text(
-              '• $_latency',
-              style: const TextStyle(
-                color: LinearColors.textTertiary,
-                fontSize: 12,
-              ),
-            ),
-          ],
           // 连接时长
           if (isConnected || isDisconnected) ...[
             const SizedBox(width: LinearSpacing.spacing8),

@@ -4,7 +4,11 @@ class ColorUtils {
   /// 解析颜色字符串 (#RRGGBB 或 #AARRGGBB)
   static Color parseColor(String colorHex) {
     try {
-      return Color(int.parse(colorHex.replaceFirst('#', '0xFF')));
+      final hex = colorHex.replaceFirst('#', '');
+      if (hex.length == 6) {
+        return Color(int.parse('FF$hex', radix: 16));
+      }
+      return Color(int.parse(hex, radix: 16));
     } catch (e) {
       return Colors.white;
     }

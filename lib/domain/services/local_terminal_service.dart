@@ -215,21 +215,7 @@ class LocalTerminalService implements TerminalInputService {
           );
 
       // 监听进程退出
-      _pty!.exitCode
-          .then((code) {
-            if (!_isShuttingDown) {
-              _pty = null;
-              _stateController.add(false);
-              _outputController.add('\r\n[进程已退出，退出码: $code]\r\n');
-            }
-          })
-          .catchError((Object error) {
-            if (!_isShuttingDown) {
-              _pty = null;
-              _stateController.add(false);
-              _outputController.add('\r\n[进程异常退出: $error]\r\n');
-            }
-          });
+      unawaited(_watchExitCode());
 
       _stateController.add(true);
       // 不输出启动信息，保持简洁
@@ -237,6 +223,23 @@ class LocalTerminalService implements TerminalInputService {
       _stateController.add(false);
       _outputController.add('启动本地终端失败: $e\r\n');
       rethrow;
+    }
+  }
+
+  Future<void> _watchExitCode() async {
+    try {
+      final code = await _pty!.exitCode;
+      if (!_isShuttingDown) {
+        _pty = null;
+        _stateController.add(false);
+        _outputController.add('\r\n[进程已退出，退出码: $code]\r\n');
+      }
+    } catch (error) {
+      if (!_isShuttingDown) {
+        _pty = null;
+        _stateController.add(false);
+        _outputController.add('\r\n[进程异常退出: $error]\r\n');
+      }
     }
   }
 

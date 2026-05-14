@@ -4,28 +4,10 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lbp_ssh/core/theme/app_theme.dart';
 import 'package:lbp_ssh/data/models/ssh_connection.dart';
+import 'package:lbp_ssh/data/models/file_item.dart';
 import 'package:lbp_ssh/domain/services/kitty_file_transfer_service.dart';
 import 'package:lbp_ssh/presentation/providers_riverpod/sftp_provider_riverpod.dart';
 import 'package:lbp_ssh/presentation/widgets/transfer_progress_dialog.dart';
-
-/// 远程文件项（用于显示文件列表）
-class FileItem {
-  final String name;
-  final String path;
-  final bool isDirectory;
-  final int size;
-  final DateTime? modified;
-  final String permissions;
-
-  FileItem({
-    required this.name,
-    required this.path,
-    required this.isDirectory,
-    this.size = 0,
-    this.modified,
-    this.permissions = '',
-  });
-}
 
 /// SFTP 浏览器界面
 class SftpBrowserScreen extends ConsumerStatefulWidget {

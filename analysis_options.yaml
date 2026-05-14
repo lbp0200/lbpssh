@@ -16,10 +16,6 @@ analyzer:
     must_be_immutable: warning
   exclude:
     - "**/*.g.dart"
-    - "**/*.freezed.dart"
-    - "**/*.mocks.dart"
-    - "lib/generated/**"
-    - "test/.test_coverage.dart"
   language:
     strict-casts: true
     strict-raw-types: true

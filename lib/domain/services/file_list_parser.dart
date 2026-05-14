@@ -1,4 +1,4 @@
-import '../../presentation/screens/sftp_browser_screen.dart';
+import '../../data/models/file_item.dart';
 
 /// 远程文件解析器
 /// 解析 ls -la 输出
