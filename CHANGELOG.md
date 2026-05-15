@@ -1,3 +1,5 @@
+- release: bump version to 1.6.5, fix Windows chmod test on CI (a029fbb)
+- docs: update CHANGELOG (1bc7f82)
 - release: bump version to 1.6.4, update kterm to 1.1.11 (7572122)
 - docs: update CHANGELOG (76fe22d)
 - release: bump version to 1.6.3 (1a5d342)
