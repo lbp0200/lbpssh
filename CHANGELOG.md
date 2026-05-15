@@ -1,4 +1,5 @@
-- release: bump version to 1.6.4, update kterm to 1.1.11 (PUB_HOSTED_URL fix)
+- release: bump version to 1.6.4, update kterm to 1.1.11 (7572122)
+- docs: update CHANGELOG (76fe22d)
 - release: bump version to 1.6.3 (1a5d342)
 - chore: comprehensive code quality cleanup (d64f0c6)
 - chore: cleanup, fix all analyzer issues, and add missing tests (684c258)
