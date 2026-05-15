@@ -218,6 +218,12 @@ Host myserver
       test(
         'Given unreadable file, When reading config, Then returns empty list (catch block)',
         () {
+          // On Windows, chmod 000 cannot reliably make a file unreadable
+          // due to differing permission models, so skip this test.
+          if (Platform.isWindows) {
+            return;
+          }
+
           final tempDir = Directory.systemTemp.createTempSync();
           addTearDown(() => tempDir.deleteSync(recursive: true));
           final configFile = File('${tempDir.path}/config');
