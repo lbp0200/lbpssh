@@ -1,3 +1,4 @@
+- release: bump version to 1.6.4, update kterm to 1.1.11 (PUB_HOSTED_URL fix)
 - fix: remove dead scroll parsing code and fix analyzer issues (e1aec8a)
 - fix: remove all 'as dynamic' and 'as TerminalSession' casts in TerminalNotifier (1cd5421)
 - fix: add missing class closing brace in TerminalNotifier (3543606)
