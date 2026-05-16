@@ -118,7 +118,7 @@ dev_dependencies:
 
   # 代码生成
   build_runner: ^2.10.5
-  json_serializable: ^6.11.3
+  json_serializable: ^6.14.0
   flutter_launcher_icons: ^0.14.4
 
 
