@@ -1,6 +1,9 @@
-- feat: add search/filter to TUI connection list (2d23401)
-- docs: update CHANGELOG (06c89fd)
-- chore: remove 3 dead widgets superseded by ConnectionList (CompactConnectionList, LoadingIndicator, ShimmerLoading) (658cc12)
+- feat: add search/filter to TUI connection list (/ key to search, case-insensitive)
+- refactor: extract ErrorDetailDialog from terminal_view.dart, cleanup imports
+- chore: add lint rules, fix 229 issues via dart fix
+- chore: upgrade sentry 9.x, json_annotation, shared_preferences, build_runner
+- chore: remove 4 dead widgets (SyncStatus, CompactConnectionList, LoadingIndicator, ShimmerLoading)
+- release: bump version to 1.7.1
 - docs: update CHANGELOG (22ebcc7)
 - chore: remove dead SyncStatus widget (never used) (51364e3)
 - docs: update CHANGELOG (6801cf0)
