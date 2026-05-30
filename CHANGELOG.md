@@ -1,3 +1,5 @@
+- chore: remove dead SyncStatus widget (never used) (51364e3)
+- docs: update CHANGELOG (6801cf0)
 - chore: add lint rules, fix 229 issues via dart fix, fix unused variable (ef94f98)
 - docs: update CHANGELOG (0e63e0f)
 - refactor: extract ErrorDetailDialog from terminal_view.dart (2bed0e9)
