@@ -117,7 +117,7 @@ dev_dependencies:
   build_runner: ^2.14.1
   json_serializable: ^6.14.0
   flutter_launcher_icons: ^0.14.4
-  test: any
+  test: 1.31.0
 
 flutter_launcher_icons:
   image_path: "assets/icon/app_icon.png" # 你的原图路径（必须是 1024x1024）# 只启用 Windows、macOS、Linux 三个桌面平台
