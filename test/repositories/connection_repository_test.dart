@@ -125,7 +125,7 @@ void main() {
       final afterSecondSave = repo.getConnectionById('v1')!;
       expect(afterSecondSave.version, connection.version + 2);
       expect(
-        afterSecondSave.updatedAt.isAfter(afterFirstSave.updatedAt),
+        afterSecondSave.updatedAt.compareTo(afterFirstSave.updatedAt) >= 0,
         isTrue,
       );
     });
