@@ -1,10 +1,6 @@
-- feat: add TUI mode - terminal-based SSH manager with utopia_tui (1328 tests)
-- refactor: extract Base64 to dart:convert in 3 Kitty services
-- refactor: extract LinearStyledTextField, HostPortRow widgets
-- refactor: extract TerminalTheme builder, remove 20-line duplication
-- chore: remove unused go_router and oauth2 dependencies
-- test: add 40 TUI tests (key parser, connection list, connection form)
-- test: add 19 widget tests for LinearStyledTextField and HostPortRow
+- release: bump version to 1.7.0, add TUI mode (b4bee90)
+- release: bump version to 1.7.0, add TUI mode (6a2844d)
+- docs: update CHANGELOG (7bbef42)
 - ci: upgrade GitHub Actions to Node.js 24 compatible versions (81f7f2f)
 - docs: update CHANGELOG (7c00e64)
 - release: bump version to 1.6.5, fix Windows chmod test on CI (a029fbb)
