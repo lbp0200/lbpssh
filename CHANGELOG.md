@@ -1,3 +1,5 @@
+- chore: upgrade dependencies - sentry 9.x, json_annotation, shared_preferences, build_runner, cupertino_icons, desktop_drop (a687c04)
+- docs: update CHANGELOG (a6d7031)
 - release: bump version to 1.7.0, add TUI mode (b4bee90)
 - release: bump version to 1.7.0, add TUI mode (6a2844d)
 - docs: update CHANGELOG (7bbef42)
