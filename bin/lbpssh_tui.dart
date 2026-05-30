@@ -125,7 +125,6 @@ void _handleListKey(String key) {
         connections: _state.connections,
         screen: 'form',
         sel: _state.sel,
-        editConn: null,
       );
       break;
     case 'e':

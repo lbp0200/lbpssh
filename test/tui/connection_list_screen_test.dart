@@ -130,7 +130,7 @@ void main() {
       final ctx = _ctx();
       final state = TuiState(
         connections: [
-          _conn(name: 'pwd', auth: AuthType.password),
+          _conn(name: 'pwd'),
           _conn(name: 'key', auth: AuthType.key),
           _conn(name: 'k+p', auth: AuthType.keyWithPassword),
           _conn(name: 'cfg', auth: AuthType.sshConfig),
@@ -165,7 +165,6 @@ void main() {
           _conn(name: 'selected-one'),
           _conn(name: 'other-one'),
         ],
-        sel: 0,
       );
 
       paintConnectionList(state, ctx);

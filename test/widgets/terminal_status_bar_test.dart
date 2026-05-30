@@ -40,7 +40,6 @@ void main() {
           id: 'test-session',
           name: 'Test Session',
           inputService: mockService,
-          isLocal: false,
           serverInfo: 'user@192.168.1.1',
         );
         session.connectionState = SshConnectionState.connected;
@@ -67,7 +66,6 @@ void main() {
           id: 'test-session',
           name: 'Test Session',
           inputService: mockService,
-          isLocal: false,
           serverInfo: 'user@192.168.1.1',
         );
         session.connectionState = SshConnectionState.disconnected;
@@ -116,7 +114,6 @@ void main() {
           id: 'test-session',
           name: 'Test Session',
           inputService: mockService,
-          isLocal: false,
           serverInfo: 'admin@server.example.com',
         );
         session.connectionState = SshConnectionState.connected;
@@ -143,7 +140,6 @@ void main() {
           id: 'test-session',
           name: 'Test Session',
           inputService: mockService,
-          isLocal: false,
           serverInfo: 'user@192.168.1.1',
         );
         session.connectionState = SshConnectionState.disconnected;
@@ -182,7 +178,6 @@ void main() {
           id: 'test-session',
           name: 'Test Session',
           inputService: mockService,
-          isLocal: false,
           serverInfo: 'user@192.168.1.1',
         );
         session.connectionState = SshConnectionState.connected;
@@ -212,7 +207,6 @@ void main() {
           id: 'test-session',
           name: 'Test Session',
           inputService: mockService,
-          isLocal: false,
           serverInfo: 'user@192.168.1.1',
         );
         session.connectionState = SshConnectionState.connecting;

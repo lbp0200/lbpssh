@@ -292,7 +292,7 @@ class KittyWideGamutService {
     }
 
     // OSC 10 ; ?
-    final cmd = '\x1b]10;?\x1b\\\\';
+    const cmd = '\x1b]10;?\x1b\\\\';
     _session.writeRaw(cmd);
   }
 }

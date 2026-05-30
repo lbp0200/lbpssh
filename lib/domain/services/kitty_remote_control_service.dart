@@ -58,7 +58,7 @@ class KittyRemoteControlService {
     }
 
     // OSC 21 ; t - 请求窗口标题
-    final cmd = '\x1b]21;t\x1b\\\\';
+    const cmd = '\x1b]21;t\x1b\\\\';
     _session.writeRaw(cmd);
 
     // 等待响应 (异步)
@@ -99,7 +99,7 @@ class KittyRemoteControlService {
     }
 
     // OSC 9 ; c - 查询前台进程
-    final cmd = '\x1b]9;c\x1b\\\\';
+    const cmd = '\x1b]9;c\x1b\\\\';
     _session.writeRaw(cmd);
 
     return null;
@@ -112,7 +112,7 @@ class KittyRemoteControlService {
     }
 
     // OSC 52 ; c - 获取剪贴板
-    final cmd = '\x1b]52;c;?\x1b\\\\';
+    const cmd = '\x1b]52;c;?\x1b\\\\';
     _session.writeRaw(cmd);
 
     return null;

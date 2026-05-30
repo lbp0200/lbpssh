@@ -55,7 +55,6 @@ void main() {
             id: 'conn1',
             name: 'Test Server',
             host: '192.168.1.1',
-            port: 22,
             username: 'testuser',
             authType: AuthType.password,
           );
@@ -83,7 +82,6 @@ void main() {
             id: 'nonexistent',
             name: 'No Session',
             host: '192.168.1.99',
-            port: 22,
             username: 'test',
             authType: AuthType.password,
           );
@@ -109,7 +107,6 @@ void main() {
             id: 'conn1',
             name: 'Test Server',
             host: '192.168.1.1',
-            port: 22,
             username: 'testuser',
             authType: AuthType.password,
           );
@@ -151,7 +148,6 @@ void main() {
             id: 'conn1',
             name: 'Test Server',
             host: '192.168.1.1',
-            port: 22,
             username: 'testuser',
             authType: AuthType.password,
           );

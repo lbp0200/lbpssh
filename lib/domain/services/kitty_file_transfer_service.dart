@@ -362,7 +362,7 @@ class KittyFileTransferService {
     );
 
     // 解析输出
-    final items = FileListParser.parse(output, _currentPath, osType: 'linux');
+    final items = FileListParser.parse(output, _currentPath);
     return items;
   }
 

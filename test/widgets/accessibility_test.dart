@@ -31,8 +31,6 @@ Widget createTestWidget({
           connectionProvider.overrideWith(
             () => _MockConnectionNotifier(
               ConnectionState(
-                isLoading: false,
-                error: null,
                 connections: connections,
               ),
             ),
@@ -70,7 +68,6 @@ void main() {
           id: '1',
           name: 'Production Server',
           host: '192.168.1.100',
-          port: 22,
           username: 'admin',
           authType: AuthType.password,
         ),

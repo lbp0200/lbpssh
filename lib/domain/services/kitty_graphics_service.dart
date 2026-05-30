@@ -166,7 +166,7 @@ class KittyGraphicsService {
     }
 
     // 格式: OSC 71 ; a=d ; a=*
-    final cmd = '\x1b]71;a=d;a=*\x1b\\';
+    const cmd = '\x1b]71;a=d;a=*\x1b\\';
     _session.writeRaw(cmd);
     _progressCallbacks.clear();
   }
@@ -212,7 +212,7 @@ class KittyGraphicsService {
     }
 
     // 格式: OSC 71 ; a=l
-    final cmd = '\x1b]71;a=l\x1b\\';
+    const cmd = '\x1b]71;a=l\x1b\\';
     _session.writeRaw(cmd);
   }
 }

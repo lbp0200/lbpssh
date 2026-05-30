@@ -106,7 +106,7 @@ class KittySearchService {
   Future<void> findNext() async {
     if (_lastSearchText.isEmpty) return;
 
-    await search(_lastSearchText, direction: SearchDirection.forward);
+    await search(_lastSearchText);
   }
 
   /// 查找上一个
@@ -136,7 +136,6 @@ class KittySearchService {
   /// 禁用区分大小写
   Future<void> disableCaseSensitive() async {
     _currentOptions = SearchOptions(
-      caseSensitive: false,
       wholeWord: _currentOptions.wholeWord,
       regex: _currentOptions.regex,
       wrap: _currentOptions.wrap,
@@ -157,7 +156,6 @@ class KittySearchService {
   Future<void> disableWholeWord() async {
     _currentOptions = SearchOptions(
       caseSensitive: _currentOptions.caseSensitive,
-      wholeWord: false,
       regex: _currentOptions.regex,
       wrap: _currentOptions.wrap,
     );
@@ -178,7 +176,6 @@ class KittySearchService {
     _currentOptions = SearchOptions(
       caseSensitive: _currentOptions.caseSensitive,
       wholeWord: _currentOptions.wholeWord,
-      regex: false,
       wrap: _currentOptions.wrap,
     );
   }
@@ -189,7 +186,6 @@ class KittySearchService {
       caseSensitive: _currentOptions.caseSensitive,
       wholeWord: _currentOptions.wholeWord,
       regex: _currentOptions.regex,
-      wrap: true,
     );
   }
 
@@ -250,7 +246,7 @@ class KittySearchService {
       if (response.contains('not found') || response.contains('no match')) {
         onSearchResult?.call(SearchResult(text: _lastSearchText, found: false));
       } else if (response.contains('found')) {
-        onSearchResult?.call(SearchResult(text: _lastSearchText, found: true));
+        onSearchResult?.call(SearchResult(text: _lastSearchText));
       }
     } catch (e) {
       // 忽略解析错误

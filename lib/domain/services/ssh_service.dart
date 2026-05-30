@@ -619,7 +619,7 @@ class SshService implements TerminalInputService {
     _outputController.add('建立跳板机隧道...\r\n');
 
     // 使用本地端口转发（L端口转发）将本地端口转发到目标服务器
-    final localPort = 2222; // 使用一个临时本地端口
+    const localPort = 2222; // 使用一个临时本地端口
 
     // 先在跳板机上建立隧道
     final tunnelCmd =

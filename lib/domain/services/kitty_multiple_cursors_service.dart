@@ -140,7 +140,7 @@ class KittyMultipleCursorsService {
     }
 
     // OSC 6 > ; cursor ; d=*
-    final cmd = '\x1b[6>cursor;d=*\x1b\\\\';
+    const cmd = '\x1b[6>cursor;d=*\x1b\\\\';
     _session.writeRaw(cmd);
 
     _cursors.clear();

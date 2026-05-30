@@ -135,7 +135,6 @@ class KittyLaunchService {
       arguments: arguments,
       cwd: cwd,
       title: title,
-      type: LaunchType.tab,
     );
   }
 
@@ -207,7 +206,7 @@ class KittyLaunchService {
       throw Exception('未连接到终端');
     }
 
-    final cmd = '\x1b]6;activate=1\x1b\\\\';
+    const cmd = '\x1b]6;activate=1\x1b\\\\';
     _session.writeRaw(cmd);
   }
 
@@ -217,7 +216,7 @@ class KittyLaunchService {
       throw Exception('未连接到终端');
     }
 
-    final cmd = '\x1b]6;minimize=1\x1b\\\\';
+    const cmd = '\x1b]6;minimize=1\x1b\\\\';
     _session.writeRaw(cmd);
   }
 
@@ -227,7 +226,7 @@ class KittyLaunchService {
       throw Exception('未连接到终端');
     }
 
-    final cmd = '\x1b]6;maximize=1\x1b\\\\';
+    const cmd = '\x1b]6;maximize=1\x1b\\\\';
     _session.writeRaw(cmd);
   }
 

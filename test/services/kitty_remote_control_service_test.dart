@@ -17,7 +17,7 @@ void main() {
 
     group('TerminalInfo', () {
       test('creates with default values', () {
-        final info = const TerminalInfo();
+        const info = TerminalInfo();
         expect(info.title, isNull);
         expect(info.columns, isNull);
         expect(info.rows, isNull);
@@ -27,7 +27,7 @@ void main() {
       });
 
       test('creates with all fields', () {
-        final info = const TerminalInfo(
+        const info = TerminalInfo(
           title: 'test',
           columns: 80,
           rows: 24,
@@ -46,7 +46,7 @@ void main() {
 
     group('BufferContent', () {
       test('creates with required fields', () {
-        final content = const BufferContent(
+        const content = BufferContent(
           startLine: 0,
           lines: 10,
           content: 'abc',

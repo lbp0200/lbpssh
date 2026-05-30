@@ -37,7 +37,7 @@ Future<void> _testShellOnly() async {
   print('✓ Authenticated');
 
   final session = await client.shell(
-    pty: const SSHPtyConfig(type: 'xterm', width: 80, height: 24),
+    pty: const SSHPtyConfig(type: 'xterm'),
   );
   final out = StringBuffer();
   session.stdout.cast<List<int>>().transform(utf8.decoder).listen(out.write);
@@ -78,7 +78,7 @@ Future<void> _testWithPreExec() async {
   print('Pre-shell commands completed, now creating shell...');
 
   final session = await client.shell(
-    pty: const SSHPtyConfig(type: 'xterm', width: 80, height: 24),
+    pty: const SSHPtyConfig(type: 'xterm'),
   );
   final out = StringBuffer();
   session.stdout.cast<List<int>>().transform(utf8.decoder).listen(out.write);

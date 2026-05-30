@@ -28,13 +28,12 @@ void registerFallbackValues() {
       id: 'test_id',
       name: 'Test Server',
       host: '192.168.1.1',
-      port: 22,
       username: 'testuser',
       authType: AuthType.password,
     ),
   );
   registerFallbackValue(Options());
-  registerFallbackValue(RequestOptions(path: ''));
+  registerFallbackValue(RequestOptions());
 }
 
 void main() {
@@ -170,7 +169,6 @@ void main() {
           id: 'conn1',
           name: 'Local Server',
           host: '192.168.1.1',
-          port: 22,
           username: 'user',
           authType: AuthType.password,
         );
@@ -178,7 +176,6 @@ void main() {
           id: 'conn1',
           name: 'Remote Server',
           host: '192.168.1.1',
-          port: 22,
           username: 'user',
           authType: AuthType.password,
         );
@@ -210,7 +207,6 @@ void main() {
               id: 'conn1',
               name: 'Server 1',
               host: '192.168.1.1',
-              port: 22,
               username: 'user',
               authType: AuthType.password,
             ),
@@ -218,7 +214,6 @@ void main() {
               id: 'conn1',
               name: 'Server 1 Updated',
               host: '192.168.1.1',
-              port: 22,
               username: 'user',
               authType: AuthType.password,
             ),
@@ -471,11 +466,11 @@ void main() {
         ),
       ).thenThrow(
         DioException(
-          requestOptions: RequestOptions(path: ''),
+          requestOptions: RequestOptions(),
           type: DioExceptionType.badResponse,
           response: Response(
             statusCode: 404,
-            requestOptions: RequestOptions(path: ''),
+            requestOptions: RequestOptions(),
           ),
         ),
       );
@@ -493,7 +488,7 @@ void main() {
             'content': {'sha': 'new_sha'},
           },
           statusCode: 201,
-          requestOptions: RequestOptions(path: ''),
+          requestOptions: RequestOptions(),
         ),
       );
 
@@ -530,11 +525,11 @@ void main() {
         ),
       ).thenThrow(
         DioException(
-          requestOptions: RequestOptions(path: ''),
+          requestOptions: RequestOptions(),
           type: DioExceptionType.badResponse,
           response: Response(
             statusCode: 404,
-            requestOptions: RequestOptions(path: ''),
+            requestOptions: RequestOptions(),
           ),
         ),
       );
@@ -551,7 +546,7 @@ void main() {
             'content': {'sha': 'new_sha'},
           },
           statusCode: 201,
-          requestOptions: RequestOptions(path: ''),
+          requestOptions: RequestOptions(),
         ),
       );
 
@@ -596,7 +591,7 @@ void main() {
         ),
       ).thenThrow(
         DioException(
-          requestOptions: RequestOptions(path: ''),
+          requestOptions: RequestOptions(),
           type: DioExceptionType.connectionTimeout,
         ),
       );
@@ -610,7 +605,7 @@ void main() {
         ),
       ).thenThrow(
         DioException(
-          requestOptions: RequestOptions(path: ''),
+          requestOptions: RequestOptions(),
           type: DioExceptionType.connectionTimeout,
         ),
       );
@@ -657,7 +652,7 @@ void main() {
             'sha': 'existing_sha',
           },
           statusCode: 200,
-          requestOptions: RequestOptions(path: ''),
+          requestOptions: RequestOptions(),
         ),
       );
 
@@ -674,7 +669,7 @@ void main() {
             'content': {'sha': 'updated_sha'},
           },
           statusCode: 200,
-          requestOptions: RequestOptions(path: ''),
+          requestOptions: RequestOptions(),
         ),
       );
 
@@ -706,11 +701,11 @@ void main() {
         ),
       ).thenThrow(
         DioException(
-          requestOptions: RequestOptions(path: ''),
+          requestOptions: RequestOptions(),
           type: DioExceptionType.badResponse,
           response: Response(
             statusCode: 404,
-            requestOptions: RequestOptions(path: ''),
+            requestOptions: RequestOptions(),
           ),
         ),
       );
@@ -727,7 +722,7 @@ void main() {
             'content': {'sha': 'new_sha'},
           },
           statusCode: 201,
-          requestOptions: RequestOptions(path: ''),
+          requestOptions: RequestOptions(),
         ),
       );
 
@@ -829,7 +824,7 @@ void main() {
             'sha': 'file_sha',
           },
           statusCode: 200,
-          requestOptions: RequestOptions(path: ''),
+          requestOptions: RequestOptions(),
         ),
       );
 
@@ -881,7 +876,7 @@ void main() {
               'sha': 'file_sha',
             },
             statusCode: 200,
-            requestOptions: RequestOptions(path: ''),
+            requestOptions: RequestOptions(),
           ),
         );
 
@@ -919,7 +914,7 @@ void main() {
         ),
       ).thenThrow(
         DioException(
-          requestOptions: RequestOptions(path: ''),
+          requestOptions: RequestOptions(),
           type: DioExceptionType.connectionTimeout,
         ),
       );
@@ -962,11 +957,10 @@ void main() {
           id: 'conn1',
           name: 'Local Newer',
           host: '192.168.1.1',
-          port: 22,
           username: 'user',
           authType: AuthType.password,
           version: 2,
-          createdAt: DateTime(2024, 1, 1),
+          createdAt: DateTime(2024),
           updatedAt: DateTime(2024, 1, 10),
         );
 
@@ -974,11 +968,9 @@ void main() {
           id: 'conn2',
           name: 'Same',
           host: '192.168.1.2',
-          port: 22,
           username: 'user',
           authType: AuthType.password,
-          version: 1,
-          createdAt: DateTime(2024, 1, 1),
+          createdAt: DateTime(2024),
           updatedAt: DateTime(2024, 1, 5),
         );
 
@@ -990,7 +982,7 @@ void main() {
           'username': 'user',
           'authType': 'password',
           'version': 1,
-          'createdAt': DateTime(2024, 1, 1).toIso8601String(),
+          'createdAt': DateTime(2024).toIso8601String(),
           'updatedAt': DateTime(2024, 1, 5).toIso8601String(),
         };
         final remoteJson2 = {
@@ -1001,7 +993,7 @@ void main() {
           'username': 'user',
           'authType': 'password',
           'version': 1,
-          'createdAt': DateTime(2024, 1, 1).toIso8601String(),
+          'createdAt': DateTime(2024).toIso8601String(),
           'updatedAt': DateTime(2024, 1, 5).toIso8601String(),
         };
 
@@ -1026,7 +1018,7 @@ void main() {
               'sha': 'file_sha',
             },
             statusCode: 200,
-            requestOptions: RequestOptions(path: ''),
+            requestOptions: RequestOptions(),
           ),
         );
 
@@ -1064,11 +1056,9 @@ void main() {
         id: 'conn1',
         name: 'Local',
         host: '192.168.1.1',
-        port: 22,
         username: 'user',
         authType: AuthType.password,
-        version: 1,
-        createdAt: DateTime(2024, 1, 1),
+        createdAt: DateTime(2024),
         updatedAt: DateTime(2024, 1, 10),
       );
 
@@ -1080,7 +1070,7 @@ void main() {
         'username': 'user',
         'authType': 'password',
         'version': 1,
-        'createdAt': DateTime(2024, 1, 1).toIso8601String(),
+        'createdAt': DateTime(2024).toIso8601String(),
         'updatedAt': DateTime(2024, 1, 5).toIso8601String(),
       };
 
@@ -1105,7 +1095,7 @@ void main() {
             'sha': 'file_sha',
           },
           statusCode: 200,
-          requestOptions: RequestOptions(path: ''),
+          requestOptions: RequestOptions(),
         ),
       );
 

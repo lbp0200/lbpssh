@@ -33,7 +33,7 @@ void main() {
     testWidgets(
       'Given idle status, When rendered, Then shows 未同步 text and sync icon',
       (tester) async {
-        await tester.pumpWidget(createTestWidget(status: SyncStatusEnum.idle));
+        await tester.pumpWidget(createTestWidget());
         await tester.pump();
 
         expect(find.text('未同步'), findsOneWidget);
@@ -100,7 +100,7 @@ void main() {
     testWidgets(
       'Given no lastSyncTime, When rendered, Then does not show time text',
       (tester) async {
-        await tester.pumpWidget(createTestWidget(status: SyncStatusEnum.idle));
+        await tester.pumpWidget(createTestWidget());
         await tester.pump();
 
         expect(find.byKey(const Key('sync_status_time')), findsNothing);

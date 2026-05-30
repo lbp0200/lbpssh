@@ -101,7 +101,7 @@ class KittyLayoutService {
     }
 
     // OSC 20 ; layout=stack
-    final cmd = '\x1b]20;layout=stack\x1b\\\\';
+    const cmd = '\x1b]20;layout=stack\x1b\\\\';
     _session.writeRaw(cmd);
 
     _currentLayout = const LayoutConfig(type: LayoutType.stack);
@@ -178,7 +178,7 @@ class KittyLayoutService {
     }
 
     // OSC 20 ; split:close
-    final cmd = '\x1b]20;split:close\x1b\\\\';
+    const cmd = '\x1b]20;split:close\x1b\\\\';
     _session.writeRaw(cmd);
   }
 
@@ -189,7 +189,7 @@ class KittyLayoutService {
     }
 
     // OSC 20 ; window:next
-    final cmd = '\x1b]20;window:next\x1b\\\\';
+    const cmd = '\x1b]20;window:next\x1b\\\\';
     _session.writeRaw(cmd);
   }
 
@@ -200,7 +200,7 @@ class KittyLayoutService {
     }
 
     // OSC 20 ; window:prev
-    final cmd = '\x1b]20;window:prev\x1b\\\\';
+    const cmd = '\x1b]20;window:prev\x1b\\\\';
     _session.writeRaw(cmd);
   }
 
@@ -265,7 +265,7 @@ class KittyLayoutService {
     }
 
     // OSC 20 ; window:maximize
-    final cmd = '\x1b]20;window:maximize\x1b\\\\';
+    const cmd = '\x1b]20;window:maximize\x1b\\\\';
     _session.writeRaw(cmd);
   }
 
@@ -276,7 +276,7 @@ class KittyLayoutService {
     }
 
     // OSC 20 ; window:restore
-    final cmd = '\x1b]20;window:restore\x1b\\\\';
+    const cmd = '\x1b]20;window:restore\x1b\\\\';
     _session.writeRaw(cmd);
   }
 
@@ -287,7 +287,7 @@ class KittyLayoutService {
     }
 
     // OSC 20 ; windows:?
-    final cmd = '\x1b]20;windows:?\x1b\\\\';
+    const cmd = '\x1b]20;windows:?\x1b\\\\';
     _session.writeRaw(cmd);
   }
 
@@ -298,7 +298,7 @@ class KittyLayoutService {
     }
 
     // OSC 20 ; layout:?
-    final cmd = '\x1b]20;layout:?\x1b\\\\';
+    const cmd = '\x1b]20;layout:?\x1b\\\\';
     _session.writeRaw(cmd);
   }
 

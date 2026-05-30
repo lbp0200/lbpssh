@@ -53,7 +53,7 @@ Future<void> _runTest() async {
 
     print('\nStep 4: Creating shell session...');
     final session = await client.shell(
-      pty: const SSHPtyConfig(type: 'xterm', width: 80, height: 24),
+      pty: const SSHPtyConfig(type: 'xterm'),
     );
     print('  ✓ Shell ready');
 

@@ -31,21 +31,20 @@ void main() {
 
     group('WindowInfo', () {
       test('creates with required fields', () {
-        final info = const WindowInfo(id: '1', isActive: true);
+        const info = WindowInfo(id: '1', isActive: true);
         expect(info.id, '1');
         expect(info.isActive, isTrue);
         expect(info.title, isNull);
       });
 
       test('creates with all fields', () {
-        final info = const WindowInfo(
+        const info = WindowInfo(
           id: '2',
           title: 'test',
           width: 80,
           height: 24,
           x: 10,
           y: 5,
-          isActive: false,
         );
         expect(info.title, 'test');
         expect(info.width, 80);
@@ -57,14 +56,14 @@ void main() {
 
     group('LayoutConfig', () {
       test('creates with required fields', () {
-        final config = const LayoutConfig(type: LayoutType.grid);
+        const config = LayoutConfig(type: LayoutType.grid);
         expect(config.type, LayoutType.grid);
         expect(config.width, isNull);
         expect(config.fraction, isNull);
       });
 
       test('creates with all fields', () {
-        final config = const LayoutConfig(
+        const config = LayoutConfig(
           type: LayoutType.horizontal,
           width: 100,
           height: 50,

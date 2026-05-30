@@ -24,7 +24,7 @@ void main() {
         MaterialApp(
           theme: ThemeData.dark(),
           home: const Scaffold(
-            body: ShimmerLoading(isLoading: true, child: Text('Content')),
+            body: ShimmerLoading(child: Text('Content')),
           ),
         ),
       );
@@ -51,7 +51,7 @@ void main() {
         MaterialApp(
           theme: ThemeData.dark(),
           home: const Scaffold(
-            body: ShimmerLoading(isLoading: true, child: Text('Content')),
+            body: ShimmerLoading(child: Text('Content')),
           ),
         ),
       );

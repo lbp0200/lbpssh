@@ -77,7 +77,7 @@ class KittySessionService {
     }
 
     // OSC 21 ; t - 请求窗口标题
-    final cmd = '\x1b]21;t\x1b\\\\';
+    const cmd = '\x1b]21;t\x1b\\\\';
     _session.writeRaw(cmd);
 
     return null; // 响应通过回调处理
@@ -101,7 +101,7 @@ class KittySessionService {
     }
 
     // OSC 9 ; c - 查询前台进程
-    final cmd = '\x1b]9;c\x1b\\\\';
+    const cmd = '\x1b]9;c\x1b\\\\';
     _session.writeRaw(cmd);
 
     return null;
@@ -294,9 +294,6 @@ class KittySessionService {
 
     return SessionState(
       workingDirectory: cwd,
-      title: null,
-      foregroundProcess: null,
-      isRunning: true,
     );
   }
 }

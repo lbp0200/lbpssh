@@ -39,7 +39,7 @@ class KittyHyperlinkService {
     }
 
     // 格式: OSC 8 ;
-    final cmd = '\x1b]8;\x1b\\\\';
+    const cmd = '\x1b]8;\x1b\\\\';
     _session.writeRaw(cmd);
   }
 }
@@ -75,7 +75,7 @@ class KittyPointerShapeService {
     }
 
     // 格式: OSC 22 ;
-    final cmd = '\x1b]22;\x1b\\\\';
+    const cmd = '\x1b]22;\x1b\\\\';
     _session.writeRaw(cmd);
   }
 
@@ -176,7 +176,7 @@ class KittyColorStackService {
     }
 
     // OSC 21 ; P ; r = 104
-    final cmd = '\x1b]21;P;r=104\x1b\\\\';
+    const cmd = '\x1b]21;P;r=104\x1b\\\\';
     _session.writeRaw(cmd);
   }
 
@@ -187,7 +187,7 @@ class KittyColorStackService {
     }
 
     // OSC 4 ; r
-    final cmd = '\x1b]4;r\x1b\\\\';
+    const cmd = '\x1b]4;r\x1b\\\\';
     _session.writeRaw(cmd);
   }
 }
@@ -223,7 +223,7 @@ class KittyTextSizeService {
     }
 
     // 格式: OSC > ;
-    final cmd = '\x1b]>\x1b\\\\';
+    const cmd = '\x1b]>\x1b\\\\';
     _session.writeRaw(cmd);
   }
 
@@ -234,7 +234,7 @@ class KittyTextSizeService {
     }
 
     // 格式: OSC > ; +
-    final cmd = '\x1b]>+\x1b\\\\';
+    const cmd = '\x1b]>+\x1b\\\\';
     _session.writeRaw(cmd);
   }
 
@@ -245,7 +245,7 @@ class KittyTextSizeService {
     }
 
     // 格式: OSC > ; -
-    final cmd = '\x1b]>-\x1b\\\\';
+    const cmd = '\x1b]>-\x1b\\\\';
     _session.writeRaw(cmd);
   }
 }
@@ -373,7 +373,7 @@ class KittyWindowTitleService {
     }
 
     // OSC 21 ; t
-    final cmd = '\x1b]21;t\x1b\\\\';
+    const cmd = '\x1b]21;t\x1b\\\\';
     _session.writeRaw(cmd);
   }
 

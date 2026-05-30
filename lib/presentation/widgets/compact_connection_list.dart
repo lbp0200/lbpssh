@@ -235,7 +235,7 @@ class _CompactConnectionItem extends StatelessWidget {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(LinearRadius.standard),
                 color: LinearColors.fillSurface,
-                border: Border.all(color: LinearColors.borderSubtle, width: 1),
+                border: Border.all(color: LinearColors.borderSubtle),
               ),
               child: const Icon(
                 Icons.computer,

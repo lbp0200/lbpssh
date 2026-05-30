@@ -168,7 +168,6 @@ class KittyUnderlineService {
 
     _currentConfig = UnderlineConfig(
       style: _currentConfig.style,
-      color: UnderlineColor.default_,
       customColor: converted,
     );
   }

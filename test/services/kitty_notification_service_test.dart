@@ -47,7 +47,6 @@ void main() {
           id: 'n1',
           title: 'T',
           body: 'B',
-          progress: null,
         );
         verify(() => mockSession.writeRaw(any())).called(1);
       });

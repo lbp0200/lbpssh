@@ -18,7 +18,7 @@ import 'utils/sentry_service.dart';
 void main() async {
   // 初始化 Sentry
   await SentryService().init(
-    dsn: const String.fromEnvironment('SENTRY_DSN', defaultValue: ''),
+    dsn: const String.fromEnvironment('SENTRY_DSN'),
   );
 
   // 全局错误处理器
@@ -77,7 +77,6 @@ class MyApp extends StatelessWidget {
       title: 'SSH Manager',
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
-      themeMode: ThemeMode.system,
       home: const MainScreen(),
       debugShowCheckedModeBanner: false,
       localizationsDelegates: const [

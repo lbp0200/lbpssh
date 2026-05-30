@@ -46,7 +46,6 @@ class _TerminalViewWidgetState extends ConsumerState<TerminalViewWidget> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('${notification.title}\n${notification.body}'),
-          duration: const Duration(seconds: 4),
           behavior: SnackBarBehavior.floating,
         ),
       );
@@ -310,9 +309,7 @@ class _TerminalViewWithSelectionState
               ),
               controller: widget.controller,
               autofocus: true,
-              readOnly: false,
               showSearchBar: true,
-              hardwareKeyboardOnly: false,
               keyboardType: TextInputType.text,
               textStyle: TerminalStyle(
                 fontSize: widget.config.fontSize,
@@ -352,7 +349,7 @@ class _TerminalViewWithSelectionState
   ui.Paragraph _buildParagraph(TextStyle style, String text) {
     final builder = ui.ParagraphBuilder(style.getParagraphStyle());
     builder.pushStyle(
-      style.getTextStyle(textScaler: const TextScaler.linear(1.0)),
+      style.getTextStyle(),
     );
     builder.addText(text);
     final paragraph = builder.build();
@@ -581,7 +578,7 @@ class TerminalTabsView extends ConsumerWidget {
                 session: session,
                 onReconnect: () async {
                   if (!context.mounted) return;
-                  final snackBar = const SnackBar(
+                  const snackBar = SnackBar(
                     content: Text('正在重连...'),
                     duration: Duration(seconds: 2),
                   );

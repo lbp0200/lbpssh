@@ -289,7 +289,7 @@ class KittyKeyboardService {
     }
 
     // OSC 200 ; ?
-    final cmd = '\x1b]200;?\x1b\\';
+    const cmd = '\x1b]200;?\x1b\\';
     _session.writeRaw(cmd);
   }
 

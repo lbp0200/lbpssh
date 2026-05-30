@@ -60,18 +60,8 @@ void main() {
       'Given TerminalConfig, When serializing to JSON, Then produces correct JSON',
       () {
         final config = TerminalConfig(
-          fontFamily: 'JetBrainsMonoNerdFontMono',
           fontSize: 14.0,
-          fontWeight: 400,
           letterSpacing: 0.5,
-          lineHeight: 1.2,
-          backgroundColor: '#1E1E1E',
-          foregroundColor: '#FFFFFF',
-          cursorColor: '#FFFFFF',
-          cursorBlinkInterval: 500,
-          padding: 8,
-          devicePixelRatio: 1.0,
-          shellPath: '',
         );
 
         final json = config.toJson();

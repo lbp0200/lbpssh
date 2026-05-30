@@ -33,7 +33,7 @@ class ConnectionManagementPage extends ConsumerWidget {
                     Navigator.of(context).push(
                       MaterialPageRoute<ConnectionFormScreen>(
                         builder: (context) =>
-                            const ConnectionFormScreen(connection: null),
+                            const ConnectionFormScreen(),
                       ),
                     );
                   },
@@ -91,7 +91,7 @@ class ConnectionManagementPage extends ConsumerWidget {
                               MaterialPageRoute<ConnectionFormScreen>(
                                 builder: (context) =>
                                     const ConnectionFormScreen(
-                                      connection: null,
+                                      
                                     ),
                               ),
                             );
@@ -161,7 +161,6 @@ class _ConnectionManagementItemState
               color: _isHovered
                   ? LinearColors.borderStandard
                   : LinearColors.borderSubtle,
-              width: 1,
             ),
           ),
           child: Material(

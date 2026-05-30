@@ -91,7 +91,6 @@ class AppTheme {
       primary: lightAccent,
       secondary: lightAccent,
       surface: lightSurface,
-      onPrimary: Colors.white,
       onSecondary: Colors.white,
       onSurface: lightTextPrimary,
       surfaceContainerHighest: lightSurfaceRaised,

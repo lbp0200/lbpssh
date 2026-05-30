@@ -21,7 +21,6 @@ void main() {
         id: 'test_id',
         name: 'Test Server',
         host: '192.168.1.1',
-        port: 22,
         username: 'testuser',
         authType: AuthType.password,
       ),
@@ -105,7 +104,6 @@ void main() {
               id: 'imported_1',
               name: 'Imported',
               host: '10.0.0.1',
-              port: 22,
               username: 'admin',
               authType: AuthType.password,
             ),
@@ -155,7 +153,6 @@ void main() {
               id: 'c1',
               name: 'Server 1',
               host: '10.0.0.1',
-              port: 22,
               username: 'admin',
               authType: AuthType.password,
             ),
@@ -177,8 +174,6 @@ void main() {
           verify(
             () => mockService.importAndSaveConnections(
               connections,
-              overwrite: false,
-              addPrefix: true,
             ),
           ).called(1);
         },
@@ -193,7 +188,6 @@ void main() {
               id: 'c2',
               name: 'Server 2',
               host: '10.0.0.2',
-              port: 22,
               username: 'admin',
               authType: AuthType.password,
             ),

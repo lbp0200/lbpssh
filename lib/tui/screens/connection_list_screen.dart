@@ -20,7 +20,7 @@ void paintConnectionList(TuiState state, TuiContext ctx) {
 }
 
 void _title(TuiContext ctx, int w) {
-  final t = ' lbpSSH TUI ';
+  const t = ' lbpSSH TUI ';
   ctx.surface.putText(
     (w - t.length) ~/ 2,
     0,
@@ -31,7 +31,7 @@ void _title(TuiContext ctx, int w) {
 }
 
 void _header(TuiContext ctx, int row, int w) {
-  final s = const TuiStyle(bold: true, fg: 250, bg: 236);
+  const s = TuiStyle(bold: true, fg: 250, bg: 236);
   ctx.surface.putText(0, row, '#   ', style: s);
   ctx.surface.putText(4, row, '名称  ', style: s);
   ctx.surface.putText(26, row, '主机  ', style: s);
@@ -42,7 +42,7 @@ void _header(TuiContext ctx, int row, int w) {
 }
 
 void _rows(TuiState state, TuiContext ctx, int h) {
-  final startRow = 5;
+  const startRow = 5;
   final maxRows = h - 7;
   final conns = state.connections;
 

@@ -4,7 +4,7 @@ import 'package:encrypt/encrypt.dart';
 
 /// 加密工具类
 class EncryptionUtil {
-  static final _keyLength = 32; // AES-256 需要 32 字节密钥
+  static const _keyLength = 32; // AES-256 需要 32 字节密钥
 
   /// 从主密码派生加密密钥
   static Key deriveKey(String masterPassword) {

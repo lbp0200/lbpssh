@@ -255,7 +255,6 @@ void main() {
           id: 'ssh-session',
           name: 'SSH Session',
           inputService: mockService,
-          isLocal: false,
           serverInfo: 'user@192.168.1.1',
         );
 

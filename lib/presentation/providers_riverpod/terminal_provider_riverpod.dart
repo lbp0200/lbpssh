@@ -153,7 +153,6 @@ class TerminalNotifier extends Notifier<TerminalState> {
       name: name,
       inputService: sshService,
       terminalConfig: terminalConfig,
-      isLocal: false,
       serverInfo: '${connection.username}@${connection.host}',
     );
 
@@ -257,7 +256,6 @@ class TerminalNotifier extends Notifier<TerminalState> {
           id: '',
           name: existingSession.name,
           host: host,
-          port: 22,
           username: username,
           authType: AuthType.password,
           password: '',

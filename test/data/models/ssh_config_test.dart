@@ -24,13 +24,13 @@ void main() {
     });
 
     test('copyWith overrides keepaliveInterval', () {
-      final config = SshConfig(keepaliveInterval: 30000);
+      final config = SshConfig();
       final copied = config.copyWith(keepaliveInterval: 60000);
       expect(copied.keepaliveInterval, 60000);
     });
 
     test('copyWith preserves value when argument is null', () {
-      final config = SshConfig(keepaliveInterval: 30000);
+      final config = SshConfig();
       final copied = config.copyWith();
       expect(copied.keepaliveInterval, 30000);
     });

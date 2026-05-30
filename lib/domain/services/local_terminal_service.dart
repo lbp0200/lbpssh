@@ -168,7 +168,6 @@ class LocalTerminalService implements TerminalInputService {
       }
 
       // 使用默认终端尺寸
-      const finalColumns = 80;
       const finalRows = 24;
 
       final workingDirectory =
@@ -182,7 +181,6 @@ class LocalTerminalService implements TerminalInputService {
         arguments: arguments,
         workingDirectory: workingDirectory,
         environment: Platform.environment,
-        columns: finalColumns,
         rows: finalRows,
       );
       _pty = pty;

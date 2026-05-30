@@ -81,7 +81,6 @@ SshConnection makeConnection({
     id: 'test-id',
     name: 'test-connection',
     host: '127.0.0.1',
-    port: 22,
     username: 'testuser',
     authType: authType,
     password: password,
@@ -383,7 +382,7 @@ void main() {
       final mockConfig = createMockAppConfigService();
       final service = SshService(appConfigService: mockConfig);
 
-      final conn = makeConnection(authType: AuthType.password, password: null);
+      final conn = makeConnection();
 
       await expectLater(
         () => service.connect(conn),
@@ -397,7 +396,7 @@ void main() {
       final mockConfig = createMockAppConfigService();
       final service = SshService(appConfigService: mockConfig);
 
-      final conn = makeConnection(authType: AuthType.password, password: '');
+      final conn = makeConnection(password: '');
 
       await expectLater(
         () => service.connect(conn),
@@ -413,7 +412,6 @@ void main() {
 
       final conn = makeConnection(
         authType: AuthType.key,
-        privateKeyContent: null,
       );
 
       await expectLater(
@@ -432,7 +430,6 @@ void main() {
         authType: AuthType.keyWithPassword,
         privateKeyContent:
             '-----BEGIN OPENSSH PRIVATE KEY-----\ntest\n-----END OPENSSH PRIVATE KEY-----',
-        keyPassphrase: null,
       );
 
       await expectLater(
@@ -449,7 +446,6 @@ void main() {
 
       final conn = makeConnection(
         authType: AuthType.sshConfig,
-        sshConfigHost: null,
       );
 
       await expectLater(

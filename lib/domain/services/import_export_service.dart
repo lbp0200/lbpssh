@@ -83,7 +83,6 @@ class ImportExportService {
       FilePickerResult? result = await FilePicker.platform.pickFiles(
         type: FileType.custom,
         allowedExtensions: ['json'],
-        allowMultiple: false,
         dialogTitle: '选择SSH连接配置文件',
       );
 

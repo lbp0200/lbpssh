@@ -93,7 +93,7 @@ class _TerminalStatusBarState extends State<TerminalStatusBar> {
       decoration: BoxDecoration(
         color: LinearColors.panel.withValues(alpha: 0.9),
         border: const Border(
-          top: BorderSide(color: LinearColors.borderSubtle, width: 1),
+          top: BorderSide(color: LinearColors.borderSubtle),
         ),
       ),
       padding: const EdgeInsets.symmetric(horizontal: LinearSpacing.spacing8),

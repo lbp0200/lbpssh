@@ -233,7 +233,7 @@ class KittyScreenshotService {
     }
 
     // OSC 20 ; screenshot:interactive
-    final cmd = '\x1b]20;screenshot:interactive\x1b\\\\';
+    const cmd = '\x1b]20;screenshot:interactive\x1b\\\\';
     _session.writeRaw(cmd);
   }
 

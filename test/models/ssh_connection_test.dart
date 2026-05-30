@@ -12,7 +12,6 @@ void main() {
           id: 'test-id-123',
           name: 'Production Server',
           host: '192.168.1.100',
-          port: 22,
           username: 'admin',
           authType: AuthType.password,
           password: 'secretpassword',
@@ -113,8 +112,8 @@ void main() {
     test(
       'Given createdAt and updatedAt fields, When serializing connection, Then preserves dates',
       () {
-        final createdAt = DateTime(2024, 1, 1, 12, 0, 0);
-        final updatedAt = DateTime(2024, 6, 15, 18, 30, 0);
+        final createdAt = DateTime(2024, 1, 1, 12);
+        final updatedAt = DateTime(2024, 6, 15, 18, 30);
 
         final connection = SshConnection(
           id: 'date-test',
@@ -221,10 +220,8 @@ void main() {
           id: 'original-id',
           name: 'Original Name',
           host: 'original.host.com',
-          port: 22,
           username: 'originaluser',
           authType: AuthType.password,
-          version: 1,
         );
 
         final updated = original.copyWith(
@@ -437,7 +434,6 @@ void main() {
       () {
         final jumpHost = JumpHostConfig(
           host: 'jump.example.com',
-          port: 22,
           username: 'jumpuser',
           authType: AuthType.password,
           password: 'jumppass',
@@ -464,7 +460,6 @@ void main() {
           id: 'test-id',
           name: 'Test Connection',
           host: '192.168.1.1',
-          port: 22,
           username: 'user',
           authType: AuthType.password,
           password: 'secret123',
@@ -595,7 +590,6 @@ void main() {
       () {
         final config = Socks5ProxyConfig(
           host: 'proxy.example.com',
-          port: 1080,
           username: 'proxyuser',
           password: 'proxypass',
         );
@@ -637,7 +631,6 @@ void main() {
     test('Given config, When calling copyWith, Then creates modified copy', () {
       final original = Socks5ProxyConfig(
         host: 'proxy.example.com',
-        port: 1080,
         username: 'user',
       );
 
@@ -671,7 +664,7 @@ void main() {
     test(
       'Given Socks5ProxyConfig in SshConnection, When serializing, Then preserves proxy config',
       () {
-        final proxy = Socks5ProxyConfig(host: 'proxy.example.com', port: 1080);
+        final proxy = Socks5ProxyConfig(host: 'proxy.example.com');
         final connection = SshConnection(
           id: 'proxy-test',
           name: 'Proxy Test',

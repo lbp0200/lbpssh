@@ -101,7 +101,6 @@ void main() {
         makeConnection(
           id: 'c1',
           name: 'Conn 1',
-          authType: AuthType.password,
           password: 'pw',
         ),
       ];
@@ -157,14 +156,12 @@ void main() {
       'Given imported connection with existing ID, When overwrite=false, addPrefix=true, '
       'Then skips the duplicate (addPrefix only applies when overwrite=true)',
       () async {
-        final existing = [makeConnection(id: 'conn-1', name: 'Original')];
-        final imported = [makeConnection(id: 'conn-1', name: 'Imported')];
+        final existing = [makeConnection(name: 'Original')];
+        final imported = [makeConnection(name: 'Imported')];
         when(() => mockRepository.getAllConnections()).thenReturn(existing);
 
         final result = await service.mergeImportedConnections(
           imported,
-          overwrite: false,
-          addPrefix: true,
         );
 
         // With overwrite=false, duplicates are skipped regardless of addPrefix
@@ -178,13 +175,12 @@ void main() {
       'Given imported connection with existing ID, When overwrite=false, addPrefix=false, '
       'Then skips the duplicate',
       () async {
-        final existing = [makeConnection(id: 'conn-1', name: 'Original')];
-        final imported = [makeConnection(id: 'conn-1', name: 'Imported')];
+        final existing = [makeConnection(name: 'Original')];
+        final imported = [makeConnection(name: 'Imported')];
         when(() => mockRepository.getAllConnections()).thenReturn(existing);
 
         final result = await service.mergeImportedConnections(
           imported,
-          overwrite: false,
           addPrefix: false,
         );
 
@@ -198,8 +194,8 @@ void main() {
       'Given imported connection with existing ID, When overwrite=true, '
       'Then removes old and adds imported with new ID and prefixed name',
       () async {
-        final existing = [makeConnection(id: 'conn-1', name: 'Original')];
-        final imported = [makeConnection(id: 'conn-1', name: 'Imported')];
+        final existing = [makeConnection(name: 'Original')];
+        final imported = [makeConnection(name: 'Imported')];
         when(() => mockRepository.getAllConnections()).thenReturn(existing);
 
         final result = await service.mergeImportedConnections(
@@ -230,8 +226,6 @@ void main() {
 
       final result = await service.mergeImportedConnections(
         imported,
-        overwrite: false,
-        addPrefix: true,
       );
 
       // With overwrite=false, conflict-1 is skipped
@@ -248,15 +242,14 @@ void main() {
       'Given conflict with addPrefix=true and overwrite=true, '
       'When merge called, Then conflicting connection gets 导入_ prefix',
       () async {
-        final existing = [makeConnection(id: 'conn-1', name: 'Original')];
-        final imported = [makeConnection(id: 'conn-1', name: 'My Server')];
+        final existing = [makeConnection(name: 'Original')];
+        final imported = [makeConnection(name: 'My Server')];
         when(() => mockRepository.getAllConnections()).thenReturn(existing);
 
         // addPrefix only affects names when there is a conflict and overwrite=true
         final result = await service.mergeImportedConnections(
           imported,
           overwrite: true,
-          addPrefix: true,
         );
 
         expect(result.any((c) => c.name == '导入_My Server'), isTrue);
@@ -284,7 +277,7 @@ void main() {
   group('importAndSaveConnections', () {
     test('Given connections, When importAndSaveConnections called, '
         'Then calls mergeImportedConnections', () async {
-      final connections = [makeConnection(id: 'conn-1', name: 'Test')];
+      final connections = [makeConnection(name: 'Test')];
 
       when(() => mockRepository.getAllConnections()).thenReturn([]);
       when(() => mockRepository.clearAll()).thenAnswer((_) async {});
@@ -303,11 +296,11 @@ void main() {
       'Given connections with overwrite, When importAndSaveConnections called, '
       'Then passes overwrite parameter',
       () async {
-        final connections = [makeConnection(id: 'conn-1', name: 'Test')];
+        final connections = [makeConnection(name: 'Test')];
 
         when(
           () => mockRepository.getAllConnections(),
-        ).thenReturn([makeConnection(id: 'conn-1', name: 'Original')]);
+        ).thenReturn([makeConnection(name: 'Original')]);
         when(() => mockRepository.clearAll()).thenAnswer((_) async {});
         when(
           () => mockRepository.saveConnections(any()),
@@ -344,12 +337,10 @@ void main() {
       final connections = [
         makeConnection(
           id: 'p1',
-          authType: AuthType.password,
           password: 'secret',
         ),
         makeConnection(
           id: 'p2',
-          authType: AuthType.password,
           password: 'secret2',
         ),
       ];
@@ -518,7 +509,7 @@ void main() {
         authType: AuthType.password,
       );
       final connections = [
-        makeConnection(id: 'p1', authType: AuthType.password, password: 'pw'),
+        makeConnection(id: 'p1', password: 'pw'),
         makeConnection(
           id: 'k1',
           authType: AuthType.key,
@@ -532,7 +523,6 @@ void main() {
         ),
         makeConnection(
           id: 'jh1',
-          authType: AuthType.password,
           jumpHost: jumpHost,
         ),
       ];

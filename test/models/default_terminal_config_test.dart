@@ -140,7 +140,7 @@ void main() {
       'Given windowsTerminal terminal type, When calling getWindowsCommand, Then returns wt.exe',
       () {
         final config = DefaultTerminalConfig(
-          execWindows: TerminalType.windowsTerminal,
+          
         );
         expect(config.getWindowsCommand(), 'wt.exe');
       },
@@ -168,7 +168,7 @@ void main() {
     test(
       'Given iterm2 terminal type, When calling getMacCommand, Then returns iTerm command',
       () {
-        final config = DefaultTerminalConfig(execMac: TerminalType.iterm2);
+        final config = DefaultTerminalConfig();
         expect(config.getMacCommand(), 'open -a iTerm');
       },
     );
@@ -211,7 +211,7 @@ void main() {
     test(
       'Given terminal terminal type, When calling getLinuxCommand, Then returns x-terminal-emulator',
       () {
-        final config = DefaultTerminalConfig(execLinux: TerminalType.terminal);
+        final config = DefaultTerminalConfig();
         expect(config.getLinuxCommand(), 'x-terminal-emulator');
       },
     );

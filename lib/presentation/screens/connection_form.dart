@@ -133,8 +133,7 @@ class _ConnectionFormScreenState extends ConsumerState<ConnectionFormScreen> {
   Future<void> _pickPrivateKeyFile() async {
     try {
       FilePickerResult? result = await FilePicker.platform.pickFiles(
-        type: FileType.any,
-        allowMultiple: false,
+        
       );
 
       if (result != null && result.files.single.path != null) {
@@ -670,7 +669,6 @@ class _ConnectionFormScreenState extends ConsumerState<ConnectionFormScreen> {
                   ),
                   items: [
                     const DropdownMenuItem<String?>(
-                      value: null,
                       child: Text('-- 选择主机 --'),
                     ),
                     ..._sshConfigEntries.map(

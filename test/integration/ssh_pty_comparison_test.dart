@@ -69,7 +69,7 @@ Future<void> _runComparison() async {
   final client2 = SSHClient(socket2, username: 'lbp', identities: identities);
 
   final session2 = await client2.shell(
-    pty: const SSHPtyConfig(type: 'xterm', width: 80, height: 24),
+    pty: const SSHPtyConfig(type: 'xterm'),
   );
   final out2 = StringBuffer();
   final sub2 = session2.stdout

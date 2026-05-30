@@ -36,7 +36,7 @@ class KittyShellIntegrationService {
     }
 
     // 格式: OSC 133 ; A
-    final cmd = '\x1b]133;A\x1b\\\\';
+    const cmd = '\x1b]133;A\x1b\\\\';
     _session.writeRaw(cmd);
   }
 
@@ -104,7 +104,7 @@ class KittyShellIntegrationService {
     }
 
     // 格式: OSC 133 ; D ; ?
-    final cmd = '\x1b]133;D;?\x1b\\\\';
+    const cmd = '\x1b]133;D;?\x1b\\\\';
     _session.writeRaw(cmd);
   }
 
@@ -128,7 +128,7 @@ class KittyShellIntegrationService {
     }
 
     // 格式: OSC 133 ; F ; ?
-    final cmd = '\x1b]133;F;?\x1b\\\\';
+    const cmd = '\x1b]133;F;?\x1b\\\\';
     _session.writeRaw(cmd);
   }
 

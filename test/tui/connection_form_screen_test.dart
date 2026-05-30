@@ -52,7 +52,6 @@ void main() {
         id: 'test',
         name: 'My Server',
         host: '10.0.0.1',
-        port: 22,
         username: 'admin',
         authType: AuthType.password,
       );
