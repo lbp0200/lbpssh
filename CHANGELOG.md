@@ -1,3 +1,5 @@
+- chore: remove 3 dead widgets superseded by ConnectionList (CompactConnectionList, LoadingIndicator, ShimmerLoading) (658cc12)
+- docs: update CHANGELOG (22ebcc7)
 - chore: remove dead SyncStatus widget (never used) (51364e3)
 - docs: update CHANGELOG (6801cf0)
 - chore: add lint rules, fix 229 issues via dart fix, fix unused variable (ef94f98)
