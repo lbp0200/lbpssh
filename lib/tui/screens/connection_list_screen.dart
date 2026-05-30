@@ -8,12 +8,21 @@ void paintConnectionList(TuiState state, TuiContext ctx) {
   final h = ctx.height;
 
   _title(ctx, w);
-  _header(ctx, 3, w);
-  _rows(state, ctx, h);
+
+  final headerRow = state.isSearching ? 4 : 3;
+  final dataStartRow = headerRow + 2;
+  final maxRows = h - dataStartRow - 2;
+
+  if (state.isSearching) {
+    _searchBar(ctx, state);
+  }
+
+  _header(ctx, headerRow, w);
+  _rows(state, ctx, dataStartRow, maxRows);
   _hints(ctx, h, w);
   paintTuiStatusBar(
     ctx,
-    leftText: ' ${state.connections.length} connections',
+    leftText: ' ${state.filteredConnections.length}/${state.connections.length} connections',
     rightText: 'lbpSSH TUI',
     row: h - 2,
   );
@@ -41,13 +50,23 @@ void _header(TuiContext ctx, int row, int w) {
   ctx.surface.putText(0, row + 1, '─' * w);
 }
 
-void _rows(TuiState state, TuiContext ctx, int h) {
-  const startRow = 5;
-  final maxRows = h - 7;
-  final conns = state.connections;
+void _searchBar(TuiContext ctx, TuiState state) {
+  ctx.surface.putText(0, 2, ' ' * ctx.width);
+  final display = '/${state.searchQuery}';
+  ctx.surface.putText(0, 2, ' 搜索: ', style: const TuiStyle(fg: 246));
+  ctx.surface.putText(5, 2, display, style: const TuiStyle(fg: 39));
+  ctx.surface.putText(5 + display.length, 2, '█', style: const TuiStyle(fg: 39));
+}
+
+void _rows(TuiState state, TuiContext ctx, int startRow, int maxRows) {
+  final conns = state.filteredConnections;
 
   if (conns.isEmpty) {
-    ctx.surface.putText(2, startRow, '(暂无连接 - 按 a 添加)');
+    ctx.surface.putText(
+      2,
+      startRow,
+      state.searchQuery.isNotEmpty ? '(无匹配)' : '(暂无连接 - 按 a 添加)',
+    );
     return;
   }
 
@@ -97,7 +116,7 @@ void _hints(TuiContext ctx, int h, int w) {
   ctx.surface.putText(
     0,
     r,
-    ' [a]添加  [e]编辑  [d]删除  [Enter]连接  [Ctrl+C]退出',
+    ' [/]搜索  [a]添加  [e]编辑  [d]删除  [Enter]连接  [Ctrl+C]退出',
     style: const TuiStyle(fg: 246, bg: 236),
   );
 }

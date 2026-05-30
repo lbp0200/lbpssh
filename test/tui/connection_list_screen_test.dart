@@ -201,5 +201,93 @@ void main() {
       expect(lines[3], contains('端口'));
       expect(lines[3], contains('用户'));
     });
+
+    test('shows filtered count when searching', () {
+      final ctx = _ctx();
+      final state = TuiState(connections: [
+        _conn(name: 'prod-web', host: '10.0.0.1'),
+        _conn(name: 'prod-db', host: '10.0.0.2'),
+        _conn(name: 'dev', host: '10.0.0.3'),
+      ], searchQuery: 'prod');
+
+      paintConnectionList(state, ctx);
+
+      final lines = ctx.surface.toPlainLines();
+      expect(lines[22], contains('2/3'));
+    });
+
+    test('shows search bar when isSearching', () {
+      final ctx = _ctx();
+      final state = TuiState(connections: [
+        _conn(name: 'test'),
+      ], isSearching: true, searchQuery: 'prod');
+
+      paintConnectionList(state, ctx);
+
+      final lines = ctx.surface.toPlainLines();
+      expect(lines[2], contains('prod'));
+    });
+
+    test('shows no match when filter yields empty', () {
+      final ctx = _ctx();
+      final state = TuiState(connections: [
+        _conn(name: 'server'),
+      ], searchQuery: 'xyz');
+
+      paintConnectionList(state, ctx);
+
+      final lines = ctx.surface.toPlainLines();
+      expect(lines.any((l) => l.contains('无匹配')), isTrue);
+    });
+  });
+
+  group('TuiState.filteredConnections', () {
+    final conns = [
+      _conn(name: 'production-web'),
+      _conn(name: 'production-db'),
+      _conn(name: 'dev-server'),
+    ];
+
+    test('filters by name', () {
+      final state = TuiState(connections: conns, searchQuery: 'production');
+      expect(state.filteredConnections.length, 2);
+    });
+
+    test('filters by host', () {
+      final state = TuiState(
+        connections: [
+          _conn(name: 'web', host: '10.0.0.1'),
+          _conn(name: 'db', host: '10.0.0.2'),
+        ],
+        searchQuery: '10.0.0',
+      );
+      expect(state.filteredConnections.length, 2);
+    });
+
+    test('filters by username', () {
+      final state = TuiState(
+        connections: [
+          _conn(name: 'web', username: 'deploy'),
+          _conn(name: 'db', username: 'admin'),
+        ],
+        searchQuery: 'deploy',
+      );
+      expect(state.filteredConnections.length, 1);
+    });
+
+    test('is case-insensitive', () {
+      final state = TuiState(connections: conns, searchQuery: 'PRODUCTION');
+      expect(state.filteredConnections.length, 2);
+    });
+
+    test('returns all when query is empty', () {
+      final state = TuiState(connections: conns);
+      expect(state.filteredConnections.length, 3);
+    });
+
+    test('returns empty when no match', () {
+      final state = TuiState(connections: conns, searchQuery: 'nope');
+      expect(state.filteredConnections.length, 0);
+    });
   });
 }

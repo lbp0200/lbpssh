@@ -105,20 +105,46 @@ void _handleKey(String key) {
 }
 
 void _handleListKey(String key) {
+  final conns = _state.filteredConnections;
+
+  if (_state.isSearching) {
+    if (key == 'esc') {
+      _state.searchQuery = '';
+      _state.isSearching = false;
+      _state.sel = 0;
+    } else if (key == 'backspace') {
+      if (_state.searchQuery.isNotEmpty) {
+        _state.searchQuery = _state.searchQuery.substring(
+          0,
+          _state.searchQuery.length - 1,
+        );
+      }
+      _state.sel = 0;
+    } else if (key.length == 1) {
+      _state.searchQuery += key;
+      _state.sel = 0;
+    }
+    return;
+  }
+
   switch (key) {
     case 'down':
     case 'j':
-      if (_state.sel < _state.connections.length - 1) _state.sel++;
+      if (_state.sel < conns.length - 1) _state.sel++;
       break;
     case 'up':
     case 'k':
       if (_state.sel > 0) _state.sel--;
       break;
     case 'enter':
-      if (_state.connections.isNotEmpty) {
-        _sshRequest = _state.connections[_state.sel];
+      if (conns.isNotEmpty) {
+        _sshRequest = conns[_state.sel];
         _running = false;
       }
+      break;
+    case '/':
+      _state.isSearching = true;
+      _state.searchQuery = '';
       break;
     case 'a':
       _state = TuiState(
@@ -128,25 +154,24 @@ void _handleListKey(String key) {
       );
       break;
     case 'e':
-      if (_state.connections.isNotEmpty) {
+      if (conns.isNotEmpty) {
         _state = TuiState(
           connections: _state.connections,
           screen: 'form',
           sel: _state.sel,
-          editConn: _state.connections[_state.sel],
+          editConn: conns[_state.sel],
         );
       }
       break;
     case 'd':
-      if (_state.connections.isNotEmpty) {
-        final conn = _state.connections[_state.sel];
-        _repo.deleteConnection(conn.id);
+      if (conns.isNotEmpty) {
+        _repo.deleteConnection(conns[_state.sel].id);
         final updated = _repo.getAllConnections();
-        _state.sel = _state.sel >= updated.length
-            ? updated.length - 1
+        _state.connections = updated;
+        _state.sel = _state.sel >= _state.filteredConnections.length
+            ? _state.filteredConnections.length - 1
             : _state.sel;
         if (_state.sel < 0) _state.sel = 0;
-        _state.connections = updated;
       }
       break;
   }
