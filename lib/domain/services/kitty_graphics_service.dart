@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:typed_data';
 
 import 'terminal_service.dart';
@@ -90,7 +91,7 @@ class KittyGraphicsService {
 
     // 构建图像加载命令
     // 格式: OSC 71 ; a=i ; d=base64_image_data
-    final encoded = _encodeBase64(imageData);
+    final encoded = base64Encode(imageData);
 
     String cmd = '\x1b]71;a=i;id=$imageId';
     if (width != null) cmd += ';w=$width';
@@ -139,7 +140,7 @@ class KittyGraphicsService {
     } else if (placement == ImagePlacement.absolute) {
       cmd += ';p=absolute';
     }
-    cmd += ';f=${_encode(path)}';
+    cmd += ';f=${base64Encode(utf8.encode(path))}';
     cmd += '\x1b\\';
 
     _session.writeRaw(cmd);
@@ -188,7 +189,7 @@ class KittyGraphicsService {
     }
 
     // 格式: OSC 71 ; a=t ; id=image_id ; f=filepath
-    final cmd = '\x1b]71;a=t;id=$imageId;f=${_encode(filePath)}\x1b\\';
+    final cmd = '\x1b]71;a=t;id=$imageId;f=${base64Encode(utf8.encode(filePath))}\x1b\\';
     _session.writeRaw(cmd);
   }
 
@@ -214,35 +215,5 @@ class KittyGraphicsService {
     _session.writeRaw(cmd);
   }
 
-  /// 编码为 base64
-  String _encodeBase64(Uint8List data) {
-    return _base64Encode(data);
-  }
 
-  /// Base64 编码
-  String _base64Encode(Uint8List data) {
-    const chars =
-        'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
-    final buffer = StringBuffer();
-
-    for (var i = 0; i < data.length; i += 3) {
-      final b1 = data[i];
-      final b2 = i + 1 < data.length ? data[i + 1] : 0;
-      final b3 = i + 2 < data.length ? data[i + 2] : 0;
-
-      buffer.write(chars[(b1 >> 2) & 0x3F]);
-      buffer.write(chars[((b1 << 4) | (b2 >> 4)) & 0x3F]);
-      buffer.write(
-        i + 1 < data.length ? chars[((b2 << 2) | (b3 >> 6)) & 0x3F] : '=',
-      );
-      buffer.write(i + 2 < data.length ? chars[b3 & 0x3F] : '=');
-    }
-
-    return buffer.toString();
-  }
-
-  /// 编码字符串
-  String _encode(String text) {
-    return _base64Encode(Uint8List.fromList(text.codeUnits));
-  }
 }

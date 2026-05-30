@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'terminal_service.dart';
 
@@ -126,7 +127,7 @@ class KittyRemoteControlService {
     }
 
     // OSC 52 ; c ; base64_text - 设置剪贴板
-    final encoded = _encodeBase64(text);
+    final encoded = base64Encode(utf8.encode(text));
     final cmd = '\x1b]52;c;$encoded\x1b\\\\';
     _session.writeRaw(cmd);
   }
@@ -312,28 +313,7 @@ class KittyRemoteControlService {
     }
   }
 
-  /// Base64 编码
-  String _encodeBase64(String text) {
-    const chars =
-        'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
-    final bytes = text.codeUnits;
-    final buffer = StringBuffer();
 
-    for (var i = 0; i < bytes.length; i += 3) {
-      final b1 = bytes[i];
-      final b2 = i + 1 < bytes.length ? bytes[i + 1] : 0;
-      final b3 = i + 2 < bytes.length ? bytes[i + 2] : 0;
-
-      buffer.write(chars[(b1 >> 2) & 0x3F]);
-      buffer.write(chars[((b1 << 4) | (b2 >> 4)) & 0x3F]);
-      buffer.write(
-        i + 1 < bytes.length ? chars[((b2 << 2) | (b3 >> 6)) & 0x3F] : '=',
-      );
-      buffer.write(i + 2 < bytes.length ? chars[b3 & 0x3F] : '=');
-    }
-
-    return buffer.toString();
-  }
 }
 
 /// 修饰键

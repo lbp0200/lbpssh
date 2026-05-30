@@ -17,8 +17,8 @@ import '../../data/models/ssh_connection.dart';
 import '../../data/models/terminal_config.dart';
 import '../../domain/services/terminal_service.dart';
 import '../../domain/services/kitty_file_transfer_service.dart';
-import '../../utils/color_utils.dart';
 import 'error_dialog.dart';
+import 'terminal_theme_builder.dart';
 import 'graphics_overlay.dart';
 import 'terminal_status_bar.dart';
 
@@ -320,41 +320,7 @@ class _TerminalViewWithSelectionState
                 fontFamily: fontFamily,
                 height: widget.config.lineHeight,
               ),
-              theme: TerminalTheme(
-                foreground: ColorUtils.parseColorCached(
-                  widget.config.foregroundColor,
-                ),
-                background: ColorUtils.parseColorCached(
-                  widget.config.backgroundColor,
-                ),
-                cursor: ColorUtils.parseColorCached(widget.config.cursorColor),
-                selection: ColorUtils.parseColorCached(
-                  widget.config.foregroundColor,
-                ).withValues(alpha: 0.3),
-                black: ColorUtils.parseColorCached('#000000'),
-                red: ColorUtils.parseColorCached('#CD3131'),
-                green: ColorUtils.parseColorCached('#0DBC79'),
-                yellow: ColorUtils.parseColorCached('#E5E510'),
-                blue: ColorUtils.parseColorCached('#2472C8'),
-                magenta: ColorUtils.parseColorCached('#BC3FBC'),
-                cyan: ColorUtils.parseColorCached('#11A8CD'),
-                white: ColorUtils.parseColorCached('#E5E5E5'),
-                brightBlack: ColorUtils.parseColorCached('#666666'),
-                brightRed: ColorUtils.parseColorCached('#F14C4C'),
-                brightGreen: ColorUtils.parseColorCached('#23D18B'),
-                brightYellow: ColorUtils.parseColorCached('#F5F543'),
-                brightBlue: ColorUtils.parseColorCached('#3B8EEA'),
-                brightMagenta: ColorUtils.parseColorCached('#D670D6'),
-                brightCyan: ColorUtils.parseColorCached('#29B8DB'),
-                brightWhite: ColorUtils.parseColorCached('#E5E5E5'),
-                searchHitBackground: ColorUtils.parseColorCached(
-                  '#FFFF00',
-                ).withValues(alpha: 0.3),
-                searchHitBackgroundCurrent: ColorUtils.parseColorCached(
-                  '#FFFF00',
-                ).withValues(alpha: 0.5),
-                searchHitForeground: ColorUtils.parseColorCached('#000000'),
-              ),
+              theme: terminalThemeFromConfig(widget.config),
             ),
           ),
         ),

@@ -8,6 +8,7 @@ import '../../data/models/ssh_connection.dart';
 import '../../domain/services/ssh_config_service.dart';
 import '../providers_riverpod/connection_provider_riverpod.dart';
 import '../widgets/error_dialog.dart';
+import '../widgets/linear_styled_text_field.dart';
 
 /// 连接配置表单界面
 class ConnectionFormScreen extends ConsumerStatefulWidget {
@@ -381,184 +382,33 @@ class _ConnectionFormScreenState extends ConsumerState<ConnectionFormScreen> {
         child: ListView(
           padding: const EdgeInsets.all(LinearSpacing.spacing16),
           children: [
-            // 基本信息
-            TextFormField(
+            LinearStyledTextField(
               controller: _nameController,
-              decoration: InputDecoration(
-                labelText: '连接名称',
-                labelStyle: const TextStyle(color: LinearColors.textSecondary),
-                hintText: '例如：生产服务器',
-                hintStyle: const TextStyle(color: LinearColors.textQuaternary),
-                filled: true,
-                fillColor: LinearColors.fillSurface,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(LinearRadius.standard),
-                  borderSide: const BorderSide(
-                    color: LinearColors.borderStandard,
-                  ),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(LinearRadius.standard),
-                  borderSide: const BorderSide(
-                    color: LinearColors.borderStandard,
-                  ),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(LinearRadius.standard),
-                  borderSide: const BorderSide(
-                    color: LinearColors.accentInteractive,
-                    width: 2,
-                  ),
-                ),
-              ),
+              labelText: '连接名称',
+              hintText: '例如：生产服务器',
               validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return '请输入连接名称';
-                }
+                if (value == null || value.isEmpty) return '请输入连接名称';
                 return null;
               },
             ),
             const SizedBox(height: LinearSpacing.spacing16),
-            Row(
-              children: [
-                Expanded(
-                  flex: 3,
-                  child: TextFormField(
-                    controller: _hostController,
-                    decoration: InputDecoration(
-                      labelText: '主机地址',
-                      labelStyle: const TextStyle(
-                        color: LinearColors.textSecondary,
-                      ),
-                      hintText: '例如：192.168.1.100',
-                      hintStyle: const TextStyle(
-                        color: LinearColors.textQuaternary,
-                      ),
-                      filled: true,
-                      fillColor: LinearColors.fillSurface,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(
-                          LinearRadius.standard,
-                        ),
-                        borderSide: const BorderSide(
-                          color: LinearColors.borderStandard,
-                        ),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(
-                          LinearRadius.standard,
-                        ),
-                        borderSide: const BorderSide(
-                          color: LinearColors.borderStandard,
-                        ),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(
-                          LinearRadius.standard,
-                        ),
-                        borderSide: const BorderSide(
-                          color: LinearColors.accentInteractive,
-                          width: 2,
-                        ),
-                      ),
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return '请输入主机地址';
-                      }
-                      return null;
-                    },
-                  ),
-                ),
-                const SizedBox(width: LinearSpacing.spacing16),
-                Expanded(
-                  child: TextFormField(
-                    controller: _portController,
-                    decoration: InputDecoration(
-                      labelText: '端口',
-                      labelStyle: const TextStyle(
-                        color: LinearColors.textSecondary,
-                      ),
-                      hintStyle: const TextStyle(
-                        color: LinearColors.textQuaternary,
-                      ),
-                      filled: true,
-                      fillColor: LinearColors.fillSurface,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(
-                          LinearRadius.standard,
-                        ),
-                        borderSide: const BorderSide(
-                          color: LinearColors.borderStandard,
-                        ),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(
-                          LinearRadius.standard,
-                        ),
-                        borderSide: const BorderSide(
-                          color: LinearColors.borderStandard,
-                        ),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(
-                          LinearRadius.standard,
-                        ),
-                        borderSide: const BorderSide(
-                          color: LinearColors.accentInteractive,
-                          width: 2,
-                        ),
-                      ),
-                    ),
-                    keyboardType: TextInputType.number,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return '请输入端口';
-                      }
-                      final port = int.tryParse(value);
-                      if (port == null || port < 1 || port > 65535) {
-                        return '端口号无效';
-                      }
-                      return null;
-                    },
-                  ),
-                ),
-              ],
+            HostPortRow(
+              hostController: _hostController,
+              portController: _portController,
+              hostLabel: '主机地址',
+              hostHint: '例如：192.168.1.100',
+              hostValidator: (value) {
+                if (value == null || value.isEmpty) return '请输入主机地址';
+                return null;
+              },
             ),
             const SizedBox(height: LinearSpacing.spacing16),
-            TextFormField(
+            LinearStyledTextField(
               controller: _usernameController,
-              decoration: InputDecoration(
-                labelText: '用户名',
-                labelStyle: const TextStyle(color: LinearColors.textSecondary),
-                hintText: '例如：root',
-                hintStyle: const TextStyle(color: LinearColors.textQuaternary),
-                filled: true,
-                fillColor: LinearColors.fillSurface,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(LinearRadius.standard),
-                  borderSide: const BorderSide(
-                    color: LinearColors.borderStandard,
-                  ),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(LinearRadius.standard),
-                  borderSide: const BorderSide(
-                    color: LinearColors.borderStandard,
-                  ),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(LinearRadius.standard),
-                  borderSide: const BorderSide(
-                    color: LinearColors.accentInteractive,
-                    width: 2,
-                  ),
-                ),
-              ),
+              labelText: '用户名',
+              hintText: '例如：root',
               validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return '请输入用户名';
-                }
+                if (value == null || value.isEmpty) return '请输入用户名';
                 return null;
               },
             ),
@@ -633,53 +483,23 @@ class _ConnectionFormScreenState extends ConsumerState<ConnectionFormScreen> {
             ),
             const SizedBox(height: LinearSpacing.spacing16),
 
-            // 密码输入（如果是密码认证）
             if (_authType == AuthType.password)
-              TextFormField(
+              LinearStyledTextField(
                 controller: _passwordController,
-                decoration: InputDecoration(
-                  labelText: '密码',
-                  labelStyle: const TextStyle(
-                    color: LinearColors.textSecondary,
-                  ),
-                  hintStyle: const TextStyle(
-                    color: LinearColors.textQuaternary,
-                  ),
-                  filled: true,
-                  fillColor: LinearColors.fillSurface,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(LinearRadius.standard),
-                    borderSide: const BorderSide(
-                      color: LinearColors.borderStandard,
-                    ),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(LinearRadius.standard),
-                    borderSide: const BorderSide(
-                      color: LinearColors.borderStandard,
-                    ),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(LinearRadius.standard),
-                    borderSide: const BorderSide(
-                      color: LinearColors.accentInteractive,
-                      width: 2,
-                    ),
-                  ),
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      _obscurePassword
-                          ? Icons.visibility
-                          : Icons.visibility_off,
-                    ),
-                    onPressed: () {
-                      setState(() {
-                        _obscurePassword = !_obscurePassword;
-                      });
-                    },
-                  ),
-                ),
+                labelText: '密码',
                 obscureText: _obscurePassword,
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    _obscurePassword
+                        ? Icons.visibility
+                        : Icons.visibility_off,
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      _obscurePassword = !_obscurePassword;
+                    });
+                  },
+                ),
               ),
 
             // 私钥文件（如果是密钥认证）
@@ -694,53 +514,19 @@ class _ConnectionFormScreenState extends ConsumerState<ConnectionFormScreen> {
                   Row(
                     children: [
                       Expanded(
-                        child: TextFormField(
+                        child: LinearStyledTextField(
                           controller: _keyPathController,
+                          labelText: '私钥文件',
+                          hintText: _privateKeyContent != null
+                              ? '已选择私钥文件'
+                              : '点击右侧按钮选择私钥文件',
                           readOnly: true,
-                          decoration: InputDecoration(
-                            labelStyle: const TextStyle(
-                              color: LinearColors.textSecondary,
-                            ),
-                            hintText: _privateKeyContent != null
-                                ? '已选择私钥文件'
-                                : '点击右侧按钮选择私钥文件',
-                            hintStyle: const TextStyle(
-                              color: LinearColors.textQuaternary,
-                            ),
-                            filled: true,
-                            fillColor: LinearColors.fillSurface,
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(
-                                LinearRadius.standard,
-                              ),
-                              borderSide: const BorderSide(
-                                color: LinearColors.borderStandard,
-                              ),
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(
-                                LinearRadius.standard,
-                              ),
-                              borderSide: const BorderSide(
-                                color: LinearColors.borderStandard,
-                              ),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(
-                                LinearRadius.standard,
-                              ),
-                              borderSide: const BorderSide(
-                                color: LinearColors.accentInteractive,
-                                width: 2,
-                              ),
-                            ),
-                            suffixIcon: _privateKeyContent != null
-                                ? const Icon(
-                                    Icons.check_circle,
-                                    color: LinearColors.success,
-                                  )
-                                : null,
-                          ),
+                          suffixIcon: _privateKeyContent != null
+                              ? const Icon(
+                                  Icons.check_circle,
+                                  color: LinearColors.success,
+                                )
+                              : null,
                           validator: (value) {
                             if (_authType == AuthType.key ||
                                 _authType == AuthType.keyWithPassword) {
@@ -797,54 +583,24 @@ class _ConnectionFormScreenState extends ConsumerState<ConnectionFormScreen> {
               ),
             ],
 
-            // 密钥密码（如果是密钥+密码认证）
             if (_authType == AuthType.keyWithPassword) ...[
               const SizedBox(height: LinearSpacing.spacing16),
-              TextFormField(
+              LinearStyledTextField(
                 controller: _keyPassphraseController,
-                decoration: InputDecoration(
-                  labelText: '密钥密码',
-                  labelStyle: const TextStyle(
-                    color: LinearColors.textSecondary,
-                  ),
-                  hintStyle: const TextStyle(
-                    color: LinearColors.textQuaternary,
-                  ),
-                  filled: true,
-                  fillColor: LinearColors.fillSurface,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(LinearRadius.standard),
-                    borderSide: const BorderSide(
-                      color: LinearColors.borderStandard,
-                    ),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(LinearRadius.standard),
-                    borderSide: const BorderSide(
-                      color: LinearColors.borderStandard,
-                    ),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(LinearRadius.standard),
-                    borderSide: const BorderSide(
-                      color: LinearColors.accentInteractive,
-                      width: 2,
-                    ),
-                  ),
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      _obscureKeyPassphrase
-                          ? Icons.visibility
-                          : Icons.visibility_off,
-                    ),
-                    onPressed: () {
-                      setState(() {
-                        _obscureKeyPassphrase = !_obscureKeyPassphrase;
-                      });
-                    },
-                  ),
-                ),
+                labelText: '密钥密码',
                 obscureText: _obscureKeyPassphrase,
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    _obscureKeyPassphrase
+                        ? Icons.visibility
+                        : Icons.visibility_off,
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      _obscureKeyPassphrase = !_obscureKeyPassphrase;
+                    });
+                  },
+                ),
               ),
             ],
 
@@ -997,148 +753,21 @@ class _ConnectionFormScreenState extends ConsumerState<ConnectionFormScreen> {
 
             if (_useJumpHost) ...[
               const SizedBox(height: LinearSpacing.spacing16),
-              Row(
-                children: [
-                  Expanded(
-                    flex: 3,
-                    child: TextFormField(
-                      controller: _jumpHostController,
-                      decoration: InputDecoration(
-                        labelText: '跳板机地址',
-                        labelStyle: const TextStyle(
-                          color: LinearColors.textSecondary,
-                        ),
-                        hintStyle: const TextStyle(
-                          color: LinearColors.textQuaternary,
-                        ),
-                        filled: true,
-                        fillColor: LinearColors.fillSurface,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(
-                            LinearRadius.standard,
-                          ),
-                          borderSide: const BorderSide(
-                            color: LinearColors.borderStandard,
-                          ),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(
-                            LinearRadius.standard,
-                          ),
-                          borderSide: const BorderSide(
-                            color: LinearColors.borderStandard,
-                          ),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(
-                            LinearRadius.standard,
-                          ),
-                          borderSide: const BorderSide(
-                            color: LinearColors.accentInteractive,
-                            width: 2,
-                          ),
-                        ),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return '请输入跳板机地址';
-                        }
-                        return null;
-                      },
-                    ),
-                  ),
-                  const SizedBox(width: LinearSpacing.spacing16),
-                  Expanded(
-                    child: TextFormField(
-                      controller: _jumpPortController,
-                      decoration: InputDecoration(
-                        labelText: '端口',
-                        labelStyle: const TextStyle(
-                          color: LinearColors.textSecondary,
-                        ),
-                        hintStyle: const TextStyle(
-                          color: LinearColors.textQuaternary,
-                        ),
-                        filled: true,
-                        fillColor: LinearColors.fillSurface,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(
-                            LinearRadius.standard,
-                          ),
-                          borderSide: const BorderSide(
-                            color: LinearColors.borderStandard,
-                          ),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(
-                            LinearRadius.standard,
-                          ),
-                          borderSide: const BorderSide(
-                            color: LinearColors.borderStandard,
-                          ),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(
-                            LinearRadius.standard,
-                          ),
-                          borderSide: const BorderSide(
-                            color: LinearColors.accentInteractive,
-                            width: 2,
-                          ),
-                        ),
-                      ),
-                      keyboardType: TextInputType.number,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return '请输入跳板机端口';
-                        }
-                        final port = int.tryParse(value);
-                        if (port == null || port < 1 || port > 65535) {
-                          return '端口号无效';
-                        }
-                        return null;
-                      },
-                    ),
-                  ),
-                ],
+              HostPortRow(
+                hostController: _jumpHostController,
+                portController: _jumpPortController,
+                hostLabel: '跳板机地址',
+                portLabel: '跳板机端口',
+                hostValidator: (value) {
+                  if (value == null || value.isEmpty) return '请输入跳板机地址';
+                  return null;
+                },
               ),
-              const SizedBox(height: LinearSpacing.spacing16),
-              TextFormField(
+              LinearStyledTextField(
                 controller: _jumpUsernameController,
-                decoration: InputDecoration(
-                  labelText: '跳板机用户名',
-                  labelStyle: const TextStyle(
-                    color: LinearColors.textSecondary,
-                  ),
-                  hintStyle: const TextStyle(
-                    color: LinearColors.textQuaternary,
-                  ),
-                  filled: true,
-                  fillColor: LinearColors.fillSurface,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(LinearRadius.standard),
-                    borderSide: const BorderSide(
-                      color: LinearColors.borderStandard,
-                    ),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(LinearRadius.standard),
-                    borderSide: const BorderSide(
-                      color: LinearColors.borderStandard,
-                    ),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(LinearRadius.standard),
-                    borderSide: const BorderSide(
-                      color: LinearColors.accentInteractive,
-                      width: 2,
-                    ),
-                  ),
-                ),
+                labelText: '跳板机用户名',
                 validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return '请输入跳板机用户名';
-                  }
+                  if (value == null || value.isEmpty) return '请输入跳板机用户名';
                   return null;
                 },
               ),
@@ -1147,25 +776,16 @@ class _ConnectionFormScreenState extends ConsumerState<ConnectionFormScreen> {
                 initialValue: _jumpAuthType,
                 decoration: InputDecoration(
                   labelText: '跳板机认证方式',
-                  labelStyle: const TextStyle(
-                    color: LinearColors.textSecondary,
-                  ),
-                  hintStyle: const TextStyle(
-                    color: LinearColors.textQuaternary,
-                  ),
+                  labelStyle: const TextStyle(color: LinearColors.textSecondary),
                   filled: true,
                   fillColor: LinearColors.fillSurface,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(LinearRadius.standard),
-                    borderSide: const BorderSide(
-                      color: LinearColors.borderStandard,
-                    ),
+                    borderSide: const BorderSide(color: LinearColors.borderStandard),
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(LinearRadius.standard),
-                    borderSide: const BorderSide(
-                      color: LinearColors.borderStandard,
-                    ),
+                    borderSide: const BorderSide(color: LinearColors.borderStandard),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(LinearRadius.standard),
@@ -1190,44 +810,9 @@ class _ConnectionFormScreenState extends ConsumerState<ConnectionFormScreen> {
               ),
               if (_jumpAuthType == AuthType.password) ...[
                 const SizedBox(height: LinearSpacing.spacing16),
-                TextFormField(
+                LinearStyledTextField(
                   controller: _jumpPasswordController,
-                  decoration: InputDecoration(
-                    labelText: '跳板机密码',
-                    labelStyle: const TextStyle(
-                      color: LinearColors.textSecondary,
-                    ),
-                    hintStyle: const TextStyle(
-                      color: LinearColors.textQuaternary,
-                    ),
-                    filled: true,
-                    fillColor: LinearColors.fillSurface,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(
-                        LinearRadius.standard,
-                      ),
-                      borderSide: const BorderSide(
-                        color: LinearColors.borderStandard,
-                      ),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(
-                        LinearRadius.standard,
-                      ),
-                      borderSide: const BorderSide(
-                        color: LinearColors.borderStandard,
-                      ),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(
-                        LinearRadius.standard,
-                      ),
-                      borderSide: const BorderSide(
-                        color: LinearColors.accentInteractive,
-                        width: 2,
-                      ),
-                    ),
-                  ),
+                  labelText: '跳板机密码',
                   obscureText: true,
                 ),
               ],
@@ -1251,201 +836,35 @@ class _ConnectionFormScreenState extends ConsumerState<ConnectionFormScreen> {
 
             if (_useSocks5Proxy) ...[
               const SizedBox(height: LinearSpacing.spacing16),
-              Row(
-                children: [
-                  Expanded(
-                    flex: 3,
-                    child: TextFormField(
-                      controller: _socks5HostController,
-                      decoration: InputDecoration(
-                        labelText: '代理主机',
-                        labelStyle: const TextStyle(
-                          color: LinearColors.textSecondary,
-                        ),
-                        hintText: '例如：127.0.0.1',
-                        hintStyle: const TextStyle(
-                          color: LinearColors.textQuaternary,
-                        ),
-                        filled: true,
-                        fillColor: LinearColors.fillSurface,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(
-                            LinearRadius.standard,
-                          ),
-                          borderSide: const BorderSide(
-                            color: LinearColors.borderStandard,
-                          ),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(
-                            LinearRadius.standard,
-                          ),
-                          borderSide: const BorderSide(
-                            color: LinearColors.borderStandard,
-                          ),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(
-                            LinearRadius.standard,
-                          ),
-                          borderSide: const BorderSide(
-                            color: LinearColors.accentInteractive,
-                            width: 2,
-                          ),
-                        ),
-                      ),
-                      validator: (value) {
-                        if (_useSocks5Proxy &&
-                            (value == null || value.isEmpty)) {
-                          return '请输入代理主机';
-                        }
+              HostPortRow(
+                hostController: _socks5HostController,
+                portController: _socks5PortController,
+                hostLabel: '代理主机',
+                hostHint: '例如：127.0.0.1',
+                portHint: '默认 1080',
+                hostValidator: _useSocks5Proxy
+                    ? (value) {
+                        if (value == null || value.isEmpty) return '请输入代理主机';
                         return null;
-                      },
-                    ),
-                  ),
-                  const SizedBox(width: LinearSpacing.spacing16),
-                  Expanded(
-                    child: TextFormField(
-                      controller: _socks5PortController,
-                      decoration: InputDecoration(
-                        labelText: '端口',
-                        labelStyle: const TextStyle(
-                          color: LinearColors.textSecondary,
-                        ),
-                        hintText: '默认 1080',
-                        hintStyle: const TextStyle(
-                          color: LinearColors.textQuaternary,
-                        ),
-                        filled: true,
-                        fillColor: LinearColors.fillSurface,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(
-                            LinearRadius.standard,
-                          ),
-                          borderSide: const BorderSide(
-                            color: LinearColors.borderStandard,
-                          ),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(
-                            LinearRadius.standard,
-                          ),
-                          borderSide: const BorderSide(
-                            color: LinearColors.borderStandard,
-                          ),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(
-                            LinearRadius.standard,
-                          ),
-                          borderSide: const BorderSide(
-                            color: LinearColors.accentInteractive,
-                            width: 2,
-                          ),
-                        ),
-                      ),
-                      keyboardType: TextInputType.number,
-                      validator: (value) {
-                        if (_useSocks5Proxy &&
-                            (value == null || value.isEmpty)) {
-                          return '请输入端口';
-                        }
-                        final port = int.tryParse(value ?? '');
-                        if (port == null || port < 1 || port > 65535) {
-                          return '端口号无效';
-                        }
-                        return null;
-                      },
-                    ),
-                  ),
-                ],
+                      }
+                    : null,
               ),
               const SizedBox(height: LinearSpacing.spacing16),
               Row(
                 children: [
                   Expanded(
-                    child: TextFormField(
+                    child: LinearStyledTextField(
                       controller: _socks5UsernameController,
-                      decoration: InputDecoration(
-                        labelText: '用户名',
-                        labelStyle: const TextStyle(
-                          color: LinearColors.textSecondary,
-                        ),
-                        hintText: '可选',
-                        hintStyle: const TextStyle(
-                          color: LinearColors.textQuaternary,
-                        ),
-                        filled: true,
-                        fillColor: LinearColors.fillSurface,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(
-                            LinearRadius.standard,
-                          ),
-                          borderSide: const BorderSide(
-                            color: LinearColors.borderStandard,
-                          ),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(
-                            LinearRadius.standard,
-                          ),
-                          borderSide: const BorderSide(
-                            color: LinearColors.borderStandard,
-                          ),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(
-                            LinearRadius.standard,
-                          ),
-                          borderSide: const BorderSide(
-                            color: LinearColors.accentInteractive,
-                            width: 2,
-                          ),
-                        ),
-                      ),
+                      labelText: '用户名',
+                      hintText: '可选',
                     ),
                   ),
                   const SizedBox(width: LinearSpacing.spacing16),
                   Expanded(
-                    child: TextFormField(
+                    child: LinearStyledTextField(
                       controller: _socks5PasswordController,
-                      decoration: InputDecoration(
-                        labelText: '密码',
-                        labelStyle: const TextStyle(
-                          color: LinearColors.textSecondary,
-                        ),
-                        hintText: '可选',
-                        hintStyle: const TextStyle(
-                          color: LinearColors.textQuaternary,
-                        ),
-                        filled: true,
-                        fillColor: LinearColors.fillSurface,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(
-                            LinearRadius.standard,
-                          ),
-                          borderSide: const BorderSide(
-                            color: LinearColors.borderStandard,
-                          ),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(
-                            LinearRadius.standard,
-                          ),
-                          borderSide: const BorderSide(
-                            color: LinearColors.borderStandard,
-                          ),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(
-                            LinearRadius.standard,
-                          ),
-                          borderSide: const BorderSide(
-                            color: LinearColors.accentInteractive,
-                            width: 2,
-                          ),
-                        ),
-                      ),
+                      labelText: '密码',
+                      hintText: '可选',
                       obscureText: true,
                     ),
                   ),
@@ -1463,36 +882,10 @@ class _ConnectionFormScreenState extends ConsumerState<ConnectionFormScreen> {
 
             const SizedBox(height: LinearSpacing.spacing24),
 
-            // 备注
-            TextFormField(
+            LinearStyledTextField(
               controller: _notesController,
-              decoration: InputDecoration(
-                labelText: '备注',
-                labelStyle: const TextStyle(color: LinearColors.textSecondary),
-                hintText: '可选',
-                hintStyle: const TextStyle(color: LinearColors.textQuaternary),
-                filled: true,
-                fillColor: LinearColors.fillSurface,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(LinearRadius.standard),
-                  borderSide: const BorderSide(
-                    color: LinearColors.borderStandard,
-                  ),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(LinearRadius.standard),
-                  borderSide: const BorderSide(
-                    color: LinearColors.borderStandard,
-                  ),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(LinearRadius.standard),
-                  borderSide: const BorderSide(
-                    color: LinearColors.accentInteractive,
-                    width: 2,
-                  ),
-                ),
-              ),
+              labelText: '备注',
+              hintText: '可选',
               maxLines: 3,
             ),
 
@@ -1553,36 +946,11 @@ class _ManualPathDialogState extends State<_ManualPathDialog> {
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          TextFormField(
+          LinearStyledTextField(
             controller: _controller,
-            decoration: InputDecoration(
-              labelText: '文件路径',
-              labelStyle: const TextStyle(color: LinearColors.textSecondary),
-              hintText: '例如: /Users/lbp/.ssh/id_rsa',
-              hintStyle: const TextStyle(color: LinearColors.textQuaternary),
-              prefixIcon: const Icon(Icons.edit),
-              filled: true,
-              fillColor: LinearColors.fillSurface,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(LinearRadius.standard),
-                borderSide: const BorderSide(
-                  color: LinearColors.borderStandard,
-                ),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(LinearRadius.standard),
-                borderSide: const BorderSide(
-                  color: LinearColors.borderStandard,
-                ),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(LinearRadius.standard),
-                borderSide: const BorderSide(
-                  color: LinearColors.accentInteractive,
-                  width: 2,
-                ),
-              ),
-            ),
+            labelText: '文件路径',
+            hintText: '例如: /Users/lbp/.ssh/id_rsa',
+            prefixIcon: const Icon(Icons.edit),
             autofocus: true,
           ),
           const SizedBox(height: LinearSpacing.spacing12),

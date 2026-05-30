@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:typed_data';
 
 import 'terminal_service.dart';
@@ -284,44 +285,11 @@ class KittyScreenshotService {
     // 解析截图数据
     try {
       // 响应格式可能是 base64 编码的图片数据
-      onScreenshot?.call(_decodeBase64(data));
+      onScreenshot?.call(base64Decode(data.split(',').last));
     } catch (e) {
       // 忽略解析错误
     }
   }
 
-  /// Base64 解码
-  Uint8List _decodeBase64(String data) {
-    // 简化的 Base64 解码
-    const chars =
-        'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
-    final bytes = <int>[];
 
-    // 移除可能的 data: 前缀
-    if (data.contains(',')) {
-      data = data.split(',').last;
-    }
-
-    // 补齐 =
-    while (data.length % 4 != 0) {
-      data += '=';
-    }
-
-    for (var i = 0; i < data.length; i += 4) {
-      final b1 = chars.indexOf(data[i]);
-      final b2 = chars.indexOf(data[i + 1]);
-      final b3 = chars.indexOf(data[i + 2]);
-      final b4 = chars.indexOf(data[i + 3]);
-
-      bytes.add((b1 << 2) | (b2 >> 4));
-      if (data[i + 2] != '=') {
-        bytes.add(((b2 & 0x0F) << 4) | (b3 >> 2));
-      }
-      if (data[i + 3] != '=') {
-        bytes.add(((b3 & 0x03) << 6) | b4);
-      }
-    }
-
-    return Uint8List.fromList(bytes);
-  }
 }
