@@ -312,8 +312,6 @@ class KittyRemoteControlService {
       // 忽略解析错误
     }
   }
-
-
 }
 
 /// 修饰键

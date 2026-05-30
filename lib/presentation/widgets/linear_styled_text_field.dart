@@ -110,7 +110,8 @@ class HostPortRow extends StatelessWidget {
             labelText: portLabel,
             hintText: portHint,
             keyboardType: TextInputType.number,
-            validator: portValidator ??
+            validator:
+                portValidator ??
                 (value) {
                   if (value == null || value.isEmpty) return '请输入端口';
                   final port = int.tryParse(value);

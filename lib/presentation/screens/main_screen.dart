@@ -6,6 +6,7 @@ import '../providers_riverpod/terminal_provider_riverpod.dart';
 import '../screens/sftp_browser_screen.dart';
 import '../widgets/collapsible_sidebar.dart';
 import '../widgets/terminal_view.dart';
+import '../widgets/error_detail_dialog.dart';
 
 /// 主界面
 class MainScreen extends ConsumerStatefulWidget {

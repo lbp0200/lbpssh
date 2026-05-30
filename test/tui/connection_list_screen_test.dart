@@ -27,7 +27,11 @@ class _TestTerminal implements TuiTerminalInterface {
 }
 
 TuiContext _ctx([int w = 80, int h = 24]) {
-  return TuiContext(_TestTerminal()..width = w..height = h);
+  return TuiContext(
+    _TestTerminal()
+      ..width = w
+      ..height = h,
+  );
 }
 
 SshConnection _conn({
@@ -106,11 +110,13 @@ void main() {
 
     test('renders multiple connections', () {
       final ctx = _ctx();
-      final state = TuiState(connections: [
-        _conn(name: 'server-1', host: '10.0.0.1'),
-        _conn(name: 'server-2', host: '10.0.0.2'),
-        _conn(name: 'server-3', host: '10.0.0.3'),
-      ]);
+      final state = TuiState(
+        connections: [
+          _conn(name: 'server-1', host: '10.0.0.1'),
+          _conn(name: 'server-2', host: '10.0.0.2'),
+          _conn(name: 'server-3', host: '10.0.0.3'),
+        ],
+      );
 
       paintConnectionList(state, ctx);
 
@@ -122,12 +128,14 @@ void main() {
 
     test('renders auth type labels', () {
       final ctx = _ctx();
-      final state = TuiState(connections: [
-        _conn(name: 'pwd', auth: AuthType.password),
-        _conn(name: 'key', auth: AuthType.key),
-        _conn(name: 'k+p', auth: AuthType.keyWithPassword),
-        _conn(name: 'cfg', auth: AuthType.sshConfig),
-      ]);
+      final state = TuiState(
+        connections: [
+          _conn(name: 'pwd', auth: AuthType.password),
+          _conn(name: 'key', auth: AuthType.key),
+          _conn(name: 'k+p', auth: AuthType.keyWithPassword),
+          _conn(name: 'cfg', auth: AuthType.sshConfig),
+        ],
+      );
 
       paintConnectionList(state, ctx);
 

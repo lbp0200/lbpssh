@@ -43,10 +43,7 @@ void main() {
       final controller = TextEditingController(text: 'Hello World');
       await tester.pumpWidget(
         wrapWithApp(
-          LinearStyledTextField(
-            controller: controller,
-            labelText: '名称',
-          ),
+          LinearStyledTextField(controller: controller, labelText: '名称'),
         ),
       );
 
@@ -89,9 +86,7 @@ void main() {
         ),
       );
 
-      final textField = tester.widget<TextField>(
-        find.byType(TextField),
-      );
+      final textField = tester.widget<TextField>(find.byType(TextField));
       expect(textField.obscureText, isTrue);
     });
 
@@ -134,9 +129,7 @@ void main() {
         ),
       );
 
-      final textField = tester.widget<TextField>(
-        find.byType(TextField),
-      );
+      final textField = tester.widget<TextField>(find.byType(TextField));
       expect(textField.readOnly, isTrue);
     });
 
@@ -151,9 +144,7 @@ void main() {
         ),
       );
 
-      final textField = tester.widget<TextField>(
-        find.byType(TextField),
-      );
+      final textField = tester.widget<TextField>(find.byType(TextField));
       expect(textField.maxLines, 3);
     });
 
@@ -168,9 +159,7 @@ void main() {
         ),
       );
 
-      final textField = tester.widget<TextField>(
-        find.byType(TextField),
-      );
+      final textField = tester.widget<TextField>(find.byType(TextField));
       expect(textField.autofocus, isTrue);
     });
 
@@ -184,9 +173,7 @@ void main() {
         ),
       );
 
-      final textField = tester.widget<TextField>(
-        find.byType(TextField),
-      );
+      final textField = tester.widget<TextField>(find.byType(TextField));
       final decoration = textField.decoration;
 
       expect(decoration!.filled, isTrue);

@@ -189,7 +189,8 @@ class KittyGraphicsService {
     }
 
     // 格式: OSC 71 ; a=t ; id=image_id ; f=filepath
-    final cmd = '\x1b]71;a=t;id=$imageId;f=${base64Encode(utf8.encode(filePath))}\x1b\\';
+    final cmd =
+        '\x1b]71;a=t;id=$imageId;f=${base64Encode(utf8.encode(filePath))}\x1b\\';
     _session.writeRaw(cmd);
   }
 
@@ -214,6 +215,4 @@ class KittyGraphicsService {
     final cmd = '\x1b]71;a=l\x1b\\';
     _session.writeRaw(cmd);
   }
-
-
 }

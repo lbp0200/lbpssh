@@ -27,7 +27,11 @@ class _TestTerminal implements TuiTerminalInterface {
 }
 
 TuiContext _ctx([int w = 80, int h = 24]) {
-  return TuiContext(_TestTerminal()..width = w..height = h);
+  return TuiContext(
+    _TestTerminal()
+      ..width = w
+      ..height = h,
+  );
 }
 
 void main() {

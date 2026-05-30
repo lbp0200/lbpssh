@@ -290,6 +290,4 @@ class KittyScreenshotService {
       // 忽略解析错误
     }
   }
-
-
 }

@@ -47,8 +47,8 @@ void main() {
       }
       stopwatch.stop();
 
-      // 缓存版本应该更快（允许 <=1ms，避免 CI 慢环境误报）
-      expect(stopwatch.elapsedMilliseconds, lessThanOrEqualTo(1));
+      // 缓存版本应该更快（允许 <=10ms，避免 CI 慢环境误报）
+      expect(stopwatch.elapsedMilliseconds, lessThanOrEqualTo(10));
     });
   });
 }

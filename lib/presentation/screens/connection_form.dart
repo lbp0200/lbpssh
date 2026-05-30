@@ -490,9 +490,7 @@ class _ConnectionFormScreenState extends ConsumerState<ConnectionFormScreen> {
                 obscureText: _obscurePassword,
                 suffixIcon: IconButton(
                   icon: Icon(
-                    _obscurePassword
-                        ? Icons.visibility
-                        : Icons.visibility_off,
+                    _obscurePassword ? Icons.visibility : Icons.visibility_off,
                   ),
                   onPressed: () {
                     setState(() {
@@ -776,16 +774,22 @@ class _ConnectionFormScreenState extends ConsumerState<ConnectionFormScreen> {
                 initialValue: _jumpAuthType,
                 decoration: InputDecoration(
                   labelText: '跳板机认证方式',
-                  labelStyle: const TextStyle(color: LinearColors.textSecondary),
+                  labelStyle: const TextStyle(
+                    color: LinearColors.textSecondary,
+                  ),
                   filled: true,
                   fillColor: LinearColors.fillSurface,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(LinearRadius.standard),
-                    borderSide: const BorderSide(color: LinearColors.borderStandard),
+                    borderSide: const BorderSide(
+                      color: LinearColors.borderStandard,
+                    ),
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(LinearRadius.standard),
-                    borderSide: const BorderSide(color: LinearColors.borderStandard),
+                    borderSide: const BorderSide(
+                      color: LinearColors.borderStandard,
+                    ),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(LinearRadius.standard),

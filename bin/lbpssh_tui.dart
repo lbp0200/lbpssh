@@ -72,7 +72,10 @@ Future<void> _runTui() async {
   _term.write('\x1b[0m');
   _term.showCursor();
   _term.write('\x1b[?1049l');
-  try { stdin.lineMode = true; stdin.echoMode = true; } catch (_) {}
+  try {
+    stdin.lineMode = true;
+    stdin.echoMode = true;
+  } catch (_) {}
 }
 
 void _render(List<String> lastFrame) {
@@ -140,7 +143,9 @@ void _handleListKey(String key) {
         final conn = _state.connections[_state.sel];
         _repo.deleteConnection(conn.id);
         final updated = _repo.getAllConnections();
-        _state.sel = _state.sel >= updated.length ? updated.length - 1 : _state.sel;
+        _state.sel = _state.sel >= updated.length
+            ? updated.length - 1
+            : _state.sel;
         if (_state.sel < 0) _state.sel = 0;
         _state.connections = updated;
       }
@@ -155,15 +160,17 @@ void _handleFormKey(String key) {
 }
 
 Future<void> _runSsh(SshConnection conn) async {
-  stdout.writeln('\nConnecting to ${conn.username}@${conn.host}:${conn.port}...');
+  stdout.writeln(
+    '\nConnecting to ${conn.username}@${conn.host}:${conn.port}...',
+  );
   stdout.writeln('Type "exit" or press Ctrl+D to return.\n');
 
   try {
-    final result = await Process.run(
-      'ssh',
-      ['-p', conn.port.toString(), '${conn.username}@${conn.host}'],
-      runInShell: true,
-    );
+    final result = await Process.run('ssh', [
+      '-p',
+      conn.port.toString(),
+      '${conn.username}@${conn.host}',
+    ], runInShell: true);
     if (result.exitCode != 0 && result.stderr.toString().isNotEmpty) {
       stderr.writeln(result.stderr);
       await Future<void>.delayed(const Duration(seconds: 2));
@@ -176,7 +183,8 @@ Future<void> _runSsh(SshConnection conn) async {
 
 File _resolveConfigFile() {
   final home = Platform.environment['HOME'] ?? '.';
-  final configDir = Platform.environment['LBPSSH_CONFIG_DIR'] ?? '$home/.lbpSSH';
+  final configDir =
+      Platform.environment['LBPSSH_CONFIG_DIR'] ?? '$home/.lbpSSH';
   return File('$configDir/ssh_connections.json');
 }
 
