@@ -1,3 +1,5 @@
+- chore: add lint rules, fix 229 issues via dart fix, fix unused variable (ef94f98)
+- docs: update CHANGELOG (0e63e0f)
 - refactor: extract ErrorDetailDialog from terminal_view.dart (2bed0e9)
 - docs: update CHANGELOG (8f35e31)
 - chore: upgrade dependencies - sentry 9.x, json_annotation, shared_preferences, build_runner, cupertino_icons, desktop_drop (a687c04)
