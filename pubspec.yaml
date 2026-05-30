@@ -37,7 +37,7 @@ dependencies:
   intl: ^0.20.2
 
   # UI
-  cupertino_icons: ^1.0.8
+  cupertino_icons: ^1.0.9
 
   # App info
   package_info_plus: ^9.0.0
@@ -61,7 +61,7 @@ dependencies:
   encrypt: ^5.0.3
 
   # 错误追踪
-  sentry: ^8.0.0
+  sentry: ^9.20.0
 
   # 路径处理
   path: ^1.9.0
@@ -70,13 +70,13 @@ dependencies:
   url_launcher: ^6.2.4
 
   # JSON 序列化
-  json_annotation: ^4.11.0
+  json_annotation: ^4.12.0
 
   # 路径处理
   path_provider: ^2.1.1
 
   # 共享首选项
-  shared_preferences: ^2.2.2
+  shared_preferences: ^2.5.5
 
   # UUID 生成
   uuid: ^4.5.3
@@ -94,7 +94,7 @@ dependencies:
   window_manager: ^0.5.1
 
   # 桌面拖拽支持
-  desktop_drop: ^0.7.0
+  desktop_drop: ^0.7.1
   cross_file: ^0.3.5+2
   socks5_proxy: ^2.1.1
 
@@ -114,8 +114,8 @@ dev_dependencies:
   mocktail: ^1.0.4
 
   # 代码生成
-  build_runner: ^2.10.5
-  json_serializable: ^6.11.3
+  build_runner: ^2.14.1
+  json_serializable: ^6.14.0
   flutter_launcher_icons: ^0.14.4
 
 

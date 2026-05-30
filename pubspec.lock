@@ -880,10 +880,10 @@ packages:
     dependency: "direct main"
     description:
       name: sentry
-      sha256: "599701ca0693a74da361bc780b0752e1abc98226cf5095f6b069648116c896bb"
+      sha256: "3284d220618d9344ce8a0765519129744a4cc658309496f052680909d74f7c51"
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "8.14.2"
+    version: "9.21.0"
   shared_preferences:
     dependency: "direct main"
     description:
