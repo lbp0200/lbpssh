@@ -1,3 +1,5 @@
+- refactor: extract ErrorDetailDialog from terminal_view.dart (2bed0e9)
+- docs: update CHANGELOG (8f35e31)
 - chore: upgrade dependencies - sentry 9.x, json_annotation, shared_preferences, build_runner, cupertino_icons, desktop_drop (a687c04)
 - docs: update CHANGELOG (a6d7031)
 - release: bump version to 1.7.0, add TUI mode (b4bee90)
