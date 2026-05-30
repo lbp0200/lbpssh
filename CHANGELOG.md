@@ -1,3 +1,5 @@
+- feat: add search/filter to TUI connection list (2d23401)
+- docs: update CHANGELOG (06c89fd)
 - chore: remove 3 dead widgets superseded by ConnectionList (CompactConnectionList, LoadingIndicator, ShimmerLoading) (658cc12)
 - docs: update CHANGELOG (22ebcc7)
 - chore: remove dead SyncStatus widget (never used) (51364e3)
