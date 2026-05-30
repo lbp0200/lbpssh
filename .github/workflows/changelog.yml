@@ -15,10 +15,13 @@ jobs:
         with:
           fetch-depth: 0
       - name: Generate and push CHANGELOG
+        if: github.ref == 'refs/heads/main'
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: |
-          git log --pretty=format:"- %s (%h)" --since="2025-01-01" > CHANGELOG.md
+          PREVIOUS_TAG=$(git describe --tags --abbrev=0 2>/dev/null || git log --reverse --format="%H" | head -1)
+          SINCE_DATE=$(git log -1 --format="%aI" "$PREVIOUS_TAG" | cut -d'T' -f1)
+          git log --pretty=format:"- %s (%h)" --since="$SINCE_DATE" > CHANGELOG.md
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           git add CHANGELOG.md

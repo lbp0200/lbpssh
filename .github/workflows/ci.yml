@@ -18,7 +18,7 @@ jobs:
       - uses: actions/checkout@v5
       - uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.41.4'
+          flutter-version: '3.44.0'
       - name: Install Linux dependencies
         if: matrix.platform == 'ubuntu-latest'
         run: |
@@ -42,7 +42,7 @@ jobs:
         if: matrix.platform == 'windows-latest'
         run: |
           flutter build windows --release
-          Compress-Archive -Path build/windows/x64/runner -DestinationPath build/windows/x64/lbpSSH-windows-x64.zip
+          Compress-Archive -Path build/windows/x64/runner/Release/* -DestinationPath build/windows/x64/lbpSSH-windows-x64.zip
       - name: Upload Linux build
         if: matrix.platform == 'ubuntu-latest'
         uses: actions/upload-artifact@v5
