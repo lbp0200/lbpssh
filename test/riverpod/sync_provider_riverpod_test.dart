@@ -15,10 +15,7 @@ void main() {
   setUpAll(() {
     registerFallbackValue(
       SyncConfig(
-        platform: SyncPlatform.githubRepo,
         accessToken: 'test_token',
-        repoOwner: 'test_owner',
-        repoName: 'test_repo',
       ),
     );
   });
@@ -45,10 +42,7 @@ void main() {
         () {
           // Arrange (Given)
           final config = SyncConfig(
-            platform: SyncPlatform.githubRepo,
             accessToken: 'test_token',
-            repoOwner: 'test_owner',
-            repoName: 'test_repo',
           );
           when(() => mockSyncService.getConfig()).thenReturn(config);
 
@@ -57,7 +51,7 @@ void main() {
 
           // Assert (Then)
           expect(result, isNotNull);
-          expect(result!.platform, SyncPlatform.githubRepo);
+          expect(result!.accessToken, 'test_token');
           verify(() => mockSyncService.getConfig()).called(1);
         },
       );
@@ -96,7 +90,6 @@ void main() {
         () async {
           // Arrange (Given)
           final config = SyncConfig(
-            platform: SyncPlatform.githubRepo,
             accessToken: 'new_token',
           );
           when(

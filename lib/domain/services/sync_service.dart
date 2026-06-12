@@ -1,68 +1,44 @@
 import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../core/constants/app_constants.dart';
 import '../../data/models/ssh_connection.dart';
 import '../../data/repositories/connection_repository.dart';
-import '../../core/constants/app_constants.dart';
 
-/// 同步平台类型
-enum SyncPlatform {
-  githubRepo; // GitHub 仓库
+// =============================================================================
+// SyncConfig
+// =============================================================================
 
-  /// 从旧版 Gist 值向后兼容
-  static SyncPlatform fromName(String name) {
-    return switch (name) {
-      'githubRepo' || 'gist' || 'giteeGist' => SyncPlatform.githubRepo,
-      _ => SyncPlatform.githubRepo,
-    };
-  }
-}
-
-/// 同步状态
-enum SyncStatusEnum { idle, syncing, success, error }
-
-/// 同步配置
 class SyncConfig {
-  final SyncPlatform platform;
   final String? accessToken;
-  final String? repoOwner; // GitHub 仓库所有者
-  final String? repoName; // GitHub 仓库名
-  final String? filePath; // 配置文件路径（默认使用 defaultConfigFilePath）
-  final String? branch; // 分支（默认 main）
+  final String? gistId; // GitHub Gist ID，首次上传时自动创建
+  final String gistFilename; // Gist 中的文件名
   final bool autoSync;
   final int syncIntervalMinutes;
 
   SyncConfig({
-    required this.platform,
     this.accessToken,
-    this.repoOwner,
-    this.repoName,
-    this.filePath,
-    this.branch,
+    this.gistId,
+    this.gistFilename = AppConstants.defaultGistFilename,
     this.autoSync = false,
     this.syncIntervalMinutes = AppConstants.defaultSyncIntervalMinutes,
   });
 
   Map<String, dynamic> toJson() => {
-    'platform': platform.name,
     'accessToken': accessToken,
-    'repoOwner': repoOwner,
-    'repoName': repoName,
-    'filePath': filePath,
-    'branch': branch,
+    'gistId': gistId,
+    'gistFilename': gistFilename,
     'autoSync': autoSync,
     'syncIntervalMinutes': syncIntervalMinutes,
   };
 
+  /// 向后兼容旧的 repo 格式字段
   factory SyncConfig.fromJson(Map<String, dynamic> json) => SyncConfig(
-    platform: SyncPlatform.fromName(
-      json['platform'] as String? ?? 'githubRepo',
-    ),
     accessToken: json['accessToken'] as String?,
-    repoOwner: json['repoOwner'] as String?,
-    repoName: json['repoName'] as String?,
-    filePath: json['filePath'] as String?,
-    branch: json['branch'] as String?,
+    gistId: json['gistId'] as String?,
+    gistFilename: (json['gistFilename'] as String?) ??
+        AppConstants.defaultGistFilename,
     autoSync: (json['autoSync'] as bool?) ?? false,
     syncIntervalMinutes:
         (json['syncIntervalMinutes'] as int?) ??
@@ -70,7 +46,16 @@ class SyncConfig {
   );
 }
 
-/// 配置同步服务
+// =============================================================================
+// SyncStatusEnum
+// =============================================================================
+
+enum SyncStatusEnum { idle, syncing, success, error }
+
+// =============================================================================
+// SyncService
+// =============================================================================
+
 class SyncService {
   final ConnectionRepository _repository;
   final Dio _dio;
@@ -119,7 +104,7 @@ class SyncService {
   /// 获取最后同步时间
   DateTime? get lastSyncTime => _lastSyncTime;
 
-  /// 上传配置到远程仓库
+  /// 上传配置到 GitHub Gist
   Future<void> uploadConfig() async {
     if (_config == null || _config!.accessToken == null) {
       throw Exception('同步配置未设置或未授权');
@@ -139,7 +124,13 @@ class SyncService {
       };
 
       final content = jsonEncode(jsonData);
-      await _uploadToGitHubRepo(content);
+      if (_config!.gistId == null) {
+        // 无 Gist ID → 创建新 Gist
+        await _createGist(content);
+      } else {
+        // 已有 Gist ID → 更新已有 Gist
+        await _updateGist(content);
+      }
 
       _lastSyncTime = DateTime.now();
       _status = SyncStatusEnum.success;
@@ -149,7 +140,7 @@ class SyncService {
     }
   }
 
-  /// 从远程仓库下载配置
+  /// 从 GitHub Gist 下载配置
   /// [skipConflictCheck] 是否跳过冲突检测（用于测试连接时）
   Future<void> downloadConfig({bool skipConflictCheck = false}) async {
     if (_config == null || _config!.accessToken == null) {
@@ -159,7 +150,7 @@ class SyncService {
     _status = SyncStatusEnum.syncing;
 
     try {
-      final content = await _downloadFromGitHubRepo();
+      final content = await _downloadFromGist();
 
       final jsonData = jsonDecode(content) as Map<String, dynamic>;
 
@@ -192,80 +183,22 @@ class SyncService {
     }
   }
 
-  /// 上传内容到 GitHub 仓库（GitHub Contents API）
-  Future<void> _uploadToGitHubRepo(String content) async {
-    final owner = _config!.repoOwner;
-    final repo = _config!.repoName;
-    final path = _config!.filePath ?? AppConstants.defaultConfigFilePath;
-    final branch = _config!.branch ?? AppConstants.defaultBranch;
-
-    if (owner == null || repo == null) {
-      throw Exception('请设置 GitHub 仓库信息（owner/repo）');
-    }
-
+  /// 创建新 Gist（POST /gists）
+  Future<void> _createGist(String content) async {
     final token = _config!.accessToken;
-    final contentBase64 = base64Encode(utf8.encode(content));
+    final filename = _config!.gistFilename;
 
-    final url = 'https://api.github.com/repos/$owner/$repo/contents/$path';
-
-    // 先尝试获取现有文件以获取 SHA（用于更新）
-    String? existingSha;
-    try {
-      final getResponse = await _dio.get<Map<String, dynamic>>(
-        url,
-        queryParameters: {'ref': branch},
-        options: Options(
-          headers: {
-            'Authorization': 'Bearer $token',
-            'Accept': 'application/vnd.github.v3+json',
-          },
-        ),
-      );
-      if (getResponse.data is Map<String, dynamic>) {
-        existingSha = getResponse.data!['sha'] as String?;
-      }
-    } on DioException catch (e) {
-      if (e.response?.statusCode != 404) rethrow;
-    }
-
-    final putData = <String, dynamic>{
-      'message': 'Update SSH connections config',
-      'content': contentBase64,
-      'branch': branch,
+    final body = {
+      'description': 'lbpSSH config sync',
+      'public': false,
+      'files': {
+        filename: {'content': content},
+      },
     };
-    if (existingSha != null) {
-      putData['sha'] = existingSha;
-    }
 
-    await _dio.put<Map<String, dynamic>>(
-      url,
-      data: putData,
-      options: Options(
-        headers: {
-          'Authorization': 'Bearer $token',
-          'Accept': 'application/vnd.github.v3+json',
-        },
-      ),
-    );
-  }
-
-  /// 从 GitHub 仓库下载内容（GitHub Contents API）
-  Future<String> _downloadFromGitHubRepo() async {
-    final owner = _config!.repoOwner;
-    final repo = _config!.repoName;
-    final path = _config!.filePath ?? AppConstants.defaultConfigFilePath;
-    final branch = _config!.branch ?? AppConstants.defaultBranch;
-
-    if (owner == null || repo == null) {
-      throw Exception('请设置 GitHub 仓库信息（owner/repo）');
-    }
-
-    final token = _config!.accessToken;
-    final url = 'https://api.github.com/repos/$owner/$repo/contents/$path';
-
-    final response = await _dio.get<Map<String, dynamic>>(
-      url,
-      queryParameters: {'ref': branch},
+    final response = await _dio.post<Map<String, dynamic>>(
+      'https://api.github.com/gists',
+      data: body,
       options: Options(
         headers: {
           'Authorization': 'Bearer $token',
@@ -276,17 +209,90 @@ class SyncService {
 
     final data = response.data;
     if (data == null) {
-      throw Exception('仓库中未找到文件: $path');
+      throw Exception('创建 Gist 失败：空响应');
     }
 
-    final encodedContent = data['content'] as String?;
-    if (encodedContent == null) {
+    final gistId = data['id'] as String?;
+    if (gistId == null) {
+      throw Exception('创建 Gist 失败：未返回 ID');
+    }
+
+    // 保存 gistId 到配置
+    final updatedConfig = SyncConfig(
+      accessToken: token,
+      gistId: gistId,
+      gistFilename: filename,
+      autoSync: _config!.autoSync,
+      syncIntervalMinutes: _config!.syncIntervalMinutes,
+    );
+    await saveConfig(updatedConfig);
+  }
+
+  /// 更新已有 Gist（PATCH /gists/{gist_id}）
+  Future<void> _updateGist(String content) async {
+    final token = _config!.accessToken;
+    final gistId = _config!.gistId!;
+    final filename = _config!.gistFilename;
+
+    final body = {
+      'files': {
+        filename: {'content': content},
+      },
+    };
+
+    await _dio.patch<Map<String, dynamic>>(
+      'https://api.github.com/gists/$gistId',
+      data: body,
+      options: Options(
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Accept': 'application/vnd.github.v3+json',
+        },
+      ),
+    );
+  }
+
+  /// 从 Gist 下载内容（GET /gists/{gist_id}）
+  Future<String> _downloadFromGist() async {
+    final token = _config!.accessToken;
+    final gistId = _config!.gistId;
+    final filename = _config!.gistFilename;
+
+    if (gistId == null) {
+      throw Exception('未设置 Gist ID，请先上传配置');
+    }
+
+    final response = await _dio.get<Map<String, dynamic>>(
+      'https://api.github.com/gists/$gistId',
+      options: Options(
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Accept': 'application/vnd.github.v3+json',
+        },
+      ),
+    );
+
+    final data = response.data;
+    if (data == null) {
+      throw Exception('Gist 不存在');
+    }
+
+    final files = data['files'] as Map<String, dynamic>?;
+    if (files == null) {
+      throw Exception('Gist 文件列表为空');
+    }
+
+    final file = files[filename] as Map<String, dynamic>?;
+    if (file == null) {
+      throw Exception('Gist 中未找到文件: $filename');
+    }
+
+    final fileContent = file['content'] as String?;
+    if (fileContent == null || fileContent.isEmpty) {
       throw Exception('文件内容为空');
     }
 
-    // GitHub API 返回的 content 是 base64 编码（含换行符）
-    final cleaned = encodedContent.replaceAll(RegExp(r'\s'), '');
-    return utf8.decode(base64Decode(cleaned));
+    return fileContent;
   }
 
   /// 检测冲突
@@ -323,17 +329,22 @@ class SyncService {
   }
 }
 
-/// 同步冲突异常
+// =============================================================================
+// SyncConflictException
+// =============================================================================
+
 class SyncConflictException implements Exception {
   final List<SyncConflict> conflicts;
-
   SyncConflictException(this.conflicts);
 
   @override
-  String toString() => '发现 ${conflicts.length} 个配置冲突';
+  String toString() => '发现 ${conflicts.length} 个同步冲突';
 }
 
-/// 同步冲突
+// =============================================================================
+// SyncConflict
+// =============================================================================
+
 class SyncConflict {
   final String connectionId;
   final SshConnection localConnection;

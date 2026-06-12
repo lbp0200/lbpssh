@@ -3,8 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../core/constants/app_constants.dart';
 import '../../core/theme/app_theme.dart';
-import '../../domain/services/sync_service.dart'
-    show SyncStatusEnum, SyncPlatform, SyncConfig;
+import '../../domain/services/sync_service.dart' show SyncStatusEnum, SyncConfig;
 import '../providers_riverpod/sync_provider_riverpod.dart';
 import '../widgets/error_dialog.dart';
 
@@ -18,11 +17,9 @@ class SyncSettingsScreen extends ConsumerStatefulWidget {
 
 class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _repoOwnerController = TextEditingController();
-  final _repoNameController = TextEditingController();
-  final _filePathController = TextEditingController();
-  final _branchController = TextEditingController();
   final _tokenController = TextEditingController();
+  final _gistIdController = TextEditingController();
+  final _gistFilenameController = TextEditingController();
   final _syncIntervalController = TextEditingController();
 
   bool _autoSync = false;
@@ -40,29 +37,23 @@ class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
     final config = state.config;
 
     if (config != null) {
-      _repoOwnerController.text = config.repoOwner ?? '';
-      _repoNameController.text = config.repoName ?? '';
-      _filePathController.text =
-          config.filePath ?? AppConstants.defaultConfigFilePath;
-      _branchController.text = config.branch ?? AppConstants.defaultBranch;
+      _gistIdController.text = config.gistId ?? '';
+      _gistFilenameController.text = config.gistFilename;
       _autoSync = config.autoSync;
       _syncInterval = config.syncIntervalMinutes;
       // 不显示 token，只显示占位符
       _tokenController.text = config.accessToken != null ? '***' : '';
     } else {
-      _filePathController.text = AppConstants.defaultConfigFilePath;
-      _branchController.text = AppConstants.defaultBranch;
+      _gistFilenameController.text = AppConstants.defaultGistFilename;
     }
     _syncIntervalController.text = _syncInterval.toString();
   }
 
   @override
   void dispose() {
-    _repoOwnerController.dispose();
-    _repoNameController.dispose();
-    _filePathController.dispose();
-    _branchController.dispose();
     _tokenController.dispose();
+    _gistIdController.dispose();
+    _gistFilenameController.dispose();
     _syncIntervalController.dispose();
     super.dispose();
   }
@@ -80,13 +71,13 @@ class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
       accessToken = ref.read(syncProvider).config?.accessToken;
     }
 
+    final gistId = _gistIdController.text.trim();
     final config = SyncConfig(
-      platform: SyncPlatform.githubRepo,
       accessToken: accessToken,
-      repoOwner: _repoOwnerController.text,
-      repoName: _repoNameController.text,
-      filePath: _filePathController.text,
-      branch: _branchController.text,
+      gistId: gistId.isNotEmpty ? gistId : null,
+      gistFilename: _gistFilenameController.text.trim().isNotEmpty
+          ? _gistFilenameController.text.trim()
+          : AppConstants.defaultGistFilename,
       autoSync: _autoSync,
       syncIntervalMinutes: _syncInterval,
     );
@@ -174,7 +165,7 @@ class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
                   const Text(
                     '请输入 GitHub Personal Access Token，'
                     '需要在 GitHub Settings → Developer settings → Personal access tokens 中创建，'
-                    '并勾选 repo 权限。',
+                    '并勾选 gist 权限。',
                     style: TextStyle(fontSize: 12),
                   ),
                   const SizedBox(height: LinearSpacing.spacing16),
@@ -214,7 +205,7 @@ class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
                   TextButton.icon(
                     onPressed: () async {
                       final url = Uri.parse(
-                        'https://github.com/settings/tokens/new?scopes=repo',
+                        'https://github.com/settings/tokens/new?scopes=gist',
                       );
                       if (await canLaunchUrl(url)) {
                         await launchUrl(url);
@@ -229,7 +220,7 @@ class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
           ),
           const SizedBox(height: LinearSpacing.spacing16),
 
-          // 仓库配置
+          // Gist 配置
           Card(
             elevation: 0,
             color: LinearColors.surface,
@@ -243,71 +234,44 @@ class _SyncSettingsScreenState extends ConsumerState<SyncSettingsScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'GitHub 仓库',
+                    'GitHub Gist',
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       color: LinearColors.textPrimary,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
+                  const SizedBox(height: LinearSpacing.spacing8),
+                  const Text(
+                    'Gist ID 留空时，首次上传将自动创建新的 Gist。',
+                    style: TextStyle(fontSize: 12),
+                  ),
                   const SizedBox(height: LinearSpacing.spacing16),
                   TextFormField(
-                    controller: _repoOwnerController,
+                    controller: _gistIdController,
                     decoration: const InputDecoration(
-                      labelText: '仓库所有者（owner）',
-                      hintText: '例如：your-username',
+                      labelText: 'Gist ID（可选）',
+                      hintText: '例如：abc123def456',
+                      helperText: '留空自动创建。可在 https://gist.github.com 查看。',
+                      filled: true,
+                      fillColor: LinearColors.fillSurface,
+                    ),
+                  ),
+                  const SizedBox(height: LinearSpacing.spacing16),
+                  TextFormField(
+                    controller: _gistFilenameController,
+                    decoration: const InputDecoration(
+                      labelText: '文件名',
+                      hintText: 'ssh_connections.json',
+                      helperText: 'Gist 中存储配置的文件名。',
                       filled: true,
                       fillColor: LinearColors.fillSurface,
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return '请输入仓库所有者';
+                        return '请输入文件名';
                       }
                       return null;
                     },
-                  ),
-                  const SizedBox(height: LinearSpacing.spacing16),
-                  TextFormField(
-                    controller: _repoNameController,
-                    decoration: const InputDecoration(
-                      labelText: '仓库名（repo）',
-                      hintText: '例如：my-configs',
-                      filled: true,
-                      fillColor: LinearColors.fillSurface,
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return '请输入仓库名';
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: LinearSpacing.spacing16),
-                  TextFormField(
-                    controller: _filePathController,
-                    decoration: const InputDecoration(
-                      labelText: '配置文件路径',
-                      hintText: 'lbpSSH/ssh_connections.json',
-                      helperText: '仓库中存储配置文件的路径。',
-                      filled: true,
-                      fillColor: LinearColors.fillSurface,
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return '请输入文件路径';
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: LinearSpacing.spacing16),
-                  TextFormField(
-                    controller: _branchController,
-                    decoration: const InputDecoration(
-                      labelText: '分支',
-                      hintText: 'main',
-                      helperText: '留空默认使用 main 分支。',
-                      filled: true,
-                      fillColor: LinearColors.fillSurface,
-                    ),
                   ),
                 ],
               ),

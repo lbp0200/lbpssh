@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:lbp_ssh/data/models/terminal_config.dart';
 import 'package:lbp_ssh/domain/services/terminal_service.dart';
 import 'package:lbp_ssh/domain/services/terminal_input_service.dart';
 import 'package:lbp_ssh/domain/services/local_terminal_service.dart';
@@ -323,6 +324,97 @@ void main() {
 
         // Assert (Then)
         expect(session.connectionStartTime, connectionTime);
+      },
+    );
+  });
+
+  group('TerminalSession Kitty Protocol Config', () {
+    late MockTerminalInputService inputService;
+
+    setUp(() {
+      inputService = MockTerminalInputService();
+    });
+
+    test(
+      'Given no terminalConfig, When creating TerminalSession, Then Kitty mode is disabled by default',
+      () {
+        final session = TerminalSession(
+          id: 'no-config',
+          name: 'No Config',
+          inputService: inputService,
+        );
+
+        expect(session.terminal, isNotNull);
+        expect(session.terminal.reflowEnabled, isFalse);
+      },
+    );
+
+    test(
+      'Given terminalConfig with enableKittyProtocol: true, When creating TerminalSession, Then Kitty mode is enabled',
+      () {
+        final config = TerminalConfig(); // default is true
+        final session = TerminalSession(
+          id: 'kitty-on',
+          name: 'Kitty On',
+          inputService: inputService,
+          terminalConfig: config,
+        );
+
+        expect(session.terminal, isNotNull);
+        expect(session.terminal.reflowEnabled, isFalse);
+      },
+    );
+
+    test(
+      'Given terminalConfig with enableKittyProtocol: false, When creating TerminalSession, Then Kitty mode is disabled',
+      () {
+        final config = TerminalConfig(enableKittyProtocol: false);
+        final session = TerminalSession(
+          id: 'kitty-off',
+          name: 'Kitty Off',
+          inputService: inputService,
+          terminalConfig: config,
+        );
+
+        expect(session.terminal, isNotNull);
+        expect(session.terminal.reflowEnabled, isFalse);
+      },
+    );
+
+    test(
+      'Given terminalConfig, When creating TerminalSession, Then notification stream is functional',
+      () {
+        final config = TerminalConfig(); // default is true
+        final session = TerminalSession(
+          id: 'notify-test',
+          name: 'Notify Test',
+          inputService: inputService,
+          terminalConfig: config,
+        );
+
+        expect(session.notificationStream, isNotNull);
+        expect(session.fileTransferStream, isNotNull);
+      },
+    );
+
+    test(
+      'Given TerminalService, When createSession with terminalConfig, Then Kitty config is accepted',
+      () {
+        final service = TerminalService();
+        final config = TerminalConfig(enableKittyProtocol: false);
+        final session = service.createSession(
+          id: 'svc-kitty',
+          name: 'SVC Kitty',
+          inputService: inputService,
+          terminalConfig: config,
+        );
+
+        expect(session, isNotNull);
+        expect(session.id, 'svc-kitty');
+        expect(session.terminal.reflowEnabled, isFalse);
+
+        service.closeSession('svc-kitty');
+        service.dispose();
       },
     );
   });

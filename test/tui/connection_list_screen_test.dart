@@ -219,7 +219,7 @@ void main() {
     test('shows search bar when isSearching', () {
       final ctx = _ctx();
       final state = TuiState(connections: [
-        _conn(name: 'test'),
+        _conn(),
       ], isSearching: true, searchQuery: 'prod');
 
       paintConnectionList(state, ctx);

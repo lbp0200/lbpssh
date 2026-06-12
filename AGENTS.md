@@ -179,3 +179,10 @@ void main() {
 | Test | `flutter test` |
 | Build | `flutter build macos --debug` |
 | Generate | `dart run build_runner build --delete-conflicting-outputs` |
+
+## Homebrew
+
+- **Tap**: `lbp0200/homebrew-lbpssh-tap`
+- **Install**: `brew install lbp0200/homebrew-lbpssh-tap/lbpssh`
+- **CI**: GitHub Actions (`ci.yml`) 在打 tag 发版时自动更新 cask 的 version 和 sha256
+- **本地 cask 目录**: `homebrew/Casks/`（用于开发测试）|

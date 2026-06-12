@@ -257,14 +257,6 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "5.0.3"
-  equatable:
-    dependency: transitive
-    description:
-      name: equatable
-      sha256: "3e0141505477fd8ad55d6eb4e7776d3fe8430be8e497ccb1521370c3f21a3e2b"
-      url: "https://pub.flutter-io.cn"
-    source: hosted
-    version: "2.0.8"
   fake_async:
     dependency: transitive
     description:
@@ -543,11 +535,10 @@ packages:
   kterm:
     dependency: "direct main"
     description:
-      name: kterm
-      sha256: "7380efea3b2b4858534427dd7f85d4edf31071005e188fb7664cc8d5d885c971"
-      url: "https://pub.flutter-io.cn"
-    source: hosted
-    version: "1.1.11"
+      path: "/Users/lbp/Projects/kterm.dart"
+      relative: false
+    source: path
+    version: "1.2.0"
   leak_tracker:
     dependency: transitive
     description:
@@ -644,14 +635,6 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "9.4.1"
-  overlay_support:
-    dependency: transitive
-    description:
-      name: overlay_support
-      sha256: fc39389bfd94e6985e1e13b2a88a125fc4027608485d2d4e2847afe1b2bb339c
-      url: "https://pub.flutter-io.cn"
-    source: hosted
-    version: "2.1.0"
   package_config:
     dependency: transitive
     description:
@@ -812,14 +795,6 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "1.5.0"
-  quiver:
-    dependency: transitive
-    description:
-      name: quiver
-      sha256: ea0b925899e64ecdfbf9c7becb60d5b50e706ade44a85b2363be2a22d88117d2
-      url: "https://pub.flutter-io.cn"
-    source: hosted
-    version: "3.2.2"
   record_use:
     dependency: transitive
     description:

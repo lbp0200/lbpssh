@@ -204,5 +204,43 @@ void main() {
         expect(config.lineHeight, 1.2);
       },
     );
+
+    test(
+      'Given no arguments, When creating TerminalConfig, Then enableKittyProtocol defaults to true',
+      () {
+        final config = TerminalConfig();
+
+        expect(config.enableKittyProtocol, isTrue);
+      },
+    );
+
+    test(
+      'Given enableKittyProtocol: false, When creating TerminalConfig, Then Kitty protocol is disabled',
+      () {
+        final config = TerminalConfig(enableKittyProtocol: false);
+
+        expect(config.enableKittyProtocol, isFalse);
+      },
+    );
+
+    test(
+      'Given original config with enableKittyProtocol: false, When calling copyWith without override, Then value is preserved',
+      () {
+        final original = TerminalConfig(enableKittyProtocol: false);
+        final modified = original.copyWith(fontSize: 20.0);
+
+        expect(modified.enableKittyProtocol, isFalse);
+      },
+    );
+
+    test(
+      'Given original config, When calling copyWith with enableKittyProtocol: false, Then Kitty protocol is disabled',
+      () {
+        final original = TerminalConfig();
+        final modified = original.copyWith(enableKittyProtocol: false);
+
+        expect(modified.enableKittyProtocol, isFalse);
+      },
+    );
   });
 }

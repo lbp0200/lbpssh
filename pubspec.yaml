@@ -48,7 +48,8 @@ dependencies:
   # 数据存储（已迁移到 JSON 文件）
 
   # 终端模拟器
-  kterm: ^1.1.11
+  kterm:
+    path: /Users/lbp/Projects/kterm.dart
   flutter_pty: ^0.4.0+2
 
   # 状态管理

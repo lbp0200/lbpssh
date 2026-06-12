@@ -138,20 +138,11 @@ flutter build macos --release
 
 ## Configuration Sync
 
-Sync SSH config to cloud Gist for multi-device sharing.
-
-### Gitee Gist Sync
-
-1. Create a token at [Gitee personal access tokens](https://gitee.com/profile/personal_access_tokens)
-2. Select **Gitee Gist** in sync settings
-3. Enter token, optionally fill Gist ID
-4. Save config, then use "Upload" to sync
-
-### GitHub Gist Sync
+Sync SSH config to GitHub Gist for multi-device sharing.
 
 1. Create a Personal Access Token at [GitHub Settings](https://github.com/settings/tokens/new?scopes=gist) (need `gist` scope)
-2. Select **GitHub Gist** in sync settings
-3. Enter token, optionally fill Gist ID
+2. Enter token in sync settings
+3. Optionally fill Gist ID (leave blank to auto-create on first upload)
 4. Save config, then use "Upload" to sync
 
 ---

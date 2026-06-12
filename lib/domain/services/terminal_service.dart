@@ -83,9 +83,14 @@ class TerminalSession {
   }) : _name = name,
        terminal = Terminal(maxLines: 10000),
        controller = TerminalController() {
-    // 禁用 Kitty 键盘模式，使用传统终端序列
-    // 这样可以确保与所有 SSH 服务器兼容
-    terminal.setKittyMode(false);
+    // 根据用户配置启用/禁用 Kitty 键盘协议
+    // 开启后远程程序能识别 Shift+Enter、Ctrl+Enter 等修饰键组合
+    // 但部分 SSH 服务器/程序不兼容，显示为乱码，需按连接单独配置
+    if (terminalConfig?.enableKittyProtocol == true) {
+      terminal.setKittyMode(true);
+    } else {
+      terminal.setKittyMode(false);
+    }
 
     // 禁用终端 reflow，避免 resize 时光标位置错乱
     // kterm 的 reflow 在调整宽度后不会重新计算光标位置，导致光标跳到错误行
