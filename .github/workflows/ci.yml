@@ -15,7 +15,7 @@ jobs:
         platform: [macos-latest, ubuntu-latest, windows-latest]
     runs-on: ${{ matrix.platform }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.44.0'
@@ -46,19 +46,19 @@ jobs:
           Compress-Archive -Path build/windows/x64/runner/Release/* -DestinationPath build/windows/x64/lbpSSH-windows-x64.zip
       - name: Upload Linux build
         if: matrix.platform == 'ubuntu-latest'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: linux-build
           path: build/linux/x64/release/lbpSSH-linux-x64.zip
       - name: Upload macOS build
         if: matrix.platform == 'macos-latest'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: macos-build
           path: build/macos/Build/Products/Release/lbpSSH-macos-universal.zip
       - name: Upload Windows build
         if: matrix.platform == 'windows-latest'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: windows-build
           path: build/windows/x64/lbpSSH-windows-x64.zip
@@ -70,21 +70,21 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
       - name: Download Linux build
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           name: linux-build
           path: releases/
       - name: Download Windows build
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           name: windows-build
           path: releases/
       - name: Download macOS build
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           name: macos-build
           path: releases/
