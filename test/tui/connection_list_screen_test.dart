@@ -204,11 +204,14 @@ void main() {
 
     test('shows filtered count when searching', () {
       final ctx = _ctx();
-      final state = TuiState(connections: [
-        _conn(name: 'prod-web', host: '10.0.0.1'),
-        _conn(name: 'prod-db', host: '10.0.0.2'),
-        _conn(name: 'dev', host: '10.0.0.3'),
-      ], searchQuery: 'prod');
+      final state = TuiState(
+        connections: [
+          _conn(name: 'prod-web', host: '10.0.0.1'),
+          _conn(name: 'prod-db', host: '10.0.0.2'),
+          _conn(name: 'dev', host: '10.0.0.3'),
+        ],
+        searchQuery: 'prod',
+      );
 
       paintConnectionList(state, ctx);
 
@@ -218,9 +221,11 @@ void main() {
 
     test('shows search bar when isSearching', () {
       final ctx = _ctx();
-      final state = TuiState(connections: [
-        _conn(),
-      ], isSearching: true, searchQuery: 'prod');
+      final state = TuiState(
+        connections: [_conn()],
+        isSearching: true,
+        searchQuery: 'prod',
+      );
 
       paintConnectionList(state, ctx);
 
@@ -230,9 +235,10 @@ void main() {
 
     test('shows no match when filter yields empty', () {
       final ctx = _ctx();
-      final state = TuiState(connections: [
-        _conn(name: 'server'),
-      ], searchQuery: 'xyz');
+      final state = TuiState(
+        connections: [_conn(name: 'server')],
+        searchQuery: 'xyz',
+      );
 
       paintConnectionList(state, ctx);
 

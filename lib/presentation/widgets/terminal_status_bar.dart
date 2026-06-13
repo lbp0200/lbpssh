@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../core/theme/app_theme.dart';
 import '../../domain/services/terminal_service.dart';
 import '../../domain/services/ssh_service.dart';
+import '../../l10n/app_localizations.dart';
 
 /// 终端状态栏组件
 /// 显示连接状态、延迟、连接时长和服务器信息
@@ -80,21 +81,20 @@ class _TerminalStatusBarState extends State<TerminalStatusBar> {
         ? LinearColors.error
         : LinearColors.accent; // 本地终端
 
+    final loc = AppLocalizations.of(context)!;
     final statusText = widget.session.isLocal
-        ? 'Local'
+        ? loc.local
         : isConnecting
-        ? 'Connecting...'
+        ? loc.connecting
         : isConnected
-        ? 'Connected'
-        : 'Disconnected';
+        ? loc.connected
+        : loc.disconnected;
 
     return Container(
       height: 28,
       decoration: BoxDecoration(
         color: LinearColors.panel.withValues(alpha: 0.9),
-        border: const Border(
-          top: BorderSide(color: LinearColors.borderSubtle),
-        ),
+        border: const Border(top: BorderSide(color: LinearColors.borderSubtle)),
       ),
       padding: const EdgeInsets.symmetric(horizontal: LinearSpacing.spacing8),
       child: Row(
@@ -150,9 +150,9 @@ class _TerminalStatusBarState extends State<TerminalStatusBar> {
                 size: 14,
                 color: LinearColors.textTertiary,
               ),
-              label: const Text(
-                'Reconnect',
-                style: TextStyle(
+              label: Text(
+                loc.reconnect,
+                style: const TextStyle(
                   fontSize: 12,
                   color: LinearColors.textTertiary,
                 ),

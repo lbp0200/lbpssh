@@ -6,7 +6,8 @@
 
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20Linux%20%7C%20macOS-green.svg)](#)
-[![Flutter](https://img.shields.io/badge/Flutter-3.10.7+-blue.svg)](#)
+[![Flutter](https://img.shields.io/badge/Flutter-3.44+-blue.svg)](#)
+[![CI](https://github.com/lbp0200/lbpssh/actions/workflows/ci.yml/badge.svg)](https://github.com/lbp0200/lbpssh/actions/workflows/ci.yml)
 
 [English](README.md) | [中文](README.zh-CN.md)
 
@@ -58,7 +59,7 @@
 
 ```bash
 # 添加 Homebrew Tap
-brew tap lbp0200/lbpssh-tap
+brew tap lbp0200/homebrew-lbpssh-tap
 
 # 安装 lbpSSH
 brew install --cask lbpssh
@@ -281,7 +282,7 @@ lib/
 | dartssh2 | SSH 客户端 |
 | xterm | 终端模拟器 |
 | flutter_pty | 伪终端支持 |
-| provider | 状态管理 |
+| flutter_riverpod | 状态管理 |
 | dio | HTTP 客户端 |
 | encrypt | 加密 |
 | shared_preferences | 本地存储 |

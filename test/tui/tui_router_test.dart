@@ -33,10 +33,7 @@ TuiContext _ctx([int w = 80, int h = 24]) {
   );
 }
 
-SshConnection _conn({
-  String name = 'test',
-  String host = '192.168.1.1',
-}) {
+SshConnection _conn({String name = 'test', String host = '192.168.1.1'}) {
   return SshConnection(
     id: 'test-id',
     name: name,
@@ -52,9 +49,7 @@ void main() {
       'Given screen is list, When paintCurrentScreen called, Then renders connection list',
       () {
         final ctx = _ctx();
-        final state = TuiState(connections: [
-          _conn(name: 'server-1'),
-        ]);
+        final state = TuiState(connections: [_conn(name: 'server-1')]);
 
         paintCurrentScreen(state, ctx);
 
@@ -73,6 +68,7 @@ void main() {
         final state = TuiState(
           screen: 'form',
           editConn: conn,
+          formValues: {'name': 'edit-me'},
         );
 
         paintCurrentScreen(state, ctx);
@@ -87,10 +83,7 @@ void main() {
       'Given unknown screen, When paintCurrentScreen called, Then renders nothing',
       () {
         final ctx = _ctx();
-        final state = TuiState(
-          connections: [_conn()],
-          screen: 'unknown',
-        );
+        final state = TuiState(connections: [_conn()], screen: 'unknown');
 
         paintCurrentScreen(state, ctx);
 

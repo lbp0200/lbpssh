@@ -22,6 +22,19 @@ class AppLocalizations {
   String get clickToConnect => locale.languageCode == 'zh'
       ? '点击左侧连接以打开终端'
       : 'Click a connection on the left to open terminal';
+  String get disconnected =>
+      locale.languageCode == 'zh' ? '已断开' : 'Disconnected';
+  String get reconnect => locale.languageCode == 'zh' ? '重连' : 'Reconnect';
+  String get reconnecting =>
+      locale.languageCode == 'zh' ? '正在重连...' : 'Reconnecting...';
+  String get connectionLost =>
+      locale.languageCode == 'zh' ? '连接已断开' : 'Connection lost';
+  String get local => locale.languageCode == 'zh' ? '本地' : 'Local';
+  String get connecting =>
+      locale.languageCode == 'zh' ? '连接中...' : 'Connecting...';
+  String get connected => locale.languageCode == 'zh' ? '已连接' : 'Connected';
+  String get reconnectFailed =>
+      locale.languageCode == 'zh' ? '重连失败' : 'Reconnect failed';
 }
 
 class _AppLocalizationsDelegate

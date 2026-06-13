@@ -43,11 +43,7 @@ void main() {
       });
 
       test('omits p= when progress is null', () {
-        service.showNotification(
-          id: 'n1',
-          title: 'T',
-          body: 'B',
-        );
+        service.showNotification(id: 'n1', title: 'T', body: 'B');
         verify(() => mockSession.writeRaw(any())).called(1);
       });
 

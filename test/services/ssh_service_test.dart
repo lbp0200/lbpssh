@@ -410,9 +410,7 @@ void main() {
       final mockConfig = createMockAppConfigService();
       final service = SshService(appConfigService: mockConfig);
 
-      final conn = makeConnection(
-        authType: AuthType.key,
-      );
+      final conn = makeConnection(authType: AuthType.key);
 
       await expectLater(
         () => service.connect(conn),
@@ -444,9 +442,7 @@ void main() {
       final mockConfig = createMockAppConfigService();
       final service = SshService(appConfigService: mockConfig);
 
-      final conn = makeConnection(
-        authType: AuthType.sshConfig,
-      );
+      final conn = makeConnection(authType: AuthType.sshConfig);
 
       await expectLater(
         () => service.connect(conn),

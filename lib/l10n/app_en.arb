@@ -9,5 +9,9 @@
   "disconnected": "Disconnected",
   "reconnect": "Reconnect",
   "reconnecting": "Reconnecting...",
-  "connectionLost": "Connection lost"
+  "connectionLost": "Connection lost",
+  "local": "Local",
+  "connecting": "Connecting...",
+  "connected": "Connected",
+  "reconnectFailed": "Reconnect failed"
 }

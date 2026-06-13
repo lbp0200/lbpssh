@@ -130,12 +130,7 @@ class KittyLaunchService {
     String? cwd,
     String? title,
   }) async {
-    await launch(
-      program,
-      arguments: arguments,
-      cwd: cwd,
-      title: title,
-    );
+    await launch(program, arguments: arguments, cwd: cwd, title: title);
   }
 
   /// 在新窗口中启动程序

@@ -3,16 +3,13 @@ on:
   push:
     branches:
       - main
-  pull_request:
-    branches:
-      - main
 jobs:
   update_release_draft:
     runs-on: ubuntu-latest
     permissions:
       contents: write
     steps:
-      - uses: release-drafter/release-drafter@v7.3.0
+      - uses: release-drafter/release-drafter@v6
         with:
           config-name: release-drafter.yml
         env:

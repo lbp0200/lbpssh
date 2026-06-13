@@ -742,9 +742,7 @@ drwxr-xr-x  2 user user 4096 2024-02-24 20:08 dir1
       test(
         'Given relative path from root, When changeDirectory called, Then resolves correctly',
         () async {
-          final service = KittyFileTransferService(
-            session: mockSession,
-          );
+          final service = KittyFileTransferService(session: mockSession);
 
           await service.changeDirectory('etc');
 
@@ -809,9 +807,7 @@ drwxr-xr-x  2 user user 4096 2024-02-24 20:08 dir1
       );
 
       test('Given root path, When goUp called, Then stays at /', () async {
-        final service = KittyFileTransferService(
-          session: mockSession,
-        );
+        final service = KittyFileTransferService(session: mockSession);
 
         await service.goUp();
 

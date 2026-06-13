@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:lbp_ssh/core/theme/app_theme.dart';
-import 'package:lbp_ssh/domain/services/kitty_file_transfer_service.dart';
+import '../../core/theme/app_theme.dart';
+import '../../domain/services/kitty_file_transfer_service.dart';
 
 /// 传输进度对话框
 class TransferProgressDialog extends StatefulWidget {

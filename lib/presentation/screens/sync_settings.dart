@@ -3,7 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../core/constants/app_constants.dart';
 import '../../core/theme/app_theme.dart';
-import '../../domain/services/sync_service.dart' show SyncStatusEnum, SyncConfig;
+import '../../domain/services/sync_service.dart'
+    show SyncStatusEnum, SyncConfig;
 import '../providers_riverpod/sync_provider_riverpod.dart';
 import '../widgets/error_dialog.dart';
 

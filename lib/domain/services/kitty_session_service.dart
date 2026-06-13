@@ -292,8 +292,6 @@ class KittySessionService {
   Future<SessionState> reportState() async {
     final cwd = await getWorkingDirectory();
 
-    return SessionState(
-      workingDirectory: cwd,
-    );
+    return SessionState(workingDirectory: cwd);
   }
 }

@@ -22,7 +22,8 @@ void paintConnectionList(TuiState state, TuiContext ctx) {
   _hints(ctx, h, w);
   paintTuiStatusBar(
     ctx,
-    leftText: ' ${state.filteredConnections.length}/${state.connections.length} connections',
+    leftText:
+        ' ${state.filteredConnections.length}/${state.connections.length} connections',
     rightText: 'lbpSSH TUI',
     row: h - 2,
   );
@@ -55,7 +56,12 @@ void _searchBar(TuiContext ctx, TuiState state) {
   final display = '/${state.searchQuery}';
   ctx.surface.putText(0, 2, ' 搜索: ', style: const TuiStyle(fg: 246));
   ctx.surface.putText(5, 2, display, style: const TuiStyle(fg: 39));
-  ctx.surface.putText(5 + display.length, 2, '█', style: const TuiStyle(fg: 39));
+  ctx.surface.putText(
+    5 + display.length,
+    2,
+    '█',
+    style: const TuiStyle(fg: 39),
+  );
 }
 
 void _rows(TuiState state, TuiContext ctx, int startRow, int maxRows) {

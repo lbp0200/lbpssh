@@ -59,10 +59,7 @@ void main() {
     test(
       'Given TerminalConfig, When serializing to JSON, Then produces correct JSON',
       () {
-        final config = TerminalConfig(
-          fontSize: 14.0,
-          letterSpacing: 0.5,
-        );
+        final config = TerminalConfig(fontSize: 14.0, letterSpacing: 0.5);
 
         final json = config.toJson();
 

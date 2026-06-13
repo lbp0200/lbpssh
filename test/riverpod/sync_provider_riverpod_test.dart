@@ -13,11 +13,7 @@ void main() {
   late ProviderContainer container;
 
   setUpAll(() {
-    registerFallbackValue(
-      SyncConfig(
-        accessToken: 'test_token',
-      ),
-    );
+    registerFallbackValue(SyncConfig(accessToken: 'test_token'));
   });
 
   setUp(() {
@@ -41,9 +37,7 @@ void main() {
         'Given SyncService with config, When accessing config, Then returns sync config',
         () {
           // Arrange (Given)
-          final config = SyncConfig(
-            accessToken: 'test_token',
-          );
+          final config = SyncConfig(accessToken: 'test_token');
           when(() => mockSyncService.getConfig()).thenReturn(config);
 
           // Act (When)
@@ -89,9 +83,7 @@ void main() {
         'Given valid config, When saveConfig called, Then saves config and updates state',
         () async {
           // Arrange (Given)
-          final config = SyncConfig(
-            accessToken: 'new_token',
-          );
+          final config = SyncConfig(accessToken: 'new_token');
           when(
             () => mockSyncService.saveConfig(config),
           ).thenAnswer((_) async {});

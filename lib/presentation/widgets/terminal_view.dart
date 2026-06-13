@@ -15,6 +15,7 @@ import '../../data/models/ssh_connection.dart';
 import '../../data/models/terminal_config.dart';
 import '../../domain/services/terminal_service.dart';
 import '../../domain/services/kitty_file_transfer_service.dart';
+import '../../l10n/app_localizations.dart';
 import 'error_dialog.dart';
 import 'error_detail_dialog.dart';
 import 'terminal_theme_builder.dart';
@@ -348,9 +349,7 @@ class _TerminalViewWithSelectionState
 
   ui.Paragraph _buildParagraph(TextStyle style, String text) {
     final builder = ui.ParagraphBuilder(style.getParagraphStyle());
-    builder.pushStyle(
-      style.getTextStyle(),
-    );
+    builder.pushStyle(style.getTextStyle());
     builder.addText(text);
     final paragraph = builder.build();
     paragraph.layout(const ui.ParagraphConstraints(width: double.infinity));
@@ -578,9 +577,10 @@ class TerminalTabsView extends ConsumerWidget {
                 session: session,
                 onReconnect: () async {
                   if (!context.mounted) return;
-                  const snackBar = SnackBar(
-                    content: Text('正在重连...'),
-                    duration: Duration(seconds: 2),
+                  final loc = AppLocalizations.of(context)!;
+                  final snackBar = SnackBar(
+                    content: Text(loc.reconnecting),
+                    duration: const Duration(seconds: 2),
                   );
                   ScaffoldMessenger.of(context).showSnackBar(snackBar);
 
@@ -590,9 +590,9 @@ class TerminalTabsView extends ConsumerWidget {
                         .reconnectSession(session.id);
                   } catch (e) {
                     if (!context.mounted) return;
-                    ScaffoldMessenger.of(
-                      context,
-                    ).showSnackBar(SnackBar(content: Text('重连失败: $e')));
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('${loc.reconnectFailed}: $e')),
+                    );
                   }
                 },
               );

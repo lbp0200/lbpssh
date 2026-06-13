@@ -61,10 +61,10 @@ void main() {
     // Mock platform channels to avoid MissingPluginException
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(SystemChannels.platform, (
-      MethodCall methodCall,
-    ) async {
-      return null;
-    });
+          MethodCall methodCall,
+        ) async {
+          return null;
+        });
   });
 
   group('ErrorDetailDialog', () {
@@ -119,7 +119,7 @@ void main() {
         'Given connection with SOCKS5 proxy, When dialog opens, Then shows proxy info',
         (WidgetTester tester) async {
           final conn = _createConnection(
-            socks5Proxy: Socks5ProxyConfig(host: 'proxy.local', port: 1080),
+            socks5Proxy: Socks5ProxyConfig(host: 'proxy.local'),
           );
 
           await pumpDialog(tester, connection: conn, errorMessage: 'test');
@@ -224,21 +224,20 @@ void main() {
     });
 
     group('actions', () {
-      testWidgets(
-        'Given close button, When tapped, Then dismisses dialog',
-        (WidgetTester tester) async {
-          final conn = _createConnection();
+      testWidgets('Given close button, When tapped, Then dismisses dialog', (
+        WidgetTester tester,
+      ) async {
+        final conn = _createConnection();
 
-          await pumpDialog(tester, connection: conn, errorMessage: 'test');
+        await pumpDialog(tester, connection: conn, errorMessage: 'test');
 
-          expect(find.text('连接失败'), findsOneWidget);
+        expect(find.text('连接失败'), findsOneWidget);
 
-          await tester.tap(find.text('关闭'));
-          await tester.pumpAndSettle();
+        await tester.tap(find.text('关闭'));
+        await tester.pumpAndSettle();
 
-          expect(find.text('连接失败'), findsNothing);
-        },
-      );
+        expect(find.text('连接失败'), findsNothing);
+      });
 
       testWidgets(
         'Given copy error button, When tapped, Then copies to clipboard',
@@ -254,29 +253,25 @@ void main() {
           // Wait for the SnackBar to appear
           await tester.pump(const Duration(seconds: 1));
 
-          expect(
-            find.text('错误信息已复制到剪贴板'),
-            findsOneWidget,
-          );
+          expect(find.text('错误信息已复制到剪贴板'), findsOneWidget);
         },
       );
 
-      testWidgets(
-        'Given feedback button, When tapped, Then does not throw',
-        (WidgetTester tester) async {
-          final conn = _createConnection();
+      testWidgets('Given feedback button, When tapped, Then does not throw', (
+        WidgetTester tester,
+      ) async {
+        final conn = _createConnection();
 
-          await pumpDialog(tester, connection: conn, errorMessage: 'test');
+        await pumpDialog(tester, connection: conn, errorMessage: 'test');
 
-          // Tap the "反馈问题" button — url_launcher will fail gracefully
-          // in test, and the state should still update to show checkmark
-          await tester.tap(find.text('反馈问题'));
-          await tester.pump();
+        // Tap the "反馈问题" button — url_launcher will fail gracefully
+        // in test, and the state should still update to show checkmark
+        await tester.tap(find.text('反馈问题'));
+        await tester.pump();
 
-          // Button text changes to "已复制，前往 Issues" after tap
-          expect(find.text('已复制，前往 Issues'), findsOneWidget);
-        },
-      );
+        // Button text changes to "已复制，前往 Issues" after tap
+        expect(find.text('已复制，前往 Issues'), findsOneWidget);
+      });
     });
   });
 }

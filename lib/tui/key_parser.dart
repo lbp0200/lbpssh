@@ -62,7 +62,9 @@ List<String> parseKeys(List<int> bytes) {
       if (i + len <= bytes.length) {
         try {
           keys.add(utf8.decode(bytes.sublist(i, i + len)));
-        } catch (_) {}
+        } catch (_) {
+          // Silently skip malformed UTF-8 sequences in terminal input
+        }
         i += len;
       } else {
         i++;

@@ -103,6 +103,7 @@ coverage/
 # 其他
 # ----------------------------------------------------------------------------
 # pubspec.lock — Flutter App 项目应提交以锁定依赖版本
+pubspec_overrides.yaml
 .claude
 .worktrees
 .opencode

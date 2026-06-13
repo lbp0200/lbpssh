@@ -46,11 +46,7 @@ void main() {
 
     group('BufferContent', () {
       test('creates with required fields', () {
-        const content = BufferContent(
-          startLine: 0,
-          lines: 10,
-          content: 'abc',
-        );
+        const content = BufferContent(startLine: 0, lines: 10, content: 'abc');
         expect(content.startLine, 0);
         expect(content.lines, 10);
         expect(content.content, 'abc');

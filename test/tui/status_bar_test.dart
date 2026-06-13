@@ -37,11 +37,7 @@ void main() {
       'Given left and right text, When painting status bar, Then renders both sides',
       () {
         final ctx = _ctx();
-        paintTuiStatusBar(
-          ctx,
-          leftText: ' Esc:返回 ',
-          rightText: ' v1.0 ',
-        );
+        paintTuiStatusBar(ctx, leftText: ' Esc:返回 ', rightText: ' v1.0 ');
 
         final lines = ctx.surface.toPlainLines();
         final joined = lines.join('\n');
@@ -56,12 +52,7 @@ void main() {
       'Given custom row, When painting status bar, Then renders at specified row',
       () {
         final ctx = _ctx();
-        paintTuiStatusBar(
-          ctx,
-          leftText: ' Status ',
-          rightText: '',
-          row: 22,
-        );
+        paintTuiStatusBar(ctx, leftText: ' Status ', rightText: '', row: 22);
 
         final lines = ctx.surface.toPlainLines();
         // Row 22 should have the status bar content
@@ -88,11 +79,7 @@ void main() {
       'Given long rightText, When painting status bar, Then positioned at right edge',
       () {
         final ctx = _ctx();
-        paintTuiStatusBar(
-          ctx,
-          leftText: 'Left',
-          rightText: 'RightEdge',
-        );
+        paintTuiStatusBar(ctx, leftText: 'Left', rightText: 'RightEdge');
 
         // RightEdge should be drawn, not clobbered by left text
         final lines = ctx.surface.toPlainLines();

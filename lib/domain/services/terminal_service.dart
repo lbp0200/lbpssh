@@ -106,8 +106,9 @@ class TerminalSession {
     terminal.onClipboardRead = (target) async {
       try {
         final data = await Clipboard.getData(Clipboard.kTextPlain);
-        if (data?.text != null) {
-          final encoded = base64Encode(utf8.encode(data!.text!));
+        final text = data?.text;
+        if (text != null) {
+          final encoded = base64Encode(utf8.encode(text));
           // 写回 OSC 52 响应序列
           terminal.write('\x1b]52;$target;$encoded\x1b\\');
         }

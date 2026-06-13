@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lbp_ssh/data/models/ssh_connection.dart';
-import 'package:lbp_ssh/core/theme/app_theme.dart';
-import '../../presentation/providers_riverpod/connection_provider_riverpod.dart';
+import '../../data/models/ssh_connection.dart';
+import '../../core/theme/app_theme.dart';
+import '../providers_riverpod/connection_provider_riverpod.dart';
 import '../screens/app_settings_screen.dart';
 import 'connection_list.dart';
 

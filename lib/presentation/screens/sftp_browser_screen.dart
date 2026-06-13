@@ -2,12 +2,12 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lbp_ssh/core/theme/app_theme.dart';
-import 'package:lbp_ssh/data/models/ssh_connection.dart';
-import 'package:lbp_ssh/data/models/file_item.dart';
-import 'package:lbp_ssh/domain/services/kitty_file_transfer_service.dart';
-import 'package:lbp_ssh/presentation/providers_riverpod/sftp_provider_riverpod.dart';
-import 'package:lbp_ssh/presentation/widgets/transfer_progress_dialog.dart';
+import '../../core/theme/app_theme.dart';
+import '../../data/models/ssh_connection.dart';
+import '../../data/models/file_item.dart';
+import '../../domain/services/kitty_file_transfer_service.dart';
+import '../providers_riverpod/sftp_provider_riverpod.dart';
+import '../widgets/transfer_progress_dialog.dart';
 
 /// SFTP 浏览器界面
 class SftpBrowserScreen extends ConsumerStatefulWidget {

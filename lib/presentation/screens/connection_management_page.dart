@@ -32,8 +32,7 @@ class ConnectionManagementPage extends ConsumerWidget {
                   onPressed: () {
                     Navigator.of(context).push(
                       MaterialPageRoute<ConnectionFormScreen>(
-                        builder: (context) =>
-                            const ConnectionFormScreen(),
+                        builder: (context) => const ConnectionFormScreen(),
                       ),
                     );
                   },
@@ -90,9 +89,7 @@ class ConnectionManagementPage extends ConsumerWidget {
                             Navigator.of(context).push(
                               MaterialPageRoute<ConnectionFormScreen>(
                                 builder: (context) =>
-                                    const ConnectionFormScreen(
-                                      
-                                    ),
+                                    const ConnectionFormScreen(),
                               ),
                             );
                           },

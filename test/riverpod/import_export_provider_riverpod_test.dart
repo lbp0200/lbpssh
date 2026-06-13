@@ -172,9 +172,7 @@ void main() {
 
           // Assert (Then)
           verify(
-            () => mockService.importAndSaveConnections(
-              connections,
-            ),
+            () => mockService.importAndSaveConnections(connections),
           ).called(1);
         },
       );

@@ -98,11 +98,7 @@ void main() {
     test('Given valid connections, When checking stats, '
         'Then returns correct counts', () {
       final connections = [
-        makeConnection(
-          id: 'c1',
-          name: 'Conn 1',
-          password: 'pw',
-        ),
+        makeConnection(id: 'c1', name: 'Conn 1', password: 'pw'),
       ];
       when(() => mockRepository.getAllConnections()).thenReturn(connections);
 
@@ -160,9 +156,7 @@ void main() {
         final imported = [makeConnection(name: 'Imported')];
         when(() => mockRepository.getAllConnections()).thenReturn(existing);
 
-        final result = await service.mergeImportedConnections(
-          imported,
-        );
+        final result = await service.mergeImportedConnections(imported);
 
         // With overwrite=false, duplicates are skipped regardless of addPrefix
         expect(result.length, equals(1));
@@ -224,9 +218,7 @@ void main() {
       ];
       when(() => mockRepository.getAllConnections()).thenReturn(existing);
 
-      final result = await service.mergeImportedConnections(
-        imported,
-      );
+      final result = await service.mergeImportedConnections(imported);
 
       // With overwrite=false, conflict-1 is skipped
       // Result: existing-1, conflict-1 (original), new-1, new-2
@@ -335,14 +327,8 @@ void main() {
     test('Given connections with password auth, When getExportStats called, '
         'Then counts correctly', () {
       final connections = [
-        makeConnection(
-          id: 'p1',
-          password: 'secret',
-        ),
-        makeConnection(
-          id: 'p2',
-          password: 'secret2',
-        ),
+        makeConnection(id: 'p1', password: 'secret'),
+        makeConnection(id: 'p2', password: 'secret2'),
       ];
       when(() => mockRepository.getAllConnections()).thenReturn(connections);
 
@@ -521,10 +507,7 @@ void main() {
           privateKeyContent: 'key',
           keyPassphrase: 'pass',
         ),
-        makeConnection(
-          id: 'jh1',
-          jumpHost: jumpHost,
-        ),
+        makeConnection(id: 'jh1', jumpHost: jumpHost),
       ];
       when(() => mockRepository.getAllConnections()).thenReturn(connections);
 

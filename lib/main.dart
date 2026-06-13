@@ -17,9 +17,7 @@ import 'utils/sentry_service.dart';
 
 void main() async {
   // 初始化 Sentry
-  await SentryService().init(
-    dsn: const String.fromEnvironment('SENTRY_DSN'),
-  );
+  await SentryService().init(dsn: const String.fromEnvironment('SENTRY_DSN'));
 
   // 全局错误处理器
   FlutterError.onError = (details) {

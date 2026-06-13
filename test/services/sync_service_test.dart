@@ -15,11 +15,7 @@ class MockDio extends Mock implements Dio {}
 
 // Register fallback values for mocktail
 void registerFallbackValues() {
-  registerFallbackValue(
-    SyncConfig(
-      accessToken: 'test_token',
-    ),
-  );
+  registerFallbackValue(SyncConfig(accessToken: 'test_token'));
   registerFallbackValue(
     SshConnection(
       id: 'test_id',
@@ -44,9 +40,7 @@ void main() {
     test(
       'Given required fields, When creating SyncConfig, Then uses default values for optional fields',
       () {
-        final config = SyncConfig(
-          accessToken: 'test_token',
-        );
+        final config = SyncConfig(accessToken: 'test_token');
 
         expect(config.accessToken, 'test_token');
         expect(config.gistId, isNull);
@@ -248,18 +242,11 @@ void main() {
       await Future<void>.delayed(const Duration(milliseconds: 10));
 
       await service.saveConfig(
-        SyncConfig(
-          accessToken: 'tokenA',
-          gistId: 'gistA',
-        ),
+        SyncConfig(accessToken: 'tokenA', gistId: 'gistA'),
       );
 
       await service.saveConfig(
-        SyncConfig(
-          accessToken: 'tokenB',
-          gistId: 'gistB',
-          autoSync: true,
-        ),
+        SyncConfig(accessToken: 'tokenB', gistId: 'gistB', autoSync: true),
       );
 
       expect(service.getConfig()!.accessToken, 'tokenB');
@@ -328,9 +315,7 @@ void main() {
       final service = SyncService(mockRepository, dio: mockDio);
       await Future<void>.delayed(const Duration(milliseconds: 10));
 
-      await service.saveConfig(
-        SyncConfig(accessToken: 'token123'),
-      );
+      await service.saveConfig(SyncConfig(accessToken: 'token123'));
 
       when(() => mockRepository.getAllConnections()).thenReturn([]);
 
@@ -362,10 +347,7 @@ void main() {
       await Future<void>.delayed(const Duration(milliseconds: 10));
 
       await service.saveConfig(
-        SyncConfig(
-          accessToken: 'token123',
-          gistId: 'existing_gist_id',
-        ),
+        SyncConfig(accessToken: 'token123', gistId: 'existing_gist_id'),
       );
 
       when(() => mockRepository.getAllConnections()).thenReturn([]);
@@ -437,9 +419,7 @@ void main() {
       final service = SyncService(mockRepository, dio: mockDio);
       await Future<void>.delayed(const Duration(milliseconds: 10));
 
-      await service.saveConfig(
-        SyncConfig(accessToken: 'token123'),
-      );
+      await service.saveConfig(SyncConfig(accessToken: 'token123'));
 
       when(() => mockRepository.getAllConnections()).thenReturn([]);
 
@@ -474,10 +454,7 @@ void main() {
       await Future<void>.delayed(const Duration(milliseconds: 10));
 
       await service.saveConfig(
-        SyncConfig(
-          accessToken: 'token123',
-          gistId: 'existing_gist',
-        ),
+        SyncConfig(accessToken: 'token123', gistId: 'existing_gist'),
       );
 
       when(() => mockRepository.getAllConnections()).thenReturn([]);
@@ -511,10 +488,7 @@ void main() {
       await Future<void>.delayed(const Duration(milliseconds: 10));
 
       await service.saveConfig(
-        SyncConfig(
-          accessToken: 'token123',
-          gistId: 'existing_gist',
-        ),
+        SyncConfig(accessToken: 'token123', gistId: 'existing_gist'),
       );
 
       when(() => mockRepository.getAllConnections()).thenReturn([]);
@@ -556,10 +530,7 @@ void main() {
       await Future<void>.delayed(const Duration(milliseconds: 10));
 
       await service.saveConfig(
-        SyncConfig(
-          accessToken: 'token123',
-          gistId: 'existing_gist',
-        ),
+        SyncConfig(accessToken: 'token123', gistId: 'existing_gist'),
       );
 
       when(() => mockRepository.getAllConnections()).thenReturn([]);
@@ -616,9 +587,7 @@ void main() {
       SharedPreferences.setMockInitialValues({});
       final service = SyncService(mockRepository, dio: mockDio);
       await Future<void>.delayed(const Duration(milliseconds: 10));
-      await service.saveConfig(
-        SyncConfig(accessToken: 'token123'),
-      );
+      await service.saveConfig(SyncConfig(accessToken: 'token123'));
 
       expect(
         () => service.downloadConfig(),
@@ -632,53 +601,53 @@ void main() {
       );
     });
 
-    test('downloadConfig sets status to success and saves connections', () async {
-      SharedPreferences.setMockInitialValues({});
-      final service = SyncService(mockRepository, dio: mockDio);
-      await Future<void>.delayed(const Duration(milliseconds: 10));
+    test(
+      'downloadConfig sets status to success and saves connections',
+      () async {
+        SharedPreferences.setMockInitialValues({});
+        final service = SyncService(mockRepository, dio: mockDio);
+        await Future<void>.delayed(const Duration(milliseconds: 10));
 
-      await service.saveConfig(
-        SyncConfig(
-          accessToken: 'token123',
-          gistId: 'gist_abc',
-        ),
-      );
+        await service.saveConfig(
+          SyncConfig(accessToken: 'token123', gistId: 'gist_abc'),
+        );
 
-      // Gist API response
-      when(
-        () => mockDio.get<Map<String, dynamic>>(
-          any(),
-          options: any(named: 'options'),
-        ),
-      ).thenAnswer(
-        (_) async => Response(
-          data: {
-            'id': 'gist_abc',
-            'files': {
-              'ssh_connections.json': {
-                'content': jsonEncode({
-                  'version': 1,
-                  'timestamp': DateTime.now().toIso8601String(),
-                  'connections': <Map<String, dynamic>>[],
-                }),
+        // Gist API response
+        when(
+          () => mockDio.get<Map<String, dynamic>>(
+            any(),
+            options: any(named: 'options'),
+          ),
+        ).thenAnswer(
+          (_) async => Response(
+            data: {
+              'id': 'gist_abc',
+              'files': {
+                'ssh_connections.json': {
+                  'content': jsonEncode({
+                    'version': 1,
+                    'timestamp': DateTime.now().toIso8601String(),
+                    'connections': <Map<String, dynamic>>[],
+                  }),
+                },
               },
             },
-          },
-          statusCode: 200,
-          requestOptions: RequestOptions(),
-        ),
-      );
+            statusCode: 200,
+            requestOptions: RequestOptions(),
+          ),
+        );
 
-      when(() => mockRepository.getAllConnections()).thenReturn([]);
-      when(
-        () => mockRepository.saveConnections(any()),
-      ).thenAnswer((_) async {});
+        when(() => mockRepository.getAllConnections()).thenReturn([]);
+        when(
+          () => mockRepository.saveConnections(any()),
+        ).thenAnswer((_) async {});
 
-      await service.downloadConfig();
+        await service.downloadConfig();
 
-      expect(service.status, SyncStatusEnum.success);
-      verify(() => mockRepository.saveConnections(any())).called(1);
-    });
+        expect(service.status, SyncStatusEnum.success);
+        verify(() => mockRepository.saveConnections(any())).called(1);
+      },
+    );
 
     test(
       'downloadConfig with skipConflictCheck skips conflict detection',
@@ -688,10 +657,7 @@ void main() {
         await Future<void>.delayed(const Duration(milliseconds: 10));
 
         await service.saveConfig(
-          SyncConfig(
-            accessToken: 'token123',
-            gistId: 'gist_abc',
-          ),
+          SyncConfig(accessToken: 'token123', gistId: 'gist_abc'),
         );
 
         when(
@@ -736,10 +702,7 @@ void main() {
       await Future<void>.delayed(const Duration(milliseconds: 10));
 
       await service.saveConfig(
-        SyncConfig(
-          accessToken: 'token123',
-          gistId: 'gist_abc',
-        ),
+        SyncConfig(accessToken: 'token123', gistId: 'gist_abc'),
       );
 
       when(
@@ -781,9 +744,7 @@ void main() {
           data: {
             'id': 'gist_abc',
             'files': {
-              'other.json': {
-                'content': '{}',
-              },
+              'other.json': {'content': '{}'},
             },
           },
           statusCode: 200,
@@ -810,10 +771,7 @@ void main() {
       await Future<void>.delayed(const Duration(milliseconds: 10));
 
       await service.saveConfig(
-        SyncConfig(
-          accessToken: 'token123',
-          gistId: 'gist_xyz',
-        ),
+        SyncConfig(accessToken: 'token123', gistId: 'gist_xyz'),
       );
 
       when(

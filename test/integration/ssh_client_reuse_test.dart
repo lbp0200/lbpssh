@@ -32,9 +32,7 @@ Future<void> _runTest() async {
 
   // Test 1: PTY FIRST
   print('--- Test 1: shell() with PTY (xterm 80x24) ---');
-  final session1 = await client.shell(
-    pty: const SSHPtyConfig(type: 'xterm'),
-  );
+  final session1 = await client.shell(pty: const SSHPtyConfig(type: 'xterm'));
   final out1 = StringBuffer();
   final sub1 = session1.stdout
       .cast<List<int>>()

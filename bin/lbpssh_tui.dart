@@ -161,6 +161,7 @@ void _handleListKey(String key) {
           sel: _state.sel,
           editConn: conns[_state.sel],
         );
+        _initFormFromEdit(conns[_state.sel]);
       }
       break;
     case 'd':
@@ -177,9 +178,100 @@ void _handleListKey(String key) {
   }
 }
 
+const _formFields = [
+  'name',
+  'host',
+  'port',
+  'username',
+  'authType',
+  'password',
+  'privateKeyPath',
+  'keyPassphrase',
+];
+
+bool _formFieldVisible(String key) => switch (key) {
+  'password' =>
+    _state.formAuthType == AuthType.password ||
+        _state.formAuthType == AuthType.keyWithPassword,
+  'privateKeyPath' =>
+    _state.formAuthType == AuthType.key ||
+        _state.formAuthType == AuthType.keyWithPassword,
+  'keyPassphrase' => _state.formAuthType == AuthType.keyWithPassword,
+  _ => true,
+};
+
+List<String> _visibleFormFields() =>
+    _formFields.where(_formFieldVisible).toList();
+
+void _initFormFromEdit(SshConnection conn) {
+  _state.formValues = {
+    'name': conn.name,
+    'host': conn.host,
+    'port': conn.port.toString(),
+    'username': conn.username,
+    'password': conn.password ?? '',
+    'privateKeyPath': conn.privateKeyPath ?? '',
+    'keyPassphrase': conn.keyPassphrase ?? '',
+  };
+  _state.formAuthType = conn.authType;
+  _state.formFieldIndex = 0;
+}
+
 void _handleFormKey(String key) {
-  if (key == 'esc') {
-    _state = TuiState(connections: _state.connections, sel: _state.sel);
+  switch (key) {
+    case 'tab':
+      final fields = _visibleFormFields();
+      _state.formFieldIndex = (_state.formFieldIndex + 1) % fields.length;
+      break;
+    case 'esc':
+      _state = TuiState(connections: _state.connections, sel: _state.sel);
+      break;
+    case 'enter':
+      final conn = _state.buildConnection();
+      if (conn != null) {
+        _repo.saveConnection(conn);
+        _state = TuiState(
+          connections: _repo.getAllConnections(),
+          sel: _state.sel,
+        );
+      }
+      break;
+    case 'backspace':
+      final fields = _visibleFormFields();
+      if (_state.formFieldIndex < fields.length) {
+        final k = fields[_state.formFieldIndex];
+        if (k == 'authType') break;
+        final v = _state.formValue(k);
+        if (v.isNotEmpty) {
+          _state.setFormValue(k, v.substring(0, v.length - 1));
+        }
+      }
+      break;
+    case ' ':
+      final fields = _visibleFormFields();
+      if (_state.formFieldIndex < fields.length &&
+          fields[_state.formFieldIndex] == 'authType') {
+        _state.formAuthType = switch (_state.formAuthType) {
+          AuthType.password => AuthType.key,
+          AuthType.key => AuthType.keyWithPassword,
+          AuthType.keyWithPassword => AuthType.sshConfig,
+          AuthType.sshConfig => AuthType.password,
+        };
+        _state.formFieldIndex = 0;
+      } else if (_state.formFieldIndex < fields.length) {
+        final k = fields[_state.formFieldIndex];
+        _state.setFormValue(k, '${_state.formValue(k)} ');
+      }
+      break;
+    default:
+      if (key.length == 1) {
+        final fields = _visibleFormFields();
+        if (_state.formFieldIndex < fields.length) {
+          final k = fields[_state.formFieldIndex];
+          if (k == 'authType') break;
+          _state.setFormValue(k, _state.formValue(k) + key);
+        }
+      }
   }
 }
 

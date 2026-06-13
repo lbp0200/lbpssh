@@ -16,7 +16,7 @@ publish_to: "none" # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and build-number is used as the build suffix.
-version: 1.7.2
+version: 1.7.3
 
 environment:
   sdk: ^3.10.7
@@ -48,8 +48,7 @@ dependencies:
   # 数据存储（已迁移到 JSON 文件）
 
   # 终端模拟器
-  kterm:
-    path: /Users/lbp/Projects/kterm.dart
+  kterm: ^1.2.0
   flutter_pty: ^0.4.0+2
 
   # 状态管理

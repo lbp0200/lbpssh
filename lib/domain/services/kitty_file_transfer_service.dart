@@ -786,71 +786,73 @@ class KittyFileTransferService {
       FileSystemEntity entity,
       String remoteEntityPath,
     ) async {
-      if (entity is File) {
-        final fileId = 'f${DateTime.now().millisecondsSinceEpoch}';
-        final fileSize = await entity.length();
+      switch (entity) {
+        case File f:
+          final fileId = 'f${DateTime.now().millisecondsSinceEpoch}';
+          final fileSize = await f.length();
 
-        _session.writeRaw(
-          _encoder.createFileMetadata(
-            sessionId: transferId,
-            fileId: fileId,
-            fileName: remoteEntityPath,
-            fileSize: fileSize,
-          ),
-        );
-
-        final stream = entity.openRead();
-        int transferred = 0;
-        await for (final chunk in stream) {
           _session.writeRaw(
-            _encoder.createDataChunk(
+            _encoder.createFileMetadata(
               sessionId: transferId,
               fileId: fileId,
-              data: chunk,
+              fileName: remoteEntityPath,
+              fileSize: fileSize,
             ),
           );
-          transferred = transferred + chunk.length;
-        }
 
-        onProgress(
-          TransferProgress(
-            fileName: p.basename(remoteEntityPath),
-            transferredBytes: transferred,
-            totalBytes: fileSize,
-            percent: 0, // 目录传输不计算百分比
-            bytesPerSecond: 0,
-          ),
-        );
-      } else if (entity is Directory) {
-        final dirId = 'd${DateTime.now().millisecondsSinceEpoch}';
-        _session.writeRaw(
-          _encoder.createDirectoryMetadata(
-            sessionId: transferId,
-            fileId: dirId,
-            dirName: remoteEntityPath,
-          ),
-        );
+          final stream = f.openRead();
+          int transferred = 0;
+          await for (final chunk in stream) {
+            _session.writeRaw(
+              _encoder.createDataChunk(
+                sessionId: transferId,
+                fileId: fileId,
+                data: chunk,
+              ),
+            );
+            transferred = transferred + chunk.length;
+          }
 
-        // 递归处理子目录
-        final children = entity.listSync();
-        for (final child in children) {
-          final childName = p.basename(child.path);
-          final childRemotePath = '$remoteEntityPath/$childName';
-          await sendEntity(child, childRemotePath);
-        }
-      } else if (entity is Link) {
-        final target = await entity.target();
-        final linkId = 'l${DateTime.now().millisecondsSinceEpoch}';
-        _session.writeRaw(
-          _encoder.createFileMetadata(
-            sessionId: transferId,
-            fileId: linkId,
-            fileName: remoteEntityPath,
-            fileSize: 0,
-            fileType: FileType.symlink,
-            linkTarget: target,
-          ),
-        );
+          onProgress(
+            TransferProgress(
+              fileName: p.basename(remoteEntityPath),
+              transferredBytes: transferred,
+              totalBytes: fileSize,
+              percent: 0,
+              bytesPerSecond: 0,
+            ),
+          );
+
+        case Directory d:
+          final dirId = 'd${DateTime.now().millisecondsSinceEpoch}';
+          _session.writeRaw(
+            _encoder.createDirectoryMetadata(
+              sessionId: transferId,
+              fileId: dirId,
+              dirName: remoteEntityPath,
+            ),
+          );
+
+          final children = d.listSync();
+          for (final child in children) {
+            final childName = p.basename(child.path);
+            final childRemotePath = '$remoteEntityPath/$childName';
+            await sendEntity(child, childRemotePath);
+          }
+
+        case Link l:
+          final target = await l.target();
+          final linkId = 'l${DateTime.now().millisecondsSinceEpoch}';
+          _session.writeRaw(
+            _encoder.createFileMetadata(
+              sessionId: transferId,
+              fileId: linkId,
+              fileName: remoteEntityPath,
+              fileSize: 0,
+              fileType: FileType.symlink,
+              linkTarget: target,
+            ),
+          );
       }
     }
 

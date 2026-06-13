@@ -139,9 +139,7 @@ void main() {
     test(
       'Given windowsTerminal terminal type, When calling getWindowsCommand, Then returns wt.exe',
       () {
-        final config = DefaultTerminalConfig(
-          
-        );
+        final config = DefaultTerminalConfig();
         expect(config.getWindowsCommand(), 'wt.exe');
       },
     );

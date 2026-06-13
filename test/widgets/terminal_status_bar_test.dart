@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lbp_ssh/domain/services/terminal_service.dart';
 import 'package:lbp_ssh/domain/services/ssh_service.dart';
+import 'package:lbp_ssh/l10n/app_localizations.dart';
 import 'package:lbp_ssh/presentation/widgets/terminal_status_bar.dart';
 import 'package:lbp_ssh/domain/services/terminal_input_service.dart';
 
@@ -27,6 +28,14 @@ class MockTerminalInputService implements TerminalInputService {
   void dispose() {}
 }
 
+Widget createApp({required Widget child}) {
+  return MaterialApp(
+    localizationsDelegates: const [AppLocalizations.delegate],
+    supportedLocales: const [Locale('en'), Locale('zh')],
+    home: Scaffold(body: child),
+  );
+}
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -34,7 +43,6 @@ void main() {
     testWidgets(
       'Given SSH session connected, When rendered, Then shows Connected status',
       (tester) async {
-        // Arrange (Given)
         final mockService = MockTerminalInputService();
         final session = TerminalSession(
           id: 'test-session',
@@ -45,14 +53,11 @@ void main() {
         session.connectionState = SshConnectionState.connected;
         session.connectionStartTime = DateTime.now();
 
-        // Act (When)
         await tester.pumpWidget(
-          MaterialApp(
-            home: Scaffold(body: TerminalStatusBar(session: session)),
-          ),
+          createApp(child: TerminalStatusBar(session: session)),
         );
+        await tester.pump();
 
-        // Assert (Then)
         expect(find.text('Connected'), findsOneWidget);
       },
     );
@@ -60,7 +65,6 @@ void main() {
     testWidgets(
       'Given SSH session disconnected, When rendered, Then shows Disconnected status',
       (tester) async {
-        // Arrange (Given)
         final mockService = MockTerminalInputService();
         final session = TerminalSession(
           id: 'test-session',
@@ -70,14 +74,11 @@ void main() {
         );
         session.connectionState = SshConnectionState.disconnected;
 
-        // Act (When)
         await tester.pumpWidget(
-          MaterialApp(
-            home: Scaffold(body: TerminalStatusBar(session: session)),
-          ),
+          createApp(child: TerminalStatusBar(session: session)),
         );
+        await tester.pump();
 
-        // Assert (Then)
         expect(find.text('Disconnected'), findsOneWidget);
       },
     );
@@ -85,7 +86,6 @@ void main() {
     testWidgets('Given local session, When rendered, Then shows Local status', (
       tester,
     ) async {
-      // Arrange (Given)
       final localService = MockTerminalInputService();
       final session = TerminalSession(
         id: 'local-session',
@@ -94,21 +94,17 @@ void main() {
         isLocal: true,
       );
 
-      // Act (When)
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(body: TerminalStatusBar(session: session)),
-        ),
+        createApp(child: TerminalStatusBar(session: session)),
       );
+      await tester.pump();
 
-      // Assert (Then)
       expect(find.text('Local'), findsOneWidget);
     });
 
     testWidgets(
       'Given SSH session with serverInfo, When rendered, Then shows server info',
       (tester) async {
-        // Arrange (Given)
         final mockService = MockTerminalInputService();
         final session = TerminalSession(
           id: 'test-session',
@@ -119,14 +115,11 @@ void main() {
         session.connectionState = SshConnectionState.connected;
         session.connectionStartTime = DateTime.now();
 
-        // Act (When)
         await tester.pumpWidget(
-          MaterialApp(
-            home: Scaffold(body: TerminalStatusBar(session: session)),
-          ),
+          createApp(child: TerminalStatusBar(session: session)),
         );
+        await tester.pump();
 
-        // Assert (Then)
         expect(find.textContaining('admin@server.example.com'), findsOneWidget);
       },
     );
@@ -134,7 +127,6 @@ void main() {
     testWidgets(
       'Given disconnected SSH session with onReconnect, When rendered, Then shows reconnect button',
       (tester) async {
-        // Arrange (Given)
         final mockService = MockTerminalInputService();
         final session = TerminalSession(
           id: 'test-session',
@@ -146,24 +138,19 @@ void main() {
 
         bool reconnectCalled = false;
 
-        // Act (When)
         await tester.pumpWidget(
-          MaterialApp(
-            home: Scaffold(
-              body: TerminalStatusBar(
-                session: session,
-                onReconnect: () {
-                  reconnectCalled = true;
-                },
-              ),
+          createApp(
+            child: TerminalStatusBar(
+              session: session,
+              onReconnect: () {
+                reconnectCalled = true;
+              },
             ),
           ),
         );
+        await tester.pump();
 
-        // Assert (Then)
         expect(find.text('Reconnect'), findsOneWidget);
-
-        // When tap reconnect
         await tester.tap(find.text('Reconnect'));
         expect(reconnectCalled, true);
       },
@@ -172,7 +159,6 @@ void main() {
     testWidgets(
       'Given connected session, When rendered, Then shows connection duration',
       (tester) async {
-        // Arrange (Given)
         final mockService = MockTerminalInputService();
         final session = TerminalSession(
           id: 'test-session',
@@ -181,19 +167,15 @@ void main() {
           serverInfo: 'user@192.168.1.1',
         );
         session.connectionState = SshConnectionState.connected;
-        // Set connection start time to 5 minutes ago
         session.connectionStartTime = DateTime.now().subtract(
           const Duration(minutes: 5),
         );
 
-        // Act (When)
         await tester.pumpWidget(
-          MaterialApp(
-            home: Scaffold(body: TerminalStatusBar(session: session)),
-          ),
+          createApp(child: TerminalStatusBar(session: session)),
         );
+        await tester.pump();
 
-        // Assert (Then) - Should show time format HH:MM:SS
         expect(find.textContaining(':'), findsWidgets);
       },
     );
@@ -201,7 +183,6 @@ void main() {
     testWidgets(
       'Given session connecting, When rendered, Then shows Connecting status',
       (tester) async {
-        // Arrange (Given)
         final mockService = MockTerminalInputService();
         final session = TerminalSession(
           id: 'test-session',
@@ -211,14 +192,11 @@ void main() {
         );
         session.connectionState = SshConnectionState.connecting;
 
-        // Act (When)
         await tester.pumpWidget(
-          MaterialApp(
-            home: Scaffold(body: TerminalStatusBar(session: session)),
-          ),
+          createApp(child: TerminalStatusBar(session: session)),
         );
+        await tester.pump();
 
-        // Assert (Then)
         expect(find.text('Connecting...'), findsOneWidget);
       },
     );
@@ -226,7 +204,6 @@ void main() {
     testWidgets(
       'Given local session, When rendered, Then does not show server info',
       (tester) async {
-        // Arrange (Given)
         final localService = MockTerminalInputService();
         final session = TerminalSession(
           id: 'local-session',
@@ -237,16 +214,12 @@ void main() {
         session.connectionState = SshConnectionState.connected;
         session.connectionStartTime = DateTime.now();
 
-        // Act (When)
         await tester.pumpWidget(
-          MaterialApp(
-            home: Scaffold(body: TerminalStatusBar(session: session)),
-          ),
+          createApp(child: TerminalStatusBar(session: session)),
         );
+        await tester.pump();
 
-        // Assert (Then) - Should show Local, not server info
         expect(find.text('Local'), findsOneWidget);
-        // Should NOT show @ symbol (server info indicator)
         expect(find.textContaining('@'), findsNothing);
       },
     );

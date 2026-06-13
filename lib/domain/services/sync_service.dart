@@ -37,8 +37,8 @@ class SyncConfig {
   factory SyncConfig.fromJson(Map<String, dynamic> json) => SyncConfig(
     accessToken: json['accessToken'] as String?,
     gistId: json['gistId'] as String?,
-    gistFilename: (json['gistFilename'] as String?) ??
-        AppConstants.defaultGistFilename,
+    gistFilename:
+        (json['gistFilename'] as String?) ?? AppConstants.defaultGistFilename,
     autoSync: (json['autoSync'] as bool?) ?? false,
     syncIntervalMinutes:
         (json['syncIntervalMinutes'] as int?) ??

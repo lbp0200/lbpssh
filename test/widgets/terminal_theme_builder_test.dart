@@ -52,10 +52,7 @@ void main() {
         final theme = terminalThemeFromConfig(config);
 
         // Assert (Then) — selection = foreground with 0.3 alpha
-        expect(
-          theme.selection,
-          const Color(0xFFFF5733).withValues(alpha: 0.3),
-        );
+        expect(theme.selection, const Color(0xFFFF5733).withValues(alpha: 0.3));
       },
     );
 

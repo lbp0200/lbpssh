@@ -150,11 +150,10 @@ class KittyMultipleCursorsService {
   ///
   /// [cursorId] - 光标 ID
   VirtualCursor? getCursor(String cursorId) {
-    try {
-      return _cursors.firstWhere((c) => c.id == cursorId);
-    } catch (_) {
-      return null;
+    for (final c in _cursors) {
+      if (c.id == cursorId) return c;
     }
+    return null;
   }
 
   /// 激活光标

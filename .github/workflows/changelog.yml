@@ -11,7 +11,7 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: Generate and push CHANGELOG
@@ -19,9 +19,12 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: |
-          PREVIOUS_TAG=$(git describe --tags --abbrev=0 2>/dev/null || git log --reverse --format="%H" | head -1)
-          SINCE_DATE=$(git log -1 --format="%aI" "$PREVIOUS_TAG" | cut -d'T' -f1)
-          git log --pretty=format:"- %s (%h)" --since="$SINCE_DATE" > CHANGELOG.md
+          PREVIOUS_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+          if [ -n "$PREVIOUS_TAG" ]; then
+            git log "$PREVIOUS_TAG..HEAD" --no-merges --pretty=format:"- %s (%h)" > CHANGELOG.md
+          else
+            git log --no-merges --pretty=format:"- %s (%h)" > CHANGELOG.md
+          fi
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           git add CHANGELOG.md

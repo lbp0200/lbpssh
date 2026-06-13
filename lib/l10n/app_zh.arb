@@ -9,5 +9,9 @@
   "disconnected": "已断开",
   "reconnect": "重连",
   "reconnecting": "正在重连...",
-  "connectionLost": "连接已断开"
+  "connectionLost": "连接已断开",
+  "local": "本地",
+  "connecting": "连接中...",
+  "connected": "已连接",
+  "reconnectFailed": "重连失败"
 }

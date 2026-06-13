@@ -31,7 +31,7 @@ flutter test test/models/ssh_connection_test.dart
 flutter test --name="SshConnection"
 
 # Build for different platforms
-flutter build macos --debug --no-tree-shake-icons
+flutter build macos --debug
 flutter build linux --debug
 flutter build windows --debug
 
@@ -76,7 +76,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dio/dio.dart';
 
 import '../../data/models/ssh_connection.dart';
-import '../providers/connection_provider.dart';
+import '../providers_riverpod/connection_provider_riverpod.dart';
 ```
 
 ### Naming Conventions
@@ -149,7 +149,6 @@ void main() {
 - **SSH**: dartssh2
 - **Terminal**: kterm, flutter_pty
 - **State**: flutter_riverpod
-- **Routing**: go_router
 - **Networking**: dio
 - **Encryption**: encrypt
 

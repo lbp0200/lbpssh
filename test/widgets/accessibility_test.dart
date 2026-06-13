@@ -30,9 +30,7 @@ Widget createTestWidget({
         overrides: [
           connectionProvider.overrideWith(
             () => _MockConnectionNotifier(
-              ConnectionState(
-                connections: connections,
-              ),
+              ConnectionState(connections: connections),
             ),
           ),
         ],

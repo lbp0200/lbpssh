@@ -38,10 +38,12 @@ void main() {
       test(
         'Given empty searchQuery, When accessing filteredConnections, Then returns all connections',
         () {
-          final state = TuiState(connections: [
-            _conn(name: 'server-1'),
-            _conn(name: 'server-2'),
-          ]);
+          final state = TuiState(
+            connections: [
+              _conn(name: 'server-1'),
+              _conn(name: 'server-2'),
+            ],
+          );
 
           expect(state.filteredConnections.length, 2);
         },
@@ -149,6 +151,147 @@ void main() {
 
           expect(state.editConn, isNotNull);
           expect(state.editConn!.name, 'edit-me');
+        },
+      );
+    });
+
+    group('form state', () {
+      test(
+        'Given new TuiState, When checking form defaults, Then fieldIndex is 0 and values are empty',
+        () {
+          final state = TuiState();
+
+          expect(state.formFieldIndex, 0);
+          expect(state.formValues, isEmpty);
+          expect(state.formAuthType, AuthType.password);
+        },
+      );
+
+      test(
+        'Given formValues set, When calling formValue, Then returns correct value',
+        () {
+          final state = TuiState(formValues: {'name': 'my-server'});
+
+          expect(state.formValue('name'), 'my-server');
+          expect(state.formValue('host'), '');
+          expect(state.formValue('port', fallback: '22'), '22');
+        },
+      );
+
+      test(
+        'Given formValues, When calling setFormValue, Then updates value',
+        () {
+          final state = TuiState(formValues: {'name': 'old'});
+          state.setFormValue('name', 'new');
+
+          expect(state.formValue('name'), 'new');
+        },
+      );
+
+      test(
+        'Given formValues setFormValue, When setting new key, Then adds to map',
+        () {
+          final state = TuiState();
+          state.setFormValue('host', '10.0.0.1');
+
+          expect(state.formValue('host'), '10.0.0.1');
+        },
+      );
+
+      test(
+        'Given complete formValues, When calling buildConnection, Then returns valid SshConnection',
+        () {
+          final state = TuiState(
+            formValues: {
+              'name': 'my-server',
+              'host': '10.0.0.1',
+              'port': '2222',
+              'username': 'admin',
+            },
+          );
+
+          final conn = state.buildConnection();
+          expect(conn, isNotNull);
+          expect(conn!.name, 'my-server');
+          expect(conn.host, '10.0.0.1');
+          expect(conn.port, 2222);
+          expect(conn.username, 'admin');
+          expect(conn.authType, AuthType.password);
+        },
+      );
+
+      test(
+        'Given incomplete formValues, When calling buildConnection, Then returns null',
+        () {
+          final state = TuiState(formValues: {'name': 'partial'});
+
+          expect(state.buildConnection(), isNull);
+        },
+      );
+
+      test(
+        'Given editConn, When calling buildConnection, Then preserves original id',
+        () {
+          final conn = _conn(name: 'original');
+          final state = TuiState(
+            editConn: conn,
+            formValues: {
+              'name': 'renamed',
+              'host': '10.0.0.1',
+              'port': '22',
+              'username': 'root',
+            },
+          );
+
+          final result = state.buildConnection();
+          expect(result, isNotNull);
+          expect(result!.id, 'test-id');
+          expect(result.name, 'renamed');
+        },
+      );
+
+      test(
+        'Given non-default authType, When building, Then preserves authType',
+        () {
+          final state = TuiState(
+            formAuthType: AuthType.key,
+            formValues: {
+              'name': 'key-auth',
+              'host': '10.0.0.1',
+              'port': '22',
+              'username': 'admin',
+              'privateKeyPath': '/home/user/.ssh/id_rsa',
+            },
+          );
+
+          final conn = state.buildConnection();
+          expect(conn, isNotNull);
+          expect(conn!.authType, AuthType.key);
+          expect(conn.privateKeyPath, '/home/user/.ssh/id_rsa');
+        },
+      );
+
+      test(
+        'Given authType keyWithPassword, When building, Then includes passphrase',
+        () {
+          final state = TuiState(
+            formAuthType: AuthType.keyWithPassword,
+            formValues: {
+              'name': 'k+p',
+              'host': '10.0.0.1',
+              'port': '22',
+              'username': 'admin',
+              'password': 'secret123',
+              'privateKeyPath': '/home/user/.ssh/id_rsa',
+              'keyPassphrase': 'mypass',
+            },
+          );
+
+          final conn = state.buildConnection();
+          expect(conn, isNotNull);
+          expect(conn!.password, 'secret123');
+          expect(conn.privateKeyPath, '/home/user/.ssh/id_rsa');
+          expect(conn.keyPassphrase, 'mypass');
         },
       );
     });
