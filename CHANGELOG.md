@@ -1,0 +1,2 @@
+- fix(ci): Windows coroutine build error, upgrade actions to Node 24 compatible (c5ecdd0)
+- docs: update CHANGELOG (f497a6a)
