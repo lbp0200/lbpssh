@@ -73,7 +73,7 @@ dependencies:
   json_annotation: ^4.12.0
 
   # 路径处理
-  path_provider: ^2.1.1
+  path_provider: ^2.1.6
 
   # 共享首选项
   shared_preferences: ^2.5.5
