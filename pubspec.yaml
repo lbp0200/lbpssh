@@ -88,7 +88,7 @@ dependencies:
   file_picker: ^10.3.10
 
   # 桌面通知
-  flutter_local_notifications: ^21.0.0
+  flutter_local_notifications: ^22.0.1
 
   # 窗口管理
   window_manager: ^0.5.1
