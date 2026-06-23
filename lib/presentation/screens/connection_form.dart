@@ -132,7 +132,7 @@ class _ConnectionFormScreenState extends ConsumerState<ConnectionFormScreen> {
   // 选择私钥文件
   Future<void> _pickPrivateKeyFile() async {
     try {
-      FilePickerResult? result = await FilePicker.platform.pickFiles();
+      FilePickerResult? result = await FilePicker.pickFiles();
 
       if (result != null && result.files.single.path != null) {
         final filePath = result.files.single.path!;

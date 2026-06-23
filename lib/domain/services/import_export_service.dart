@@ -45,7 +45,7 @@ class ImportExportService {
       };
 
       // 选择保存位置
-      String? outputFile = await FilePicker.platform.saveFile(
+      String? outputFile = await FilePicker.saveFile(
         dialogTitle: '保存SSH连接配置',
         fileName:
             'ssh_connections_export_${DateTime.now().toString().substring(0, 10)}.json',
@@ -80,7 +80,7 @@ class ImportExportService {
       _lastError = null;
 
       // 选择要导入的文件
-      FilePickerResult? result = await FilePicker.platform.pickFiles(
+      FilePickerResult? result = await FilePicker.pickFiles(
         type: FileType.custom,
         allowedExtensions: ['json'],
         dialogTitle: '选择SSH连接配置文件',
