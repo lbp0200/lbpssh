@@ -109,7 +109,7 @@ class _SftpBrowserScreenState extends ConsumerState<SftpBrowserScreen> {
   }
 
   Future<void> _uploadFile() async {
-    final result = await FilePicker.platform.pickFiles();
+    final result = await FilePicker.pickFiles();
     if (result != null && result.files.single.path != null) {
       final file = result.files.single;
       final String localPath = file.path!;
@@ -160,7 +160,7 @@ class _SftpBrowserScreenState extends ConsumerState<SftpBrowserScreen> {
   }
 
   Future<void> _downloadFile(FileItem item) async {
-    final result = await FilePicker.platform.saveFile(fileName: item.name);
+    final result = await FilePicker.saveFile(fileName: item.name);
     if (result != null) {
       // 创建进度流
       final progressController = StreamController<TransferProgress>();
