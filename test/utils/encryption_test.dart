@@ -1,6 +1,8 @@
+import 'dart:convert';
+import 'dart:typed_data';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lbp_ssh/utils/encryption.dart';
-import 'dart:convert';
 
 void main() {
   group('EncryptionUtil', () {
@@ -11,7 +13,6 @@ void main() {
           final key = EncryptionUtil.deriveKey('short');
 
           expect(key.length, 32);
-          expect(key.bytes.length, 32);
         },
       );
 
@@ -21,7 +22,6 @@ void main() {
           final key = EncryptionUtil.deriveKey('a' * 50);
 
           expect(key.length, 32);
-          expect(key.bytes.length, 32);
         },
       );
 
@@ -31,7 +31,6 @@ void main() {
           final key = EncryptionUtil.deriveKey('');
 
           expect(key.length, 32);
-          expect(key.bytes.length, 32);
         },
       );
 
@@ -50,7 +49,7 @@ void main() {
           final key1 = EncryptionUtil.deriveKey('testpassword');
           final key2 = EncryptionUtil.deriveKey('testpassword');
 
-          expect(base64Encode(key1.bytes), base64Encode(key2.bytes));
+          expect(base64Encode(key1), base64Encode(key2));
         },
       );
 
@@ -60,7 +59,7 @@ void main() {
           final key1 = EncryptionUtil.deriveKey('password1');
           final key2 = EncryptionUtil.deriveKey('password2');
 
-          expect(base64Encode(key1.bytes), isNot(base64Encode(key2.bytes)));
+          expect(base64Encode(key1), isNot(base64Encode(key2)));
         },
       );
     });
@@ -229,6 +228,139 @@ Line 3''';
       );
     });
 
+    group('encryptWithKey/decryptWithKey', () {
+      late Uint8List key;
+
+      setUp(() {
+        key = EncryptionUtil.randomBytes(32);
+      });
+
+      test(
+        'Given text and key, When encrypting and decrypting, Then recovers original',
+        () {
+          const original = 'Hello with raw key!';
+
+          final encrypted = EncryptionUtil.encryptWithKey(original, key);
+          final decrypted = EncryptionUtil.decryptWithKey(encrypted, key);
+
+          expect(decrypted, original);
+        },
+      );
+
+      test(
+        'Given same text and key, When encrypting multiple times, Then produces different ciphertext',
+        () {
+          const original = 'Same text with key';
+
+          final encrypted1 = EncryptionUtil.encryptWithKey(original, key);
+          final encrypted2 = EncryptionUtil.encryptWithKey(original, key);
+
+          expect(encrypted1, isNot(encrypted2));
+        },
+      );
+
+      test(
+        'Given text, When encrypting with one key and decrypting with another, Then throws exception',
+        () {
+          const original = 'Secret key test';
+          final wrongKey = EncryptionUtil.randomBytes(32);
+
+          final encrypted = EncryptionUtil.encryptWithKey(original, key);
+
+          expect(
+            () => EncryptionUtil.decryptWithKey(encrypted, wrongKey),
+            throwsException,
+          );
+        },
+      );
+    });
+
+    group('encryptField/decryptField', () {
+      late Uint8List key;
+
+      setUp(() {
+        key = EncryptionUtil.randomBytes(32);
+      });
+
+      test(
+        'Given plaintext, When encrypting field, Then produces prefixed ciphertext',
+        () {
+          const original = 'sensitive data';
+
+          final encrypted = EncryptionUtil.encryptField(original, key);
+
+          expect(encrypted, startsWith('\$AES\$V1\$'));
+          expect(encrypted, isNot(original));
+        },
+      );
+
+      test(
+        'Given encrypted field, When decrypting, Then recovers original',
+        () {
+          const original = 'my password';
+
+          final encrypted = EncryptionUtil.encryptField(original, key);
+          final decrypted = EncryptionUtil.decryptField(encrypted, key);
+
+          expect(decrypted, original);
+        },
+      );
+
+      test(
+        'Given plaintext field, When decrypting, Then returns as-is',
+        () {
+          const original = 'plaintext value';
+
+          final result = EncryptionUtil.decryptField(original, key);
+
+          expect(result, original);
+        },
+      );
+
+      test(
+        'Given null field, When decrypting, Then returns null',
+        () {
+          final result = EncryptionUtil.decryptField(null, key);
+
+          expect(result, isNull);
+        },
+      );
+
+      test(
+        'Given empty field, When decrypting, Then returns empty',
+        () {
+          const original = '';
+
+          final result = EncryptionUtil.decryptField(original, key);
+
+          expect(result, isEmpty);
+        },
+      );
+    });
+
+    group('isEncrypted', () {
+      test(
+        'Given prefixed string, When checking, Then returns true',
+        () {
+          expect(EncryptionUtil.isEncrypted('\$AES\$V1\$abc123'), isTrue);
+        },
+      );
+
+      test(
+        'Given plain string, When checking, Then returns false',
+        () {
+          expect(EncryptionUtil.isEncrypted('plaintext'), isFalse);
+        },
+      );
+
+      test(
+        'Given non-matching prefix, When checking, Then returns false',
+        () {
+          expect(EncryptionUtil.isEncrypted('\$BES\$V1\$abc123'), isFalse);
+        },
+      );
+    });
+
     group('encryption format', () {
       test(
         'Given plaintext and password, When encrypting, Then produces base64 encoded ciphertext',
@@ -249,6 +381,19 @@ Line 3''';
           const password = 'testpassword';
 
           final encrypted = EncryptionUtil.encrypt(original, password);
+          final decoded = base64Decode(encrypted);
+
+          expect(decoded.length, greaterThan(16));
+        },
+      );
+
+      test(
+        'Given encryptWithKey, When encrypting, Then produces IV prepended ciphertext',
+        () {
+          const original = 'Key-based test';
+          final key = EncryptionUtil.randomBytes(32);
+
+          final encrypted = EncryptionUtil.encryptWithKey(original, key);
           final decoded = base64Decode(encrypted);
 
           expect(decoded.length, greaterThan(16));

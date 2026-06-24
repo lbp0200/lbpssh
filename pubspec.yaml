@@ -16,7 +16,7 @@ publish_to: "none" # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and build-number is used as the build suffix.
-version: 1.9.0
+version: 1.9.1
 
 environment:
   sdk: ^3.10.7
@@ -40,10 +40,10 @@ dependencies:
   cupertino_icons: ^1.0.9
 
   # App info
-  package_info_plus: ^9.0.0
+  package_info_plus: ^10.1.0
 
   # SSH 客户端
-  dartssh2: ^2.14.0
+  dartssh2: ^2.18.0
 
   # 数据存储（已迁移到 JSON 文件）
 
@@ -58,7 +58,7 @@ dependencies:
   dio: ^5.9.2
 
   # 加密
-  encrypt: ^5.0.3
+  pointycastle: ^4.0.0
 
   # 错误追踪
   sentry: ^9.20.0
@@ -81,14 +81,8 @@ dependencies:
   # UUID 生成
   uuid: ^4.5.3
 
-  # 骨架屏
-  shimmer: ^3.0.0
-
   # 文件选择器
-  file_picker: ^11.0.2
-
-  # 桌面通知
-  flutter_local_notifications: ^22.0.1
+  file_picker: ^12.0.0-beta.7
 
   # 窗口管理
   window_manager: ^0.5.1

@@ -113,6 +113,8 @@ class SshService implements TerminalInputService {
   // 性能优化：输出缓冲和批处理
   final _outputBuffer = StringBuffer();
   Timer? _outputTimer;
+  static const _outputBufferMaxSize = 65536;
+  static const _outputFlushInterval = Duration(milliseconds: 16);
 
   // 是否已显示过 Last login 信息
   bool _hasShownLastLogin = false;
@@ -156,43 +158,50 @@ class SshService implements TerminalInputService {
     return null;
   }
 
-  /// 性能优化：批量输出处理
+  /// 性能优化：批量输出处理（固定间隔刷新，不停顿）
   void _scheduleOutputFlush() {
-    _outputTimer?.cancel();
-    _outputTimer = Timer(const Duration(milliseconds: 10), () {
-      if (_isDisposed || _outputController.isClosed) return;
-
-      var output = _outputBuffer.toString();
-      _outputBuffer.clear();
-
-      // 过滤重复的 Last login 行
-      if (!_hasShownLastLogin && output.contains('Last login:')) {
-        _hasShownLastLogin = true;
-        // 保留第一行（Last login），删除后续的
-        final lines = output.split('\n');
-        final lastLoginLines = <String>[];
-        final otherLines = <String>[];
-        bool foundLastLogin = false;
-
-        for (final line in lines) {
-          if (line.startsWith('Last login:')) {
-            if (!foundLastLogin) {
-              lastLoginLines.add(line);
-              foundLastLogin = true;
-            }
-            // 跳过重复的 Last login 行
-          } else {
-            otherLines.add(line);
-          }
-        }
-
-        output = [...lastLoginLines, ...otherLines].join('\n');
-      }
-
-      if (output.isNotEmpty) {
-        _outputController.add(output);
-      }
+    _outputTimer ??= Timer.periodic(_outputFlushInterval, (_) {
+      _flushOutputBuffer();
     });
+  }
+
+  void _flushOutputBuffer() {
+    if (_isDisposed || _outputController.isClosed) return;
+
+    if (_outputBuffer.isEmpty) {
+      _outputTimer?.cancel();
+      _outputTimer = null;
+      return;
+    }
+
+    var output = _outputBuffer.toString();
+    _outputBuffer.clear();
+
+    // 过滤重复的 Last login 行
+    if (!_hasShownLastLogin && output.contains('Last login:')) {
+      _hasShownLastLogin = true;
+      final lines = output.split('\n');
+      final lastLoginLines = <String>[];
+      final otherLines = <String>[];
+      bool foundLastLogin = false;
+
+      for (final line in lines) {
+        if (line.startsWith('Last login:')) {
+          if (!foundLastLogin) {
+            lastLoginLines.add(line);
+            foundLastLogin = true;
+          }
+        } else {
+          otherLines.add(line);
+        }
+      }
+
+      output = [...lastLoginLines, ...otherLines].join('\n');
+    }
+
+    if (output.isNotEmpty) {
+      _outputController.add(output);
+    }
   }
 
   /// 连接到 SSH 服务器
@@ -393,9 +402,12 @@ class SshService implements TerminalInputService {
           .transform(const Utf8Decoder(allowMalformed: true))
           .listen(
             (data) {
-              // 性能优化：批量处理输出
               _outputBuffer.write(data);
-              _scheduleOutputFlush();
+              if (_outputBuffer.length > _outputBufferMaxSize) {
+                _flushOutputBuffer();
+              } else {
+                _scheduleOutputFlush();
+              }
             },
             onError: (Object error) {
               if (!_isDisposed && !_outputController.isClosed) {
@@ -414,7 +426,8 @@ class SshService implements TerminalInputService {
           .transform(const Utf8Decoder(allowMalformed: true))
           .listen(
             (data) {
-              _outputController.add(data);
+              _outputBuffer.write(data);
+              _scheduleOutputFlush();
             },
             onError: (Object error) {
               if (!_isDisposed && !_outputController.isClosed) {
@@ -502,6 +515,11 @@ class SshService implements TerminalInputService {
     if (_isDisposed) return;
 
     try {
+      // 刷新剩余输出缓冲
+      _outputTimer?.cancel();
+      _outputTimer = null;
+      _flushOutputBuffer();
+
       _session?.close();
       _session = null;
 
@@ -535,6 +553,10 @@ class SshService implements TerminalInputService {
   /// SSH session 意外断开时调用（由 _session.done 触发）
   void _onSessionDone() {
     if (_isDisposed) return;
+    // 刷新剩余输出缓冲
+    _outputTimer?.cancel();
+    _outputTimer = null;
+    _flushOutputBuffer();
     if (_sessionDoneCompleter?.isCompleted == false) {
       _sessionDoneCompleter?.complete();
     }

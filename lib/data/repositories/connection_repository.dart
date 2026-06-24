@@ -1,14 +1,25 @@
 import 'dart:io';
 import 'dart:convert';
+import 'dart:typed_data';
 import 'package:path_provider/path_provider.dart';
 import '../models/ssh_connection.dart';
 import '../../core/constants/app_constants.dart';
+import '../../utils/encryption.dart';
 
 /// 连接配置仓库
 class ConnectionRepository {
   static const String _fileName = 'ssh_connections.json';
+  static const String _keyFileName = 'encryption.key';
   File? _configFile;
   Map<String, SshConnection> _connectionsCache = {};
+  Uint8List? _encryptionKey;
+
+  /// 敏感字段列表（序列化时需要加密/解密）
+  static const _sensitiveFields = [
+    'password',
+    'privateKeyContent',
+    'keyPassphrase',
+  ];
 
   /// Creates a repository with a custom config file path.
   /// Primarily intended for testing.
@@ -17,7 +28,7 @@ class ConnectionRepository {
   /// 初始化仓库
   Future<void> init() async {
     if (_configFile != null) {
-      // Config file already set via constructor (e.g., for testing).
+      await _initEncryptionKey();
       await _loadCache();
       return;
     }
@@ -32,8 +43,77 @@ class ConnectionRepository {
       await _configFile!.writeAsString('[]');
     }
 
-    // 加载缓存
+    await _initEncryptionKey();
     await _loadCache();
+  }
+
+  /// 初始化加密密钥
+  Future<void> _initEncryptionKey() async {
+    final dir = _configFile!.parent;
+    final keyFile = File('${dir.path}/$_keyFileName');
+    if (await keyFile.exists()) {
+      final stored = await keyFile.readAsString();
+      _encryptionKey = base64Decode(stored.trim());
+    } else {
+      _encryptionKey = EncryptionUtil.randomBytes(32);
+      await keyFile.writeAsString(base64Encode(_encryptionKey!));
+    }
+  }
+
+  /// 加密敏感字段
+  void _encryptFields(Map<String, dynamic> map) {
+    for (final field in _sensitiveFields) {
+      final value = map[field];
+      if (value is String && value.isNotEmpty) {
+        map[field] = EncryptionUtil.encryptField(value, _encryptionKey!);
+      }
+    }
+
+    // 嵌套跳板机
+    final jumpHost = map['jumpHost'];
+    if (jumpHost is Map<String, dynamic>) {
+      final pw = jumpHost['password'];
+      if (pw is String && pw.isNotEmpty) {
+        jumpHost['password'] = EncryptionUtil.encryptField(pw, _encryptionKey!);
+      }
+    }
+
+    // 嵌套 SOCKS5 代理
+    final socks5 = map['socks5Proxy'];
+    if (socks5 is Map<String, dynamic>) {
+      final pw = socks5['password'];
+      if (pw is String && pw.isNotEmpty) {
+        socks5['password'] = EncryptionUtil.encryptField(pw, _encryptionKey!);
+      }
+    }
+  }
+
+  /// 解密敏感字段
+  void _decryptFields(Map<String, dynamic> map) {
+    for (final field in _sensitiveFields) {
+      final value = map[field];
+      if (value is String && value.isNotEmpty) {
+        map[field] = EncryptionUtil.decryptField(value, _encryptionKey!);
+      }
+    }
+
+    // 嵌套跳板机
+    final jumpHost = map['jumpHost'];
+    if (jumpHost is Map<String, dynamic>) {
+      final pw = jumpHost['password'];
+      if (pw is String && pw.isNotEmpty) {
+        jumpHost['password'] = EncryptionUtil.decryptField(pw, _encryptionKey!);
+      }
+    }
+
+    // 嵌套 SOCKS5 代理
+    final socks5 = map['socks5Proxy'];
+    if (socks5 is Map<String, dynamic>) {
+      final pw = socks5['password'];
+      if (pw is String && pw.isNotEmpty) {
+        socks5['password'] = EncryptionUtil.decryptField(pw, _encryptionKey!);
+      }
+    }
   }
 
   /// 从文件加载数据到缓存
@@ -43,15 +123,20 @@ class ConnectionRepository {
       final jsonList = jsonDecode(content) as List<dynamic>;
       _connectionsCache = {
         for (var json in jsonList)
-          (json['id'] as String): SshConnection.fromJson(
+          (json['id'] as String): _deserializeConnection(
             json as Map<String, dynamic>,
           ),
       };
     } catch (e) {
-      // 如果文件格式错误，重置为空
       _connectionsCache = {};
       await _configFile!.writeAsString('[]');
     }
+  }
+
+  /// 反序列化（含解密）
+  SshConnection _deserializeConnection(Map<String, dynamic> map) {
+    _decryptFields(map);
+    return SshConnection.fromJson(map);
   }
 
   /// 保存缓存到文件
@@ -59,6 +144,9 @@ class ConnectionRepository {
     final jsonList = _connectionsCache.values
         .map((conn) => conn.toJson())
         .toList();
+    for (final map in jsonList) {
+      _encryptFields(map);
+    }
     await _configFile!.writeAsString(jsonEncode(jsonList));
   }
 

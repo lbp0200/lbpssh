@@ -57,7 +57,7 @@ $error
     });
 
     final Uri issuesUrl = Uri.parse(
-      'https://github.com/lbpCode/lbpSSH/issues/new',
+      'https://github.com/lbp0200/lbpSSH/issues/new',
     );
     if (await canLaunchUrl(issuesUrl)) {
       await launchUrl(issuesUrl, mode: LaunchMode.externalApplication);

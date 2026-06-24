@@ -1,5 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
+
 import 'package:file_picker/file_picker.dart';
 import '../../data/models/ssh_connection.dart';
 import '../../data/repositories/connection_repository.dart';
@@ -44,25 +46,25 @@ class ImportExportService {
         'connections': connections.map((conn) => conn.toJson()).toList(),
       };
 
-      // 选择保存位置
-      String? outputFile = await FilePicker.saveFile(
+      // 准备 JSON 内容
+      final jsonContent = const JsonEncoder.withIndent(
+        '  ',
+      ).convert(exportData);
+      final bytes = utf8.encode(jsonContent);
+
+      // 选择保存位置并写入文件
+      final outputFile = await FilePicker.saveFile(
         dialogTitle: '保存SSH连接配置',
         fileName:
             'ssh_connections_export_${DateTime.now().toString().substring(0, 10)}.json',
         type: FileType.custom,
         allowedExtensions: ['json'],
+        bytes: Uint8List.fromList(bytes),
       );
 
       if (outputFile == null) {
-        // 用户取消操作
         return null;
       }
-
-      // 写入文件
-      final jsonContent = const JsonEncoder.withIndent(
-        '  ',
-      ).convert(exportData);
-      await File(outputFile).writeAsString(jsonContent);
 
       _status = ImportExportStatus.success;
       return File(outputFile);

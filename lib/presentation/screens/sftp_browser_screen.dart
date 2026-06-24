@@ -160,46 +160,49 @@ class _SftpBrowserScreenState extends ConsumerState<SftpBrowserScreen> {
   }
 
   Future<void> _downloadFile(FileItem item) async {
-    final result = await FilePicker.saveFile(fileName: item.name);
-    if (result != null) {
-      // 创建进度流
-      final progressController = StreamController<TransferProgress>();
+    final dir = await FilePicker.getDirectoryPath(
+      dialogTitle: '选择下载目录',
+    );
+    if (dir == null) return;
+    final result = '$dir/${item.name}';
 
-      if (!mounted) return;
+    // 创建进度流
+    final progressController = StreamController<TransferProgress>();
 
-      // 显示进度对话框
-      showDialog<void>(
-        context: context,
-        barrierDismissible: false,
-        builder: (context) => TransferProgressDialog(
-          fileName: item.name,
-          totalBytes: item.size,
-          progressStream: progressController.stream,
-          onCancel: () {
-            progressController.close();
-            Navigator.pop(context);
-          },
-        ),
+    if (!mounted) return;
+
+    // 显示进度对话框
+    showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => TransferProgressDialog(
+        fileName: item.name,
+        totalBytes: item.size,
+        progressStream: progressController.stream,
+        onCancel: () {
+          progressController.close();
+          Navigator.pop(context);
+        },
+      ),
+    );
+
+    try {
+      await _transferService?.downloadFile(
+        item.path,
+        result,
+        onProgress: (progress) {
+          progressController.add(progress);
+        },
       );
 
-      try {
-        await _transferService?.downloadFile(
-          item.path,
-          result,
-          onProgress: (progress) {
-            progressController.add(progress);
-          },
-        );
-
-        if (mounted) {
-          Navigator.pop(context); // 关闭进度对话框
-          _showMessage('下载成功');
-        }
-      } catch (e) {
-        if (mounted) {
-          Navigator.pop(context);
-          _showError('下载失败: $e');
-        }
+      if (mounted) {
+        Navigator.pop(context);
+        _showMessage('下载成功');
+      }
+    } catch (e) {
+      if (mounted) {
+        Navigator.pop(context);
+        _showError('下载失败: $e');
       }
     }
   }
