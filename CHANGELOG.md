@@ -1,0 +1,2 @@
+- release: bump version to 1.9.2 (5e8970a)
+- docs: update CHANGELOG (41c1b85)
