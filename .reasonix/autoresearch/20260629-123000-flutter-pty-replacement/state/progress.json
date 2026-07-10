@@ -1,0 +1,27 @@
+{
+  "iteration": 4,
+  "direction": "Final recommendation and completion",
+  "started_at": "2026-06-29T12:38:00Z",
+  "completed_at": "2026-06-29T12:40:00Z",
+  "status": "completed",
+  "evidence": {
+    "recommendation": "Stay with flutter_pty (方案 A)",
+    "reasons": [
+      "SPM warning does not affect compilation or runtime",
+      "Flutter is gradually migrating to SPM, CocoaPods still supported short-term",
+      "portable_pty is too new (v0.0.5) with high migration cost",
+      "No perfect drop-in replacement exists"
+    ],
+    "monitoring_plan": [
+      "Watch flutter_pty GitHub Issues and Releases",
+      "Watch Flutter official SPM migration announcements",
+      "Re-evaluate when Flutter makes SPM warning an error"
+    ]
+  },
+  "completion_summary": {
+    "goal": "Find SPM-compatible replacement for flutter_pty",
+    "result": "No ideal replacement found - recommend staying with flutter_pty",
+    "key_finding": "kyroon_pty has identical API but same SPM problem; portable_pty solves SPM but has completely different API",
+    "next_steps": "Monitor Flutter SPM migration progress, re-evaluate when needed"
+  }
+}
