@@ -177,26 +177,28 @@ class SshService implements TerminalInputService {
     var output = _outputBuffer.toString();
     _outputBuffer.clear();
 
-    // 过滤重复的 Last login 行
+    // 过滤重复的 Last login 行 — 避免 split('\n') 整个缓冲
     if (!_hasShownLastLogin && output.contains('Last login:')) {
       _hasShownLastLogin = true;
-      final lines = output.split('\n');
-      final lastLoginLines = <String>[];
-      final otherLines = <String>[];
-      bool foundLastLogin = false;
-
-      for (final line in lines) {
+      // 按行扫描，只保留第一个 Last login 行
+      var result = StringBuffer();
+      var start = 0;
+      var foundLastLogin = false;
+      while (start < output.length) {
+        var end = output.indexOf('\n', start);
+        if (end == -1) end = output.length;
+        final line = output.substring(start, end);
         if (line.startsWith('Last login:')) {
           if (!foundLastLogin) {
-            lastLoginLines.add(line);
+            result.writeln(line);
             foundLastLogin = true;
           }
         } else {
-          otherLines.add(line);
+          result.writeln(line);
         }
+        start = end + 1;
       }
-
-      output = [...lastLoginLines, ...otherLines].join('\n');
+      output = result.toString().trimRight();
     }
 
     if (output.isNotEmpty) {

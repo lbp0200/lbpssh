@@ -1,0 +1,48 @@
+{
+  "iteration": 3,
+  "direction": "API comparison between flutter_pty and portable_pty",
+  "started_at": "2026-06-29T12:35:00Z",
+  "completed_at": "2026-06-29T12:38:00Z",
+  "status": "completed",
+  "evidence": {
+    "flutter_pty_api_usage": {
+      "file": "lib/domain/services/local_terminal_service.dart",
+      "methods_used": [
+        {"method": "Pty.start()", "line": 179, "params": "shell, arguments, workingDirectory, environment, rows"},
+        {"method": "_pty!.output", "line": 189, "type": "Stream<List<int>>"},
+        {"method": "_pty!.ackRead()", "line": 198, "type": "void"},
+        {"method": "_pty!.write(bytes)", "line": 262, "type": "void"},
+        {"method": "_pty!.exitCode", "line": 229, "type": "Future<int>"},
+        {"method": "_pty!.pid", "line": 331, "type": "int"},
+        {"method": "_pty!.resize(rows, columns)", "line": 395, "type": "void"},
+        {"method": "_pty!.kill()", "line": 413, "type": "void"}
+      ]
+    },
+    "portable_pty_api": {
+      "constructor": "PortablePty.open(rows: rows, cols: cols)",
+      "spawn": "pty.spawn(shell, args: args)",
+      "read": "pty.readSync(maxBytes) - SYNCHRONOUS, not stream-based",
+      "write": "pty.writeString(text) / pty.writeBytes(bytes)",
+      "exit_code": "pty.tryWait() - non-blocking, returns null if running",
+      "pid": "pty.childPid",
+      "resize": "pty.resize(rows: rows, cols: cols)",
+      "kill": "pty.kill() / pty.close()"
+    },
+    "api_differences": {
+      "critical": [
+        "portable_pty uses SYNCHRONOUS read (readSync) instead of stream-based output",
+        "flutter_pty uses Pty.start() as constructor, portable_pty uses PortablePty.open() + .spawn()",
+        "portable_pty uses .childPid instead of .pid",
+        "portable_pty uses .tryWait() instead of .exitCode Future"
+      ],
+      "migration_effort": "HIGH - requires fundamental architecture change from stream-based to synchronous polling"
+    }
+  },
+  "findings": [
+    "portable_pty API is fundamentally different from flutter_pty",
+    "Biggest issue: portable_pty uses synchronous read (readSync) instead of stream-based output",
+    "This requires architectural changes to LocalTerminalService",
+    "Migration effort is HIGH - not a simple find-and-replace",
+    "kyroon_pty has identical API but same SPM problem as flutter_pty"
+  ]
+}

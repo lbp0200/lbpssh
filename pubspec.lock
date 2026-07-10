@@ -498,7 +498,7 @@ packages:
       path: "/Users/lbp/Projects/kterm.dart"
       relative: false
     source: path
-    version: "1.5.0"
+    version: "1.5.2"
   leak_tracker:
     dependency: transitive
     description:
