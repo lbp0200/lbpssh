@@ -108,7 +108,7 @@ dev_dependencies:
   mocktail: ^1.0.4
 
   # 代码生成 & 测试
-  build_runner: ^2.14.1
+  build_runner: ^2.15.1
   json_serializable: ^6.14.0
   flutter_launcher_icons: ^0.14.4
   test: any
