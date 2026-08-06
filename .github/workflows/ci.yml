@@ -74,17 +74,17 @@ jobs:
         with:
           fetch-depth: 0
       - name: Download Linux build
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v8
         with:
           name: linux-build
           path: releases/
       - name: Download Windows build
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v8
         with:
           name: windows-build
           path: releases/
       - name: Download macOS build
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v8
         with:
           name: macos-build
           path: releases/
