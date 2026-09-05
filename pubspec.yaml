@@ -86,7 +86,7 @@ dev_dependencies:
   json_serializable: ^6.14.0
   flutter_launcher_icons: ^0.14.4
   test: any
-  file_picker_platform_interface: ^3.0.1
+  file_picker_platform_interface: ^3.3.0
 
 flutter_launcher_icons:
   image_path: "assets/icon/app_icon.png" # 原图路径（必须是 1024x1024）
