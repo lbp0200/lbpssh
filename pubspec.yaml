@@ -62,7 +62,7 @@ dependencies:
   window_manager: ^0.5.1
 
   # 桌面拖拽支持
-  desktop_drop: ^0.8.0
+  desktop_drop: ^0.8.4
   cross_file: ^0.3.5+2
   socks5_proxy: ^2.1.1
 
