@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
+
 import 'kitty_file_transfer_models.dart';
 
 export 'kitty_file_transfer_models.dart';
@@ -185,8 +187,9 @@ class KittyFileTransferEncoder {
           size: size,
         );
       }
-    } catch (_) {
-      // 忽略解析错误
+    } catch (e) {
+      // 远端不支持/响应格式不符属预期，宽容返回 null，不上报
+      debugPrint('[KittyFileTransferEncoder] parse response failed: $e');
     }
     return null;
   }

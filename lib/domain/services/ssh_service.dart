@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:dartssh2/dartssh2.dart';
 
 import '../../data/models/ssh_connection.dart';
+import '../../utils/sentry_service.dart';
 import 'app_config_service.dart';
 import 'socks5_proxy_socket.dart';
 import 'ssh_config_service.dart';
@@ -302,7 +303,10 @@ class SshService implements TerminalInputService {
           // 避免首个 socket 泄漏
           try {
             await socket?.close();
-          } catch (_) {}
+          } catch (e, stackTrace) {
+            // close() 幂等，此处抛出属异常路径，上报一次便于排查
+            unawaited(SentryService().captureException(e, stackTrace: stackTrace));
+          }
           // 跳板机模式下目标主机通常不可直达，连接由 _connectViaJumpHost 独立完成。
           // 这里不预先直连目标主机（否则会白白发起并泄漏一条 TCP 连接，
           // 且目标不可直达时还会导致连接失败）。
@@ -344,13 +348,25 @@ class SshService implements TerminalInputService {
                     identities = SSHKeyPair.fromPem(keyContent);
                     break;
                   } catch (_) {
-                    // 尝试下一个身份文件
+                    // 尝试下一个身份文件（单文件解析失败属预期流程，不上报）
                     continue;
                   }
                 }
               } catch (_) {
+                // 尝试下一个身份文件（读取失败同样属预期流程）
                 continue;
               }
+            }
+            // 全部身份文件均不可用：记录一次，便于定位配置问题
+            if (identities == null) {
+              unawaited(
+                SentryService().captureException(
+                  StateError(
+                    'SSH config identity files all failed: '
+                    '${configEntry.identityFiles!.length} file(s)',
+                  ),
+                ),
+              );
             }
           }
 
@@ -465,11 +481,17 @@ class SshService implements TerminalInputService {
       // 跳板机模式下 _jumpClient 及其上的 ssh -L 隧道同理。close() 幂等。
       try {
         unawaited(_jumpClient?.close());
-      } catch (_) {}
+      } catch (e, stackTrace) {
+        // close() 幂等，抛出属异常路径，上报一次便于排查
+        unawaited(SentryService().captureException(e, stackTrace: stackTrace));
+      }
       _jumpClient = null;
       try {
         unawaited(_client?.close());
-      } catch (_) {}
+      } catch (e, stackTrace) {
+        // close() 幂等，抛出属异常路径，上报一次便于排查
+        unawaited(SentryService().captureException(e, stackTrace: stackTrace));
+      }
       _client = null;
 
       _updateState(SshConnectionState.error);
@@ -755,16 +777,25 @@ class SshService implements TerminalInputService {
 
     try {
       _session?.close();
-    } catch (_) {}
+    } catch (e, stackTrace) {
+      // close() 幂等，抛出属异常路径，上报一次便于排查
+      unawaited(SentryService().captureException(e, stackTrace: stackTrace));
+    }
     // 先关跳板机：其上的 ssh -L 隧道进程随客户端关闭而终止，避免孤儿进程。
     try {
       unawaited(_jumpClient?.close());
-    } catch (_) {}
+    } catch (e, stackTrace) {
+      // close() 幂等，抛出属异常路径，上报一次便于排查
+      unawaited(SentryService().captureException(e, stackTrace: stackTrace));
+    }
     _jumpClient = null;
 
     try {
       unawaited(_client?.close());
-    } catch (_) {}
+    } catch (e, stackTrace) {
+      // close() 幂等，抛出属异常路径，上报一次便于排查
+      unawaited(SentryService().captureException(e, stackTrace: stackTrace));
+    }
     _client = null;
     _session = null;
   }

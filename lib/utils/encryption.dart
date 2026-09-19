@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:math';
-import 'dart:typed_data';
 
+import 'package:flutter/foundation.dart';
 import 'package:pointycastle/export.dart';
 
 class EncryptionUtil {
@@ -46,9 +46,16 @@ class EncryptionUtil {
       final key = deriveKey(masterPassword);
       return decryptWithKey(encryptedText, key);
     } catch (_) {
-      // 兼容旧版零填充加密的数据
+      // 兼容旧版零填充加密的数据（新密钥解密失败是预期回退路径，不上报）
       final legacyKey = _deriveKeyLegacy(masterPassword);
-      return decryptWithKey(encryptedText, legacyKey);
+      try {
+        return decryptWithKey(encryptedText, legacyKey);
+      } catch (_) {
+        // 两种密钥均失败：主密码错误或数据损坏。异常详情可能含密文片段，
+        // 只记录通用信息，不带上报与敏感数据。
+        debugPrint('[Encryption] decrypt failed: invalid password or corrupted data');
+        rethrow;
+      }
     }
   }
 

@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+
 import '../../data/models/file_item.dart';
 
 /// 远程文件解析器
@@ -111,8 +113,9 @@ class FileListParser {
           }
         }
       }
-    } catch (_) {
-      // 忽略解析错误
+    } catch (e) {
+      // 宽容解析：日期格式不匹配仅导致 modified 为 null，逐行不上报
+      debugPrint('[FileListParser] parse entry failed: $e');
     }
 
     // 构建完整路径

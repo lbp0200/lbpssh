@@ -10,6 +10,15 @@ import 'package:lbp_ssh/domain/services/app_config_service.dart';
 import 'package:lbp_ssh/data/models/ssh_connection.dart';
 import 'package:lbp_ssh/data/models/ssh_config.dart';
 
+/// 轮询等待输出缓冲区刷出（替代固定延时，避免定时器竞态导致偶发失败）。
+/// 每 10ms 检查一次，最多等待 500ms；一旦有输出即提前返回。
+Future<void> _awaitOutputFlush(List<String> outputs, {Duration timeout = const Duration(milliseconds: 500)}) async {
+  final deadline = DateTime.now().add(timeout);
+  while (outputs.isEmpty && DateTime.now().isBefore(deadline)) {
+    await Future<void>.delayed(const Duration(milliseconds: 10));
+  }
+}
+
 // ---------------------------------------------------------------------------
 // Fake / Mock classes for dartssh2 types
 // ---------------------------------------------------------------------------
@@ -1388,8 +1397,8 @@ void main() {
 
       // Act — 写入 UTF-8 数据
       session.stdoutCtrl.add(utf8.encode('hello world\r\n'));
-      // 等待输出缓冲 flush（16ms 定时器）
-      await Future<void>.delayed(const Duration(milliseconds: 60));
+      // 轮询等待输出缓冲 flush（替代固定延时，避免定时器竞态）
+      await _awaitOutputFlush(outputs);
 
       // Assert
       expect(outputs.join(), contains('hello world'));
@@ -1412,7 +1421,7 @@ void main() {
       final full = utf8.encode('A中B'); // [0x41, 0xE4, 0xB8, 0xAD, 0x42]
       session.stdoutCtrl.add(full.sublist(0, 2)); // "A" + 中 的首字节
       session.stdoutCtrl.add(full.sublist(2)); // 中 的剩余两字节 + "B"
-      await Future<void>.delayed(const Duration(milliseconds: 80));
+      await _awaitOutputFlush(outputs);
 
       // Assert — 跨 chunk 边界完整还原，无乱码。
       expect(outputs.join(), contains('A中B'));
@@ -1430,7 +1439,7 @@ void main() {
 
       // Act — stderr 也路由到 outputStream
       session.stderrCtrl.add(utf8.encode('warning: disk full\r\n'));
-      await Future<void>.delayed(const Duration(milliseconds: 60));
+      await _awaitOutputFlush(outputs);
 
       // Assert
       expect(outputs.join(), contains('warning: disk full'));
@@ -1473,7 +1482,7 @@ void main() {
           'user@host:~\$ ',
         ),
       );
-      await Future<void>.delayed(const Duration(milliseconds: 60));
+      await _awaitOutputFlush(outputs);
 
       // Assert — 只保留第一条 Last login，其他内容原样保留
       final joined = outputs.join();
@@ -1531,7 +1540,7 @@ void main() {
       // Act — 写入超过 65536 字节，触发 _flushOutputBuffer 立即刷出
       final bigChunk = 'x' * 70000;
       session.stdoutCtrl.add(utf8.encode(bigChunk));
-      await Future<void>.delayed(const Duration(milliseconds: 60));
+      await _awaitOutputFlush(outputs);
 
       // Assert — 大块数据被立即冲刷到输出流
       expect(outputs.join(), contains(bigChunk));

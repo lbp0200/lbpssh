@@ -18,7 +18,9 @@ class TerminalPreview extends StatelessWidget {
   static Color _parseColor(String colorHex) {
     try {
       return Color(int.parse(colorHex.replaceFirst('#', '0xFF')));
-    } catch (_) {
+    } catch (e) {
+      // 无效颜色配置属用户数据问题，build 路径只记录日志，不上报
+      debugPrint('[TerminalPreview] invalid color hex: $e');
       return Colors.white;
     }
   }

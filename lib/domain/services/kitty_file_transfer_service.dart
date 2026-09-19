@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:dartssh2/dartssh2.dart';
 import 'package:path/path.dart' as p;
 
@@ -704,8 +705,9 @@ class KittyFileTransferService extends KittyServiceBase {
       if (partFile.existsSync()) {
         partFile.deleteSync();
       }
-    } catch (_) {
-      // 忽略：文件可能已成功重命名或本就不存在
+    } catch (e) {
+      // 目标可能已被重命名或不存在，静默处理（不上报）
+      debugPrint('[KittyFileTransferService] _deletePartFile failed: $e');
     }
   }
 

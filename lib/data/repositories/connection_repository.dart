@@ -138,8 +138,10 @@ class ConnectionRepository {
         debugPrint(
           '[ConnectionRepository] corrupted config backed up to $backupPath',
         );
-      } catch (_) {
-        // 备份失败不影响主流程
+      } catch (e, stackTrace) {
+        // 备份失败不影响主流程，记录并上报一次便于排查
+        debugPrint('[ConnectionRepository] corrupted config backup failed: $e');
+        unawaited(SentryService().captureException(e, stackTrace: stackTrace));
       }
       _connectionsCache = {};
       await _configFile!.writeAsString('[]');

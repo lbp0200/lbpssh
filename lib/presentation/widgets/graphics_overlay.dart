@@ -1,5 +1,8 @@
+import 'dart:async';
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
+
+import '../../utils/sentry_service.dart';
 
 /// 终端图形叠加层组件
 /// 显示由 kterm GraphicsManager 管理的图片
@@ -22,6 +25,8 @@ class GraphicsOverlayWidget extends StatefulWidget {
 }
 
 class _GraphicsOverlayWidgetState extends State<GraphicsOverlayWidget> {
+  bool _sentryReported = false;
+
   @override
   void initState() {
     super.initState();
@@ -41,8 +46,15 @@ class _GraphicsOverlayWidgetState extends State<GraphicsOverlayWidget> {
         if (placements is Map && placements.isNotEmpty) {
           setState(() {});
         }
-      } catch (_) {
-        // 忽略图形管理器访问异常
+      } catch (e, stackTrace) {
+        // 忽略图形管理器访问异常；持续失败时最多上报一次，避免高频刷屏
+        if (!_sentryReported) {
+          _sentryReported = true;
+          debugPrint('[GraphicsOverlay] graphics manager access failed: $e');
+          unawaited(
+            SentryService().captureException(e, stackTrace: stackTrace),
+          );
+        }
       }
       return true;
     });
@@ -54,7 +66,9 @@ class _GraphicsOverlayWidgetState extends State<GraphicsOverlayWidget> {
       final widgets = _buildImageWidgets();
       if (widgets.isEmpty) return const SizedBox.shrink();
       return Stack(children: widgets);
-    } catch (_) {
+    } catch (e) {
+      // 渲染失败降级为空组件，避免崩溃；仅记录日志不上报
+      debugPrint('[GraphicsOverlay] build failed: $e');
       return const SizedBox.shrink();
     }
   }

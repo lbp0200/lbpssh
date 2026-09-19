@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_pty/flutter_pty.dart';
+import '../../utils/sentry_service.dart';
 import 'terminal_input_service.dart';
 
 /// PTY 启动函数签名（默认使用 [Pty.start]，测试时可注入替身）
@@ -397,8 +399,9 @@ class LocalTerminalService implements TerminalInputService {
           onActualDirectoryChange?.call(actualDir);
         }
       }
-    } catch (_) {
-      // 静默处理错误（lsof 不可用或查询失败时忽略）
+    } catch (e) {
+      // 静默处理错误（lsof 不可用或查询失败时忽略，属预期场景，不上报）
+      debugPrint('[LocalTerminalService] lsof cwd query failed: $e');
     }
   }
 
@@ -478,7 +481,13 @@ class LocalTerminalService implements TerminalInputService {
     unawaited(() async {
       try {
         await stop();
-      } catch (_) {}
+      } catch (e, stackTrace) {
+        // dispose 阶段 stop 失败属意外路径，记录并上报
+        debugPrint('[LocalTerminalService] dispose stop failed: $e');
+        unawaited(
+          SentryService().captureException(e, stackTrace: stackTrace),
+        );
+      }
       if (!_outputController.isClosed) await _outputController.close();
       if (!_stateController.isClosed) await _stateController.close();
     }());
