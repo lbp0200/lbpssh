@@ -9,6 +9,7 @@ import '../../utils/sentry_service.dart';
 import 'app_config_service.dart';
 import 'socks5_proxy_socket.dart';
 import 'ssh_config_service.dart';
+import 'ssh_legacy_algorithms.dart';
 import 'terminal_input_service.dart';
 
 export 'jump_host_tunnel.dart';
@@ -74,12 +75,16 @@ class SshService implements TerminalInputService {
   }
 
   /// 创建 SSH 客户端（优先使用注入的工厂，默认 [SSHClient]）
+  ///
+  /// [algorithms] 仅在默认构造真实 [SSHClient] 时生效：注入的测试工厂签名
+  /// 中没有该参数（保持测试替身兼容），兼容重连逻辑见 [_retryDirectWithLegacy]。
   SSHClient _createClient(
     SSHSocket socket, {
     required String username,
     SSHPasswordRequestHandler? onPasswordRequest,
     List<SSHKeyPair>? identities,
     Duration? keepAliveInterval,
+    SSHAlgorithms? algorithms,
   }) {
     final factory = _clientFactory;
     if (factory != null) {
@@ -97,7 +102,71 @@ class SshService implements TerminalInputService {
       onPasswordRequest: onPasswordRequest,
       identities: identities,
       keepAliveInterval: keepAliveInterval ?? const Duration(seconds: 10),
+      algorithms: algorithms ?? const SSHAlgorithms(),
     );
+  }
+
+  /// 打开交互式会话：首选 PTY 模式（支持颜色、交互），失败回退无 PTY 的标准 shell。
+  ///
+  /// 协商失败（旧设备不支持现代算法）会在两种模式下以同一错误抛出，调用方
+  /// 可据此识别并触发兼容重连，见 [connect] 与 [isAlgorithmNegotiationFailure]。
+  Future<SSHSession> _openInteractiveSession() async {
+    try {
+      // 使用保存的最新终端尺寸，避免首屏排版错乱。
+      return await _client!.shell(
+        pty: SSHPtyConfig(type: 'xterm', width: _ptyWidth, height: _ptyHeight),
+      );
+    } catch (_) {
+      // 回退：不使用 PTY 的标准 shell。
+      return await _client!.shell();
+    }
+  }
+
+  /// 直连模式协商失败后的兼容重连：关闭已死的 socket/客户端，用
+  /// [legacyFallbackAlgorithms] 重建连接并重新打开会话。
+  ///
+  /// [reopenSocket] 由调用方提供，负责按本次连接的最终目标（直连 / SOCKS5 /
+  /// sshConfig 解析结果）重新建连；重试仍失败则抛出带排查提示的异常。
+  Future<SSHSession> _retryDirectWithLegacy({
+    required Future<SSHSocket> Function() reopenSocket,
+    required SSHSocket staleSocket,
+    required String username,
+    SSHPasswordRequestHandler? onPasswordRequest,
+    List<SSHKeyPair>? identities,
+    Duration? keepAliveInterval,
+  }) async {
+    _outputController.add('服务器仅支持旧加密算法，已自动切换为兼容模式重连…\r\n');
+    // 已死的连接：静默回收。最终失败时外层 catch 会统一回收 _client，
+    // 这里先置空避免重复 close（测试桩会计数 close 调用）。
+    try {
+      await staleSocket.close();
+    } catch (_) {
+      // 协商失败时 socket 已不可用，关闭失败属预期，不上报。
+    }
+    final staleClient = _client;
+    _client = null;
+    try {
+      await staleClient?.close();
+    } catch (_) {
+      // 同上，静默回收。
+    }
+    final socket = await reopenSocket();
+    _client = _createClient(
+      socket,
+      username: username,
+      onPasswordRequest: onPasswordRequest,
+      identities: identities,
+      keepAliveInterval: keepAliveInterval,
+      algorithms: legacyFallbackAlgorithms,
+    );
+    try {
+      return await _openInteractiveSession();
+    } catch (e) {
+      throw Exception(
+        '兼容模式重连失败：服务器可能仅支持已淘汰的算法（如 3DES），'
+        '建议升级服务器 SSH 配置: $e',
+      );
+    }
   }
 
   SSHClient? _client;
@@ -219,26 +288,29 @@ class SshService implements TerminalInputService {
       // 跳板机模式下目标主机通常不可直达，连接由 _connectViaJumpHost 独立完成
       // （先连跳板机，再经其 direct-tcpip 通道打穿到目标）。这里不预先直连
       // 目标主机，否则会白白发起并泄漏一条 TCP 连接。
-      SSHSocket? socket;
-      if (connection.jumpHost == null) {
+      // 直连目标（SOCKS5 / sshConfig 解析结果都会改写它）。抽成闭包，供
+      // 协商失败时的兼容重连复用，保证重试打向同一最终目标。
+      String directHost = connection.host;
+      int directPort = connection.port;
+      Future<SSHSocket> openDirectSocket() {
         if (connection.socks5Proxy != null) {
           final proxy = connection.socks5Proxy!;
-          socket = await connectViaSocks5Proxy(
+          return connectViaSocks5Proxy(
             proxy.host,
             proxy.port,
-            connection.host,
-            connection.port,
+            directHost,
+            directPort,
             username: proxy.username,
             password: proxy.password,
             timeout: timeout,
           );
-        } else {
-          socket = await _connectSocket(
-            connection.host,
-            connection.port,
-            timeout: timeout,
-          );
         }
+        return _connectSocket(directHost, directPort, timeout: timeout);
+      }
+
+      SSHSocket? socket;
+      if (connection.jumpHost == null) {
+        socket = await openDirectSocket();
       }
 
       // 根据认证方式准备认证信息
@@ -305,30 +377,17 @@ class SshService implements TerminalInputService {
             await socket?.close();
           } catch (e, stackTrace) {
             // close() 幂等，此处抛出属异常路径，上报一次便于排查
-            unawaited(SentryService().captureException(e, stackTrace: stackTrace));
+            unawaited(
+              SentryService().captureException(e, stackTrace: stackTrace),
+            );
           }
           // 跳板机模式下目标主机通常不可直达，连接由 _connectViaJumpHost 独立完成。
           // 这里不预先直连目标主机（否则会白白发起并泄漏一条 TCP 连接，
           // 且目标不可直达时还会导致连接失败）。
           if (connection.jumpHost == null) {
-            if (connection.socks5Proxy != null) {
-              final proxy = connection.socks5Proxy!;
-              socket = await connectViaSocks5Proxy(
-                proxy.host,
-                proxy.port,
-                targetHost,
-                targetPort,
-                username: proxy.username,
-                password: proxy.password,
-                timeout: timeout,
-              );
-            } else {
-              socket = await _connectSocket(
-                targetHost,
-                targetPort,
-                timeout: timeout,
-              );
-            }
+            directHost = targetHost;
+            directPort = targetPort;
+            socket = await openDirectSocket();
           }
 
           // 处理身份文件
@@ -404,26 +463,29 @@ class SshService implements TerminalInputService {
         );
       }
 
-      // 创建交互式会话
-      // 修复：直接使用 PTY 模式，避免 pre-exec 消耗 MOTD
-      // 之前的 _getShellEnvironment() 会通过 execute() 打开额外通道，
-      // 导致首次通道被占用，欢迎信息只在第一个通道发送
+      // 创建交互式会话。直连模式下若失败特征指向算法协商（旧设备仅支持
+      // SHA-1 / CBC 等旧算法，见 ssh_legacy_algorithms.dart），自动用兼容
+      // 算法集重连一次；跳板机路径保持原样（跳板机通常是可维护的现代主机，
+      // 其后的目标连接走隧道，协商失败会按原逻辑报错）。
       SSHSession? session;
       try {
-        // 首选 PTY 模式（支持颜色、交互），使用保存的最新尺寸
-        session = await _client!.shell(
-          pty: SSHPtyConfig(
-            type: 'xterm',
-            width: _ptyWidth,
-            height: _ptyHeight,
-          ),
-        );
+        session = await _openInteractiveSession();
       } catch (e) {
-        // 回退：不使用 PTY 的标准 shell
-        try {
-          session = await _client!.shell();
-        } catch (e2) {
-          throw Exception('建立会话失败: $e2');
+        if (connection.jumpHost == null && isAlgorithmNegotiationFailure(e)) {
+          session = await _retryDirectWithLegacy(
+            reopenSocket: openDirectSocket,
+            staleSocket: socket!,
+            username: connection.username,
+            onPasswordRequest: connection.authType == AuthType.password
+                ? () => password!
+                : null,
+            identities: identities,
+            keepAliveInterval: Duration(
+              milliseconds: _config.ssh.keepaliveInterval,
+            ),
+          );
+        } else {
+          throw Exception('建立会话失败: $e');
         }
       }
       _session = session;

@@ -19,7 +19,7 @@ dependencies:
   package_info_plus: ^10.1.0
 
   # SSH 客户端
-  dartssh2: ^3.3.1
+  dartssh2: ^4.1.0
 
   # 终端模拟器
   kterm: ^1.5.7

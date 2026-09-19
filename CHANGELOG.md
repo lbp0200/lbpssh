@@ -1,3 +1,4 @@
+- feat(deps): bump dartssh2 3.3.1 -> 4.1.0；直连模式遇算法协商失败自动用兼容集（SHA-1 kex/ssh-rsa/CBC）重连一次，旧路由器/NAS/嵌入式设备不断连
 - fix: 空 catch 块补 debugPrint/Sentry 上报；预期失败路径（轮询重试、宽容解析、兼容回退、try-next-key、清理删除）不上报或仅最终失败上报一次，避免 Sentry 误报刷屏 (current)
 - fix(local-terminal): 会话重启时复位退出去重标记，修复第二次退出状态行被抑制 (f8b9905)
 - fix(tui): 编辑连接保存后保留跳板机/代理/备注等非表单字段 (49ebe5a)
