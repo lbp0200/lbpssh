@@ -229,18 +229,18 @@ packages:
     dependency: "direct main"
     description:
       name: desktop_drop
-      sha256: c65d1f959ccf4bb6803f984303d03e1e0dd4c0f73a3a2eca2d1b46d48ea16999
+      sha256: "47ded09c85909edfed644fd4cbb5051b040d0aed5c79e7e062ea4b3b7156dbe4"
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "0.8.2"
+    version: "0.8.4"
   dio:
     dependency: "direct main"
     description:
       name: dio
-      sha256: "0df44ebba85e503958eb75d07eedd3c86275a58c1d3eda2f2ce8f0a2c3abbb3c"
+      sha256: "852ec3b48cc431ac04fff978413c541502b67ffc3e26921e74e3d994694192c1"
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "5.11.0"
+    version: "5.11.1"
   dio_web_adapter:
     dependency: transitive
     description:
@@ -372,10 +372,10 @@ packages:
     dependency: "direct main"
     description:
       name: flutter_riverpod
-      sha256: "56e81e662e6e54e59b231da57e90ac0d06ac67d8e3f2273c129a37ae6282b40c"
+      sha256: "2b7f9d2a3c730ac1a98221b420cef966b990fca7ab546ede324642ca57a533e3"
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "3.4.2"
+    version: "3.4.3"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -528,10 +528,10 @@ packages:
     dependency: "direct main"
     description:
       name: kterm
-      sha256: "586e819058c8d6c2a700a6350dcd71768d1946a76f2ade76efa99c8a4ddf57ef"
+      sha256: "1b5ae6cfb9eb16985689a16d8cffd5bea79687b62ff12760fe586bc68e6b97cb"
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "1.5.7"
+    version: "1.5.8"
   leak_tracker:
     dependency: transitive
     description:
@@ -808,10 +808,10 @@ packages:
     dependency: transitive
     description:
       name: riverpod
-      sha256: "84351b3472a447f7b89f961f95c73287009d58c59d8cc1267425d995f78e50f1"
+      sha256: "484dfc873ea4c4f4240e5635444fa066f87b07862b7279ebd004a2b71fba4b7a"
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "3.4.2"
+    version: "3.4.3"
   screen_retriever:
     dependency: transitive
     description:
@@ -856,10 +856,10 @@ packages:
     dependency: "direct main"
     description:
       name: sentry
-      sha256: "5641a2acec1647f6482e472679374ac02070464e8c1d0df946361393ea7681a2"
+      sha256: bf80a571e370aad3f68b5c26d43f31cc230a084c250fb3138a83da6032ba0c01
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "9.28.0"
+    version: "9.30.0"
   shared_preferences:
     dependency: "direct main"
     description:
