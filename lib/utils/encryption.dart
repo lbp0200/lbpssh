@@ -53,7 +53,9 @@ class EncryptionUtil {
       } catch (_) {
         // 两种密钥均失败：主密码错误或数据损坏。异常详情可能含密文片段，
         // 只记录通用信息，不带上报与敏感数据。
-        debugPrint('[Encryption] decrypt failed: invalid password or corrupted data');
+        debugPrint(
+          '[Encryption] decrypt failed: invalid password or corrupted data',
+        );
         rethrow;
       }
     }

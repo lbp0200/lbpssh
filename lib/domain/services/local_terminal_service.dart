@@ -484,9 +484,7 @@ class LocalTerminalService implements TerminalInputService {
       } catch (e, stackTrace) {
         // dispose 阶段 stop 失败属意外路径，记录并上报
         debugPrint('[LocalTerminalService] dispose stop failed: $e');
-        unawaited(
-          SentryService().captureException(e, stackTrace: stackTrace),
-        );
+        unawaited(SentryService().captureException(e, stackTrace: stackTrace));
       }
       if (!_outputController.isClosed) await _outputController.close();
       if (!_stateController.isClosed) await _stateController.close();

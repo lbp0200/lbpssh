@@ -667,34 +667,31 @@ void main() {
         await svc.stop();
       });
 
-      test(
-        'Given natural exit fires BOTH output-done and exitCode, '
-        'Then only ONE exit status line is emitted (no duplicate)',
-        () async {
-          // Arrange (Given)
-          final svc = makeService();
-          final outputs = <String>[];
-          svc.outputStream.listen(outputs.add);
+      test('Given natural exit fires BOTH output-done and exitCode, '
+          'Then only ONE exit status line is emitted (no duplicate)', () async {
+        // Arrange (Given)
+        final svc = makeService();
+        final outputs = <String>[];
+        svc.outputStream.listen(outputs.add);
 
-          // Act (When): 真实自然退出时 PTY 输出流关闭（onDone）与 exitCode 完成
-          // （_watchExitCode）都会先后触发，二者各自会打印一条退出信息。
-          await svc.start();
-          await outputController.close();
-          exitCodeCompleter.complete(0);
-          await Future<void>.delayed(const Duration(milliseconds: 30));
+        // Act (When): 真实自然退出时 PTY 输出流关闭（onDone）与 exitCode 完成
+        // （_watchExitCode）都会先后触发，二者各自会打印一条退出信息。
+        await svc.start();
+        await outputController.close();
+        exitCodeCompleter.complete(0);
+        await Future<void>.delayed(const Duration(milliseconds: 30));
 
-          // Assert (Then)：去重后只应有一条退出信息（修复前会是两条）。
-          final exitLines = outputs.where((o) => o.contains('进程已')).toList();
-          expect(
-            exitLines.length,
-            1,
-            reason: 'onDone 与 _watchExitCode 都触发时应去重，只打印一条退出信息',
-          );
-          expect(svc.isConnected, isFalse);
+        // Assert (Then)：去重后只应有一条退出信息（修复前会是两条）。
+        final exitLines = outputs.where((o) => o.contains('进程已')).toList();
+        expect(
+          exitLines.length,
+          1,
+          reason: 'onDone 与 _watchExitCode 都触发时应去重，只打印一条退出信息',
+        );
+        expect(svc.isConnected, isFalse);
 
-          await svc.stop();
-        },
-      );
+        await svc.stop();
+      });
 
       test(
         'Given service restarted after a natural exit, When the second session exits, '
@@ -726,7 +723,14 @@ void main() {
           final ptys = [pty1, pty2];
           var idx = 0;
           final svc = LocalTerminalService(
-            ptyStarter: (String shell, {List<String> arguments = const [], Map<String, String>? environment, int rows = 80, String? workingDirectory}) => ptys[idx++],
+            ptyStarter:
+                (
+                  String shell, {
+                  List<String> arguments = const [],
+                  Map<String, String>? environment,
+                  int rows = 80,
+                  String? workingDirectory,
+                }) => ptys[idx++],
           );
           final outputs = <String>[];
           svc.outputStream.listen(outputs.add);
