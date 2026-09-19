@@ -109,3 +109,7 @@ pubspec_overrides.yaml
 .opencode
 .reasonix
 QWEN.md
+
+# Agent 本地脚手架与工具状态（不入库，AGENTS.md 等项目规范文档仍正常提交）
+.agents/
+skills-lock.json
