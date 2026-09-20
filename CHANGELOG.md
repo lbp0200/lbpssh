@@ -1,3 +1,5 @@
+- chore(deps): 升级 window_manager 0.5.1→0.5.2 (95ff6ed)
+- docs: update CHANGELOG (ca2bfad)
 - chore(deps): upgrade transitive dependencies via flutter pub upgrade --major-versions (dccd2c2)
 - chore(deps): 升级 kterm 1.5.7→1.5.8、flutter_riverpod 3.3.1→3.4.3、dio 5.9.2→5.11.1、sentry 9.27.0→9.30.0、desktop_drop 0.8.0→0.8.4 (c2b4ee1)
 - chore: .gitignore 忽略 agent 本地脚手架（.agents/、skills-lock.json） (1d66015)
