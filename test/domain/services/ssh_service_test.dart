@@ -12,7 +12,10 @@ import 'package:lbp_ssh/data/models/ssh_config.dart';
 
 /// 轮询等待输出缓冲区刷出（替代固定延时，避免定时器竞态导致偶发失败）。
 /// 每 10ms 检查一次，最多等待 500ms；一旦有输出即提前返回。
-Future<void> _awaitOutputFlush(List<String> outputs, {Duration timeout = const Duration(milliseconds: 500)}) async {
+Future<void> _awaitOutputFlush(
+  List<String> outputs, {
+  Duration timeout = const Duration(milliseconds: 500),
+}) async {
   final deadline = DateTime.now().add(timeout);
   while (outputs.isEmpty && DateTime.now().isBefore(deadline)) {
     await Future<void>.delayed(const Duration(milliseconds: 10));
