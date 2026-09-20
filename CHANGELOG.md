@@ -1,3 +1,10 @@
+- chore(deps): upgrade transitive dependencies via flutter pub upgrade --major-versions (dccd2c2)
+- chore(deps): 升级 kterm 1.5.7→1.5.8、flutter_riverpod 3.3.1→3.4.3、dio 5.9.2→5.11.1、sentry 9.27.0→9.30.0、desktop_drop 0.8.0→0.8.4 (c2b4ee1)
+- chore: .gitignore 忽略 agent 本地脚手架（.agents/、skills-lock.json） (1d66015)
+- chore: dart format 对齐（空白换行规范化，无逻辑变更） (1387a5e)
+- feat(deps): 升级 dartssh2 到 4.1.0，直连协商失败自动兼容重连旧设备 (24e5585)
+- fix(test): 轮询替代固定延时，修复 SSH 输出缓冲竞态导致的偶发失败 (b95ee04)
+- docs: update CHANGELOG (fdb3cd1)
 - feat(deps): bump dartssh2 3.3.1 -> 4.1.0；直连模式遇算法协商失败自动用兼容集（SHA-1 kex/ssh-rsa/CBC）重连一次，旧路由器/NAS/嵌入式设备不断连
 - fix: 空 catch 块补 debugPrint/Sentry 上报；预期失败路径（轮询重试、宽容解析、兼容回退、try-next-key、清理删除）不上报或仅最终失败上报一次，避免 Sentry 误报刷屏 (current)
 - fix(local-terminal): 会话重启时复位退出去重标记，修复第二次退出状态行被抑制 (f8b9905)
