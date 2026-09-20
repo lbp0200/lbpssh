@@ -59,7 +59,7 @@ dependencies:
   file_picker: ^12.1.1
 
   # 窗口管理
-  window_manager: ^0.5.1
+  window_manager: ^0.5.2
 
   # 桌面拖拽支持
   desktop_drop: ^0.8.4
