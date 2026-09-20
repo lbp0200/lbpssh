@@ -1,3 +1,5 @@
+- chore: 补齐 ssh_service_test.dart 格式（修复 CI format 检查） (dcd65a4)
+- docs: update CHANGELOG (a8a68a4)
 - chore(deps): 升级 window_manager 0.5.1→0.5.2 (95ff6ed)
 - docs: update CHANGELOG (ca2bfad)
 - chore(deps): upgrade transitive dependencies via flutter pub upgrade --major-versions (dccd2c2)
