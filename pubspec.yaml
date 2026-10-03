@@ -41,7 +41,7 @@ dependencies:
   path: ^1.9.0
 
   # URL 启动器
-  url_launcher: ^6.2.4
+  url_launcher: ^6.3.3
 
   # JSON 序列化
   json_annotation: ^4.12.0
