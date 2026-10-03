@@ -16,7 +16,7 @@ dependencies:
   intl: ^0.20.2
 
   # App info
-  package_info_plus: ^10.1.0
+  package_info_plus: ^10.2.2
 
   # SSH 客户端
   dartssh2: ^4.1.0
