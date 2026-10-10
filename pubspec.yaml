@@ -50,7 +50,7 @@ dependencies:
   path_provider: ^2.1.1
 
   # 共享首选项
-  shared_preferences: ^2.5.5
+  shared_preferences: ^2.5.6
 
   # UUID 生成
   uuid: ^4.5.3
