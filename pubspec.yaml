@@ -86,7 +86,7 @@ dev_dependencies:
   json_serializable: ^6.14.0
   flutter_launcher_icons: ^0.14.4
   test: any
-  file_picker_platform_interface: ^3.0.1
+  file_picker_platform_interface: ^3.4.0
 
 # 锁定 file_picker 系依赖到已验证可用的精确版本，避免 CI/本地解析漂移。
 # 根因：pubspec.lock 的 source 是 pub.flutter-io.cn（国内镜像），而 GitHub CI 用
