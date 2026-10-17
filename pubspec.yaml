@@ -64,7 +64,7 @@ dependencies:
   # 桌面拖拽支持
   desktop_drop: ^0.8.4
   cross_file: ^0.3.5+2
-  socks5_proxy: ^2.1.1
+  socks5_proxy: ^2.1.2
 
   # TUI
   utopia_tui: ^2.0.0
