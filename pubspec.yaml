@@ -22,7 +22,7 @@ dependencies:
   dartssh2: ^4.1.0
 
   # 终端模拟器
-  kterm: ^1.5.8
+  kterm: ^1.6.0
   flutter_pty: ^0.4.0+2
 
   # 状态管理
